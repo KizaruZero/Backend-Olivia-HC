@@ -28,4 +28,7 @@ Route::get('/home', function () {
     return Inertia::render('HomeView');
 })->name('home');
 
+Route::get('/maternal', function () {
+    return Inertia::render('MaternalDashboard');
+})->name('maternal');
 require __DIR__ . '/auth.php';

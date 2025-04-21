@@ -59,7 +59,7 @@ export default function Navbar() {
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                             className="bg-blue-600 text-white px-6 py-2 rounded-full shadow-md hover:bg-blue-700 transition-colors"
-                            onClick={() => router.visit("/dashboard")}
+                            onClick={() => router.visit("/maternal")}
                         >
                             Dashboard
                         </motion.button>
