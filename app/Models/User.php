@@ -11,7 +11,7 @@ use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 
 
-class User extends Authenticatable implements FilamentUser, MustVerifyEmail
+class User extends Authenticatable implements FilamentUser
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;

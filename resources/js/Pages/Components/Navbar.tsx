@@ -26,7 +26,9 @@ export default function Navbar() {
                     initial={{ x: -100 }}
                     animate={{ x: 0 }}
                     transition={{ type: "spring", stiffness: 100 }}
-                    className="flex items-center "
+                    className="flex items-center cursor-pointer"
+                    onClick={() => router.visit("/")}
+                    whileHover={{ scale: 1.05 }}
                 >
                     <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-xl mr-3">
                         BS+
@@ -68,7 +70,7 @@ export default function Navbar() {
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                             className="bg-blue-600 text-white px-6 py-2 rounded-full shadow-md hover:bg-blue-700 transition-colors"
-                            onClick={() => router.visit("/login")}
+                            onClick={() => router.get("/login")}
                         >
                             Login
                         </motion.button>

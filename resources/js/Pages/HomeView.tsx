@@ -5,6 +5,7 @@ import ProblemSection from "./Components/ProblemSection";
 import JoinUs from "./Components/JoinUs";
 import FiturCard from "./Components/FiturSection";
 import GuestLayout from "@/Layouts/GuestLayout";
+import { usePage, router } from "@inertiajs/react";
 
 export default function HomeView() {
     // Animation variants
@@ -89,7 +90,7 @@ export default function HomeView() {
                     >
                         <div className="hero flex flex-col md:flex-row w-full  justify-center">
                             <div className="w-full md:w-1/2 ">
-                                <button className="outline-1 mb-4 outline-sky-200 hover:bg-blue-600 px-6 py-3 rounded-4xl text-gray-600 hover:text-white transition duration-300">
+                                <button className="outline-1 mb-4 outline-sky-200 hover:bg-blue-600 px-6 py-3 rounded-3xl text-gray-600 hover:text-white transition duration-300">
                                     Health Matters: Setiap Bunda Berhak Sehat
                                 </button>
                                 <motion.h3
@@ -128,7 +129,10 @@ export default function HomeView() {
                                     kesehatan Bunda menentukan masa depan si
                                     kecil
                                 </p>
-                                <button className="outline-1 bg-blue-600 mb-4 outline-sky-200 hover:bg-blue-600 px-6 py-3 rounded-4xl text-gray-200 hover:text-white transition duration-300">
+                                <button
+                                    onClick={() => router.visit("/login")}
+                                    className="outline-2 bg-blue-600 mb-4 outline-sky-200 hover:bg-blue-600 px-6 py-3 rounded-3xl text-gray-200 hover:text-white transition duration-300"
+                                >
                                     Mulai Sekarang
                                 </button>
                             </div>

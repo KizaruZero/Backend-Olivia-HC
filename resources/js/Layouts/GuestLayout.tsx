@@ -6,7 +6,7 @@ import Navbar from "../Pages/Components/Navbar";
 
 export default function Guest({ children }: PropsWithChildren) {
     return (
-        <div className="flex flex-col min-h-screen bg-gradient-to-b from-orange-50 to-white">
+        <div className="flex flex-col min-h-screen bg-gradient-to-b from-blue-50 to-white">
             <Navbar />
             <div className="flex-grow">
                 <div className="mx-auto">{children}</div>

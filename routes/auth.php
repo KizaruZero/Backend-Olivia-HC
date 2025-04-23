@@ -57,3 +57,11 @@ Route::middleware('auth')->group(function () {
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
         ->name('logout');
 });
+
+// GOOGLE
+Route::middleware('web')->group(function () {
+    Route::get('/oauth/google/redirect', [AuthenticatedSessionController::class, 'redirectToGoogle'])
+        ->name('google.redirect');
+    Route::get('/oauth/google/callback', [AuthenticatedSessionController::class, 'handleGoogleCallback'])
+        ->name('google.callback');
+});
