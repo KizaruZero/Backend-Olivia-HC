@@ -12,6 +12,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Carbon;
 
 class KehamilanResource extends Resource
 {
@@ -23,22 +24,45 @@ class KehamilanResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('user_id')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\DatePicker::make('last_periode_date')
+                Forms\Components\Select::make('user_id')
+                    ->relationship('user', 'name')
                     ->required(),
-                Forms\Components\DatePicker::make('estimated_due_date'),
+                Forms\Components\DatePicker::make('last_periode_date')
+                    ->required()
+                    ->reactive()
+                    ->afterStateUpdated(function (callable $set, $state) {
+                        if ($state) {
+                            $set('estimated_due_date', Carbon::parse($state)->addWeeks(40)->format('Y-m-d'));
+                        }
+                    }),
+                Forms\Components\DatePicker::make('estimated_due_date')
+                    ->required()
+                    ->reactive()
+                    ->afterStateUpdated(function (callable $set, $state, $get) {
+                        $lastPeriodeDate = $get('last_periode_date');
+                        if ($lastPeriodeDate) {
+                            $set('estimated_due_date', Carbon::parse($lastPeriodeDate)->addWeeks(40)->format('Y-m-d'));
+                        }
+                    }),
                 Forms\Components\Toggle::make('is_active')
                     ->required(),
-                Forms\Components\TextInput::make('status')
+                Forms\Components\Select::make('status')
+                    ->options([
+                        'hamil' => 'Hamil',
+                        'melahirkan' => 'Melahirkan',
+                        'keguguran' => 'Keguguran',
+                        'nifas' => 'Nifas',
+                        'selesai' => 'Selesai',
+                    ])
                     ->required(),
                 Forms\Components\DatePicker::make('delivered_date'),
                 Forms\Components\TextInput::make('miscarriage_week')
+                    ->nullable()
                     ->maxLength(255),
                 Forms\Components\Toggle::make('is_nifas_complete')
                     ->required(),
                 Forms\Components\Textarea::make('notes')
+                    ->nullable()
                     ->columnSpanFull(),
             ]);
     }
@@ -72,11 +96,14 @@ class KehamilanResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
                     ->dateTime()
+
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 //
+
+
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

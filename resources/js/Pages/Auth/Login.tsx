@@ -76,12 +76,12 @@ export default function Login({
                                 type="email"
                                 name="email"
                                 value={data.email}
-                                className="mt-1 block w-full bg-gray-100 border-0"
+                                className="mt-1 block w-full border-blue-200 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 rounded-md shadow-sm"
                                 autoComplete="username"
-                                isFocused={true}
                                 onChange={(e) =>
                                     setData("email", e.target.value)
                                 }
+                                required
                             />
 
                             <InputError
@@ -98,11 +98,12 @@ export default function Login({
                                 type="password"
                                 name="password"
                                 value={data.password}
-                                className="mt-1 block w-full bg-gray-100 border-0 "
-                                autoComplete="current-password"
+                                className="mt-1 block w-full border-blue-200 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 rounded-md shadow-sm"
+                                autoComplete="new-password"
                                 onChange={(e) =>
                                     setData("password", e.target.value)
                                 }
+                                required
                             />
 
                             <InputError
