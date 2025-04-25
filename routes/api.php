@@ -15,4 +15,4 @@ Route::post('/daily-notes', [NotesController::class, 'store']);
 Route::put('/daily-notes/{id}', [NotesController::class, 'update']);
 Route::delete('/daily-notes/{id}', [NotesController::class, 'destroy']);
 
-?>
+require __DIR__ . '/auth.php';

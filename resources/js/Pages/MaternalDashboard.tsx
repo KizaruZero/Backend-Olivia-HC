@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
+import { router, usePage } from "@inertiajs/react";
 import GuestLayout from "@/Layouts/GuestLayout";
 import {
     Calendar,
@@ -46,8 +47,8 @@ export default function MaternalDashboard() {
     const [kehamilan, setKehamilan] = useState<Kehamilan | null>(null);
     const [isHovered, setIsHovered] = useState(false);
 
-    const user = JSON.parse(localStorage.getItem("user") || "{}");
-    const userId = 5;
+    const user = usePage().props.auth.user as User | null;
+    const userId = user?.id;
 
     // Data dummy untuk demo
     const userData = {
@@ -169,11 +170,7 @@ export default function MaternalDashboard() {
                                 {calculateDaysRemaining()} hari
                             </div>
                             <div className="text-blue-600">
-                                {userData.dueDate.toLocaleDateString("id-ID", {
-                                    day: "numeric",
-                                    month: "long",
-                                    year: "numeric",
-                                })}
+                                {kehamilan?.estimated_due_date.split("T")[0]}
                             </div>
                         </motion.div>
 
@@ -261,7 +258,11 @@ export default function MaternalDashboard() {
                     </div>
 
                     {/* Main Panel */}
-                    <NotesSection></NotesSection>
+                    {kehamilan && kehamilan.id && (
+                        <NotesSection
+                            kehamilan_id={kehamilan.id}
+                        ></NotesSection>
+                    )}
                 </main>
 
                 {/* Bottom Navigation (Mobile) */}
