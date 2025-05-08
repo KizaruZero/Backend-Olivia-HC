@@ -146,7 +146,7 @@ const PregnancyNotesApp: React.FC<PregnancyNotesAppProps> = ({
     const [allNoteDates, setAllNoteDates] = useState<string[]>([]);
     // State untuk note yang sedang diedit
     const [currentNote, setCurrentNote] = useState<DailyNote>({
-        kehamilan_id: kehamilan_id, // Default value, akan diambil dari user yang login
+        kehamilan_id: kehamilan_id,
         notes_date: formatLocalDate(new Date()),
         notes_time: new Date().toTimeString().slice(0, 5),
         mood: null,
@@ -209,7 +209,7 @@ const PregnancyNotesApp: React.FC<PregnancyNotesAppProps> = ({
         try {
             // Ganti URL dengan endpoint API Laravel Anda
             const response = await axios.get(
-                `/api/daily-notes?date=${selectedDate}&kehamilan_id=1`
+                `/api/daily-notes?date=${selectedDate}&kehamilan_id=${kehamilan_id}`
             );
             setNotes(response.data);
         } catch (err) {

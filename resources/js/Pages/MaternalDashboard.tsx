@@ -50,15 +50,6 @@ export default function MaternalDashboard() {
     const user = usePage().props.auth.user as User | null;
     const userId = user?.id;
 
-    // Data dummy untuk demo
-    const userData = {
-        name: "Ibu Anisa",
-        pregnancyWeek: 24,
-        trimester: 2,
-        dueDate: new Date(2025, 7, 15), // 15 Agustus 2025
-        completionPercentage: 72,
-    };
-
     // Fetch Data Kehamilan
     useEffect(() => {
         const fetchData = async () => {
