@@ -1,3 +1,4 @@
+import { router } from "@inertiajs/react";
 import { motion } from "framer-motion";
 
 export default function JoinUs() {
@@ -55,6 +56,7 @@ export default function JoinUs() {
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                             className="bg-pink-500 hover:bg-pink-600 text-white px-12 py-4 rounded-full text-lg font-medium mx-auto shadow-xl sm:w-auto transition-colors duration-300"
+                            onClick={() => router.visit(route("register"))}
                         >
                             Gabung Sekarang - Gratis!
                         </motion.button>

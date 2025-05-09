@@ -26,6 +26,7 @@
         "vite": "^6.2.4"
     },
     "dependencies": {
+        "@heroicons/react": "^2.2.0",
         "chart.js": "^4.4.9",
         "framer-motion": "^12.7.4",
         "lucide-react": "^0.501.0",

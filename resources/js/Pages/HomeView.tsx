@@ -33,7 +33,7 @@ export default function HomeView() {
     // Scroll spy effect
     useEffect(() => {
         const handleScroll = () => {
-            const sections = ["hero", "problem", "features", "join"];
+            const sections = ["hero", "problem", "fase-nifas", "features", "join"];
             const scrollPosition = window.scrollY + 100;
 
             for (const section of sections) {

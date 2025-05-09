@@ -5,26 +5,42 @@ export default function FiturSection() {
     const [isHovered, setIsHovered] = useState<number | null>(null);
     const featureCards = [
         {
-            title: "Bunda Diary",
-            desc: "Setiap detik berharga dalam perjalanan Bunda! Catat semua yang Bunda rasakan - dari tendangan pertama si kecil sampai konsultasi dengan bidan - dalam satu tempat. Nanti, Bunda bisa tunjukkan ke dokter dengan sekali klik. Jadi nggak ada lagi lupa jadwal kontrol atau lupa cerita gejala penting!",
-            icon: "📖",
+          title: "Pantau Perkembangan Nifasmu",
+          desc: "Pantau fase nifas dengan timeline interaktif, dapatkan reward digital tiap tahap selesai! Progress bar visual menampilkan % penyelesaian fase, checklist tindakan (minum vitamin, kontrol ke bidan, dll.), twibbon/border profile khusus tiap fase terpenuhi, dan confetti effect saat menyelesaikan fase. Memotivasi ibu melalui gamifikasi dan membantu tracking perkembangan harian.",
+          icon: "📈",
+          gradient: "from-pink-500 to-purple-500",
+          buttonText: "Lihat Demo",
+          downloadText: "Download Panduan"
         },
         {
-            title: "Bunda Cerdas",
-            desc: "Pernah bingung baca catatan kesehatan Bunda sendiri? Sekarang ada asisten pribadi yang merangkum semua catatan Bunda tiap minggu. Dia akan kasih tahu pola penting, misalnya: 'Wah, tekanan darah Bunda mulai naik nih, lebih banyak istirahat ya!' Jadi Bunda lebih tenang dan siap untuk konsultasi berikutnya.",
-            icon: "🧠",
+          title: "Pengingat Kontrol Kesehatan",
+          desc: "Dapatkan notifikasi jadwal kontrol ke puskesmas dan tips harian via WhatsApp/email! Reminder otomatis berdasarkan tanggal mulai nifas, notifikasi untuk kontrol ke fasilitas kesehatan, minum obat/vitamin, cek gejala bahaya (demo perdarahan, demam), dan integrasi booking janji online (jika terhubung ke sistem puskesmas). Mengurangi risiko lupa kontrol dan memandu ibu langkah demi langkah.",
+          icon: "⏰",
+          gradient: "from-blue-500 to-cyan-500",
+          buttonText: "Uji Coba",
+          downloadText: "Unduh Jadwal Contoh"
         },
         {
-            title: "Nifas Aman",
-            desc: "Masa nifas itu penting tapi sering diabaikan. Dengan 'Nifas Aman', Bunda tinggal centang gejala harian - misalnya demam atau perdarahan. Kalau ada tanda bahaya, langsung bisa hubungi bidan via WA dengan laporan otomatis. Jadi Bunda nggak sendirian lagi di 40 hari kritis ini!",
-            icon: " 🩺 ",
+          title: "Edukasi 3-in-1",
+          desc: "Akses konten edukasi sesuai fase nifasmu: video singkat, leaflet praktis, dan artikel lengkap! Konten dikurasi oleh tenaga medis dengan video penjelasan dokter/bidan (1-2 menit), leaflet infografis download/print, artikel gejala yang perlu diwaspadai, dan personalized hanya tampilkan konten relevan dengan fase user. Informasi mudah dicerna dalam berbagai format dan menyesuaikan kebutuhan tiap tahap nifas.",
+          icon: "📚",
+          gradient: "from-amber-500 to-orange-500",
+          buttonText: "Coba Fitur",
+          downloadText: "Download Materi"
         },
-    ];
+      ];
+
+    const painPoints = [
+        "✖️ Bingung mengikuti tahapan nifas",
+        "✖️ Lupa jadwal minum obat & kontrol",
+        "✖️ Kesulitan memahami info medis",
+        "✖️ Tidak tahu gejala berbahaya"
+      ];
 
     return (
         <section
             id="features"
-            className="container mx-auto px-6 py-20 min-h-screen"
+            className="container mx-auto px-6 py-8 min-h-screen"
         >
             <motion.div
                 initial="hidden"
@@ -50,7 +66,7 @@ export default function FiturSection() {
                             y: 0,
                             transition: {
                                 duration: 0.6,
-                                ease: "backOut",
+                                ease: "easeOut",
                             },
                         },
                     }}
@@ -90,8 +106,8 @@ export default function FiturSection() {
                             scale: 1,
                             transition: {
                                 delay: 0.4,
-                                type: "spring",
-                                stiffness: 100,
+                                duration: 0.5,
+                                ease: "easeOut"
                             },
                         },
                     }}
@@ -102,14 +118,15 @@ export default function FiturSection() {
                             <motion.span
                                 key={i}
                                 animate={{
-                                    y: [0, -10, 0],
-                                    rotate: [0, 10, -10, 0],
+                                    y: -10,
+                                    rotate: 10
                                 }}
                                 transition={{
                                     delay: 0.6 + i * 0.3,
                                     repeat: Infinity,
                                     repeatType: "reverse",
-                                    duration: 3,
+                                    duration: 1.5,
+                                    ease: "easeInOut"
                                 }}
                                 className="text-3xl"
                             >
@@ -184,41 +201,91 @@ export default function FiturSection() {
                 ))}
             </div>
             <motion.div
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                transition={{ delay: 0.3 }}
-                className="mt-16 bg-blue-50 rounded-xl p-8 text-center"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7 }}
+            className="mt-16 bg-gradient-to-r from-purple-white to-blue-50 rounded-xl p-8 text-center shadow-lg border border-blue-100"
             >
-                <h3 className="text-xl font-medium text-gray-800 mb-4">
-                    "Dulu, saya sering lupa kapan terakhir merasakan gerakan
-                    janin atau apakah demam saya berbahaya. Sekarang..."
-                </h3>
+      {/* Quote Icon */}
+      <motion.div 
+        className="mx-auto mb-4 text-pink-400 opacity-30 w-16 h-16 flex items-center justify-center"
+        initial={{ scale: 0 }}
+        whileInView={{ 
+          scale: 1,
+          rotate: 10
+        }}
+        viewport={{ once: true }}
+        transition={{ 
+          delay: 0.2, 
+          duration: 0.5,
+          ease: "easeOut"
+        }}
+      >
+        <svg viewBox="0 0 24 24" fill="currentColor" className="w-full h-full">
+          <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
+        </svg>
+      </motion.div>
+      
+      <motion.h3 
+        className="text-xl md:text-2xl font-medium text-gray-800 mb-6"
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{ delay: 0.4 }}
+      >
+        "Dulu, saya tidak tahu apa yang normal selama masa nifas. Pendarahan berlebih atau demam, saya bingung mana yang berbahaya. Sekarang dengan aplikasi ini, saya merasa lebih tenang dan terpandu."
+      </motion.h3>
 
-                <p className="text-gray-600 mb-6">
-                    Dengan 3 fitur utama di atas, Bunda tidak perlu lagi:
-                </p>
+     
 
-                <ul className="flex flex-wrap justify-center gap-3 mb-6">
-                    {[
-                        "✖️ Menebak-nebak gejala",
-                        "✖️ Khawatir lupa jadwal kontrol",
-                        "✖️ Bingung baca catatan medis",
-                    ].map((item, i) => (
-                        <motion.li
-                            key={i}
-                            whileHover={{ scale: 1.05 }}
-                            className="bg-white px-4 py-2 rounded-full shadow-sm text-black"
-                        >
-                            {item}
-                        </motion.li>
-                    ))}
-                </ul>
+      <motion.p 
+        className="text-gray-700 mb-6 font-medium"
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{ delay: 0.6 }}
+      >
+        Dengan 3 fitur utama di atas, Bunda tidak perlu lagi:
+      </motion.p>
 
-                <p className="text-pink-600 font-medium">
-                    Yang Bunda dapatkan adalah kehamilan lebih terkontrol dan
-                    masa pemulihan yang aman.
-                </p>
-            </motion.div>
+      <motion.ul 
+        className="flex flex-wrap justify-center gap-3 mb-8"
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{ delay: 0.7 }}
+      >
+        {painPoints.map((item, i) => (
+          <motion.li
+            key={i}
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.7 + (i * 0.1) }}
+            whileHover={{ scale: 1.05, backgroundColor: "#FDF2F8" }}
+            className="bg-white px-4 py-2 rounded-full shadow-sm text-gray-700 border border-pink-100"
+          >
+            {item}
+          </motion.li>
+        ))}
+      </motion.ul>
+
+      
+      
+      <motion.button
+        className="mt-8 px-8 py-3 bg-gradient-to-r from-pink-500 to-purple-500 text-white rounded-full font-medium shadow-lg"
+        whileHover={{ scale: 1.05, boxShadow: "0 10px 25px -5px rgba(236, 72, 153, 0.4)" }}
+        whileTap={{ scale: 0.98 }}
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{ delay: 1.1 }}
+      >
+        Mulai Pantau Masa Nifas Bunda
+      </motion.button>
+    </motion.div>
+            
         </section>
     );
 }

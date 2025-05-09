@@ -9,6 +9,7 @@ export default function Navbar() {
     const navItems = [
         { name: "Beranda", id: "hero" },
         { name: "Masalah", id: "problem" },
+        { name: "Fase Nifas", id: "fase-nifas" },
         { name: "Fitur", id: "features" },
         { name: "Bergabung", id: "join" },
     ];

@@ -15,7 +15,7 @@ class Appointment extends Model
         'kehamilan_id',
         'title',
         'appointment_date',
-        'provider_name',
+        'provider_name',    
         'location',
         'reminder_status',
         'notes',
