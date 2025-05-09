@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('nifas_task_progress', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('fase_nifas_id')->constrained()->onDelete('cascade');
-            $table->foreignId('nifas_task_id')->constrained();
+            $table->foreignId('nifas_progress_id')->constrained('nifas_progress');
+            $table->foreignId('nifas_task_id')->constrained('nifas_tasks');
             $table->boolean('is_completed')->default(false);
             $table->date('completed_at')->nullable();
             $table->timestamps();

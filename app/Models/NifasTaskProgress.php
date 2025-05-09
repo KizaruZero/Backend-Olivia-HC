@@ -7,8 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 class NifasTaskProgress extends Model
 {
     //
+    protected $table = 'nifas_task_progress';
     protected $fillable = [
-        'fase_nifas_id',
+        'nifas_progress_id',
         'nifas_task_id',
         'is_completed',
         'completed_at',

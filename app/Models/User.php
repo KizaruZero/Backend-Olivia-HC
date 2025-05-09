@@ -2,38 +2,35 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Filament\Models\Contracts\FilamentUser;
-use Filament\Panel;
+use Laravel\Sanctum\HasApiTokens;
 
-
-class User extends Authenticatable implements FilamentUser
+class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable;
 
     /**
      * The attributes that are mass assignable.
      *
-     * @var list<string>
+     * @var array<int, string>
      */
     protected $fillable = [
         'name',
         'email',
+        'role',
         'password',
-        'phone',
+        'phone_number',
         'birth_date',
-        'blood_type',
+        'address',
+        'profile_picture',
     ];
 
     /**
      * The attributes that should be hidden for serialization.
      *
-     * @var list<string>
+     * @var array<int, string>
      */
     protected $hidden = [
         'password',
@@ -41,26 +38,33 @@ class User extends Authenticatable implements FilamentUser
     ];
 
     /**
-     * Get the attributes that should be cast.
+     * The attributes that should be cast.
      *
-     * @return array<string, string>
+     * @var array<string, string>
      */
-    protected function casts(): array
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'birth_date' => 'date',
+    ];
+
+    public function nifas()
     {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
+        return $this->hasMany(Nifas::class);
     }
 
-    public function kehamilan()
+    public function nifasProgress()
     {
-        return $this->hasMany(Kehamilan::class);
+        return $this->hasMany(NifasProgress::class);
     }
 
-    public function canAccessPanel(Panel $panel): bool
+    public function nifasTaskProgress()
     {
-        return str_ends_with($this->role, 'admin');
+        return $this->hasMany(NifasTaskProgress::class);
     }
 
+    public function nifasTask()
+    {
+        return $this->hasMany(NifasTask::class);
+    }
+    
 }

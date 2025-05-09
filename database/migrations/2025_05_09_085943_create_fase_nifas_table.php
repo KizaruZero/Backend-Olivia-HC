@@ -17,6 +17,9 @@ return new class extends Migration
             $table->integer('start_day'); // Hari mulai (dari hari 0)
             $table->integer('end_day'); // Hari selesai
             $table->text('description')->nullable();
+            $table->string('video_url')->nullable();
+            $table->string('leaflet_url')->nullable();
+            $table->string('article_url')->nullable();
             $table->string('twibbon_image')->nullable(); // Path gambar twibbon untuk KF ini
             $table->string('border_style')->nullable(); // Style border yang akan diterapkan di profil
             $table->timestamps();

@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class NifasProgress extends Model
 {
     //
+    protected $table = 'nifas_progress';
     protected $fillable = [
         'nifas_id',
         'fase_nifas_id',
@@ -19,6 +20,13 @@ class NifasProgress extends Model
     public function nifas()
     {
         return $this->belongsTo(Nifas::class);
+    }
+
+    public function tasks()
+    {
+        return $this->belongsToMany(NifasTask::class, 'nifas_task_progress')
+                    ->withPivot('is_completed', 'completed_at')
+                    ->withTimestamps();
     }
 
     public function faseNifas()

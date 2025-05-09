@@ -12,6 +12,9 @@ class FaseNifas extends Model
         'start_day',
         'end_day',
         'description',
+        'video_url',
+        'leaflet_url',
+        'article_url',
         'twibbon_image',
         'border_style',
     ];
