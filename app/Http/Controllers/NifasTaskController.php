@@ -60,7 +60,7 @@ class NifasTaskController extends Controller
 
         //setiap nifasProgress yang memiliki nifas_id yang sama dengan nifas->id, maka ambil nifasTaskProgress yang memiliki nifasProgress->id yang sama dengan nifasTaskProgress->nifasProgress_id
         $nifasProgress = NifasProgress::where('nifas_id', $nifas->id)->get();
-        $nifasTaskProgress = NifasTaskProgress::whereIn('nifas_progress_id', $nifasProgress->pluck('id'))->with('nifasTask', 'nifasProgress',)->get();
+        $nifasTaskProgress = NifasTaskProgress::whereIn('nifas_progress_id', $nifasProgress->pluck('id'))->with('nifasTask', 'nifasProgress', )->get();
         return response()->json($nifasTaskProgress);
     }
 
@@ -180,7 +180,8 @@ class NifasTaskController extends Controller
         $validator = Validator::make($request->all(), [
             'nifas_progress_id' => 'required|exists:nifas_progress,id',
             'is_completed' => 'required|boolean',
-            'completed_at' => 'nullable|date',
+            'puskesmas' => 'nullable|string',
+            'notes' => 'nullable|string',
         ]);
 
         if ($validator->fails()) {
@@ -191,19 +192,12 @@ class NifasTaskController extends Controller
             // Cari dan update nifas progress
             $nifasProgress = NifasProgress::findOrFail($request->nifas_progress_id);
             $nifasProgress->is_completed = $request->is_completed;
-            
-            // Jika completed_at disertakan dalam request, gunakan nilai tersebut
-            // Jika tidak dan is_completed=1, set ke waktu sekarang
-            if ($request->filled('completed_at')) {
-                $nifasProgress->completed_at = $request->completed_at;
-            } elseif ($request->is_completed) {
-                $nifasProgress->completed_at = Carbon::now();
-            } else {
-                $nifasProgress->completed_at = null;
-            }
-            
+            $nifasProgress->puskesmas = $request->puskesmas;
+            $nifasProgress->notes = $request->notes;
+            $nifasProgress->completed_at = Carbon::now();
+
             $nifasProgress->save();
-            
+
             return response()->json([
                 'message' => 'Nifas progress berhasil diperbarui',
                 'data' => $nifasProgress
@@ -221,10 +215,9 @@ class NifasTaskController extends Controller
 
         // Validasi input
         $validator = Validator::make($request->all(), [
-            'tasks' => 'required|array',
-            'tasks.*.id' => 'required|exists:nifas_progress_tasks,id',
-            'tasks.*.is_completed' => 'required|boolean',
-            'tasks.*.completed_at' => 'nullable|date',
+            'tasks' => 'nullable|array',
+            'tasks.*.id' => 'nullable|exists:nifas_task_progress,id',
+            'tasks.*.is_completed' => 'nullable|boolean',
         ]);
 
         if ($validator->fails()) {
@@ -232,12 +225,12 @@ class NifasTaskController extends Controller
         }
 
         DB::beginTransaction();
-        
+
         try {
             foreach ($request->tasks as $taskData) {
                 $task = NifasTaskProgress::findOrFail($taskData['id']);
                 $task->is_completed = $taskData['is_completed'];
-                
+
                 // Handle completed_at field
                 if (isset($taskData['completed_at'])) {
                     $task->completed_at = $taskData['completed_at'];
@@ -246,18 +239,18 @@ class NifasTaskController extends Controller
                 } else {
                     $task->completed_at = null;
                 }
-                
+
                 $task->save();
             }
-            
+
             DB::commit();
-            
+
             return response()->json([
                 'message' => 'Tasks berhasil diperbarui'
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
-            
+
             return response()->json([
                 'message' => 'Gagal memperbarui tasks',
                 'error' => $e->getMessage()
@@ -265,5 +258,5 @@ class NifasTaskController extends Controller
         }
     }
 
-    
+
 }

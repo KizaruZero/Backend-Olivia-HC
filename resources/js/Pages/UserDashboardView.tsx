@@ -48,10 +48,8 @@ interface NifasTask {
         description: string;
     };
     is_completed: boolean | number;
-    completed_at: string; 
+    completed_at: string;
 }
-
-
 
 export default function DashboardNifas() {
     const [activeKF, setActiveKF] = useState<number>(1);
@@ -60,9 +58,14 @@ export default function DashboardNifas() {
     const [nifas, setNifas] = useState<Nifas | null>(null);
     const [faseNifas, setFaseNifas] = useState<FaseNifas[]>([]);
     const [nifasTask, setNifasTask] = useState<NifasTask[]>([]);
-    const [checkedTasks, setCheckedTasks] = useState<{[key: number]: boolean}>({});
-
-    
+    const [checkedTasks, setCheckedTasks] = useState<{
+        [key: number]: boolean;
+    }>({});
+    const [selectedPuskesmas, setSelectedPuskesmas] = useState(
+        "Puskesmas Sejahtera"
+    );
+    const [customPuskesmas, setCustomPuskesmas] = useState("");
+    const [notes, setNotes] = useState("");
 
     useEffect(() => {
         fetch("/api/nifas/user", {
@@ -77,16 +80,6 @@ export default function DashboardNifas() {
             });
     }, []);
 
-
-    useEffect(() => {
-        fetch("/api/nifastask/percentage")
-            .then((response) => response.json())
-            .then((data) => {
-                setFaseNifas(data);
-            });
-    }, []);
-
-
     useEffect(() => {
         fetch("/api/nifastask/user")
             .then((response) => response.json())
@@ -97,9 +90,6 @@ export default function DashboardNifas() {
 
     console.log(nifasTask);
 
-    // Contoh data untuk KF
-    
-
     // Fungsi untuk menampilkan modal
     const handleKFClick = (kfId: number) => {
         setActiveKF(kfId);
@@ -107,84 +97,125 @@ export default function DashboardNifas() {
     };
 
     const handleCheckboxChange = (taskId: number, checked: boolean) => {
-        setCheckedTasks(prev => ({
+        setCheckedTasks((prev) => ({
             ...prev,
-            [taskId]: checked
+            [taskId]: checked,
         }));
     };
 
     // Fungsi untuk menyelesaikan KF
     const completeKF = async () => {
         try {
-            // 1. Perbarui status KF (nifas_progress)
-            const kfResponse = await fetch('/api/nifasprogress/update', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    nifas_progress_id: nifasTask.find(task => task.nifas_task.fase_nifas_id === activeKF)?.nifas_progress_id,
-                    is_completed: 1,
-                    completed_at: new Date().toISOString()
-                })
-            });
-            
-            
-            if (!kfResponse.ok) {
-                throw new Error('Gagal memperbarui status KF');                
+            const nifasProgressId = nifasTask.find(
+                (task) => task.nifas_task.fase_nifas_id === activeKF
+            )?.nifas_progress_id;
+
+            console.log("Active KF:", activeKF);
+            console.log("Nifas Tasks:", nifasTask);
+            console.log("Found Nifas Progress ID:", nifasProgressId);
+
+            if (!nifasProgressId) {
+                throw new Error("Nifas Progress ID not found");
             }
-            
+
+            // Get CSRF token from meta tag
+            const token = document
+                .querySelector('meta[name="csrf-token"]')
+                ?.getAttribute("content");
+
+            // 1. Perbarui status KF (nifas_progress)
+            const kfResponse = await fetch("/api/nifasprogress/update", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": token || "",
+                    Accept: "application/json",
+                },
+                credentials: "include",
+                body: JSON.stringify({
+                    nifas_progress_id: nifasProgressId,
+                    is_completed: 1,
+                    puskesmas:
+                        selectedPuskesmas === "other"
+                            ? customPuskesmas
+                            : selectedPuskesmas,
+                    notes: notes,
+                }),
+            });
+
+            if (!kfResponse.ok) {
+                const errorData = await kfResponse.json();
+                console.error("Server error response:", errorData);
+                throw new Error("Gagal memperbarui status KF");
+            }
+
             // 2. Perbarui status task yang dicentang
             const taskUpdates = Object.entries(checkedTasks)
                 .filter(([_, checked]) => checked)
                 .map(([taskId]) => parseInt(taskId));
-                
-            const tasksResponse = await fetch('/api/nifastasks/updatebatch', {
-                method: 'POST',
+
+            console.log("Task Updates:", taskUpdates);
+
+            const tasksResponse = await fetch("/api/nifastasks/updatebatch", {
+                method: "POST",
                 headers: {
-                    'Content-Type': 'application/json',
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": token || "",
+                    Accept: "application/json",
                 },
+                credentials: "include",
                 body: JSON.stringify({
-                    tasks: taskUpdates.map(taskId => ({
+                    tasks: taskUpdates.map((taskId) => ({
                         id: taskId,
                         is_completed: 1,
-                        completed_at: new Date().toISOString()
-                    }))
-                })
+                    })),
+                }),
             });
-            
+
             if (!tasksResponse.ok) {
-                throw new Error('Gagal memperbarui status task');
+                throw new Error("Gagal memperbarui status task");
             }
-            
+
             // 3. Perbarui state lokal
-            setNifasTask(prev => prev.map(task => {
-                if (checkedTasks[task.id]) {
-                    return {
-                        ...task,
-                        is_completed: 1,
-                        completed_at: new Date().toISOString()
-                    };
-                }
-                return task;
-            }));
-            
+            setNifasTask((prev) =>
+                prev.map((task) => {
+                    if (checkedTasks[task.id]) {
+                        return {
+                            ...task,
+                            is_completed: 1,
+                            completed_at: new Date().toISOString(),
+                        };
+                    }
+                    return task;
+                })
+            );
+
             // 4. Tambahkan KF ke daftar yang sudah selesai
             if (!completedKFs.includes(activeKF)) {
                 setCompletedKFs([...completedKFs, activeKF]);
             }
-            
+
             // 5. Tutup modal
             setShowModal(false);
-            
+
             // 6. Tampilkan notifikasi sukses (opsional)
-            alert('Kunjungan berhasil diselesaikan!');
-            
+            alert("Kunjungan berhasil diselesaikan!");
+
+            // Refresh the page
+            window.location.reload();
         } catch (error) {
-            console.error('Error completing KF:', error);
-            alert('Terjadi kesalahan saat menyelesaikan kunjungan.');
+            console.error("Error completing KF:", error);
+            alert("Terjadi kesalahan saat menyelesaikan kunjungan.");
         }
     };
+
+    useEffect(() => {
+        fetch("/api/nifastask/percentage")
+            .then((response) => response.json())
+            .then((data) => {
+                setFaseNifas(data);
+            });
+    }, []);
 
     // Add these helper functions at the top of the file, after the interfaces
     const calculateProgress = (startDate: string, endDate: string): number => {
@@ -345,8 +376,31 @@ export default function DashboardNifas() {
                     </div>
                 </div>
 
+                {/* Reminders */}
+                <div className="bg-white rounded-lg p-6 shadow-md">
+                    <h3 className="text-lg font-medium text-gray-800 mb-4">
+                        Pengingat
+                    </h3>
+                    <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-md">
+                        <div className="flex">
+                            <div className="flex-shrink-0">
+                                <Bell className="text-yellow-500" size={20} />
+                            </div>
+                            <div className="ml-3">
+                                <h4 className="text-sm font-medium text-yellow-800">
+                                    Kunjungan KF 2
+                                </h4>
+                                <p className="text-sm text-yellow-700 mt-1">
+                                    Jangan lupa jadwal kunjungan KF 2 pada
+                                    tanggal 9 Mei 2025
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 {/* KF Progress Cards */}
-                <h3 className="text-lg font-medium text-gray-800 mb-4">
+                <h3 className="text-lg font-medium text-gray-800 mb-4 mt-4">
                     Kunjungan Nifas
                 </h3>
                 <div className="grid gap-4 mb-6">
@@ -355,14 +409,21 @@ export default function DashboardNifas() {
                             key={kf.id}
                             onClick={() => handleKFClick(kf.id)}
                             className={`bg-white rounded-lg p-4 shadow-md cursor-pointer transition-all hover:shadow-lg ${
-                                completedKFs.includes(kf.id)
+                                nifasTask.find(
+                                    (task) =>
+                                        task.nifas_task.fase_nifas_id === kf.id
+                                )?.is_completed
                                     ? "border-l-4 border-green-500"
                                     : ""
                             }`}
                         >
                             <div className="flex justify-between items-center">
                                 <div className="flex items-center space-x-3">
-                                    {completedKFs.includes(kf.id) ? (
+                                    {nifasTask.find(
+                                        (task) =>
+                                            task.nifas_task.fase_nifas_id ===
+                                            kf.id
+                                    )?.is_completed ? (
                                         <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
                                             <CheckCircle
                                                 className="text-green-500"
@@ -405,7 +466,7 @@ export default function DashboardNifas() {
                             <div className="w-full bg-gray-200 rounded-full h-2 mt-3">
                                 <div
                                     className={`h-2 rounded-full ${
-                                        completedKFs.includes(kf.id)
+                                        kf.progress === 100
                                             ? "bg-green-500"
                                             : "bg-purple-600"
                                     }`}
@@ -415,85 +476,7 @@ export default function DashboardNifas() {
                         </div>
                     ))}
                 </div>
-
-                {/* Quick Actions */}
-                <div className="mb-6 bg-white rounded-lg p-6 shadow-md">
-                    <h3 className="text-lg font-medium text-gray-800 mb-4">
-                        Menu Cepat
-                    </h3>
-                    <div className="grid grid-cols-3 gap-4">
-                        <button className="flex flex-col items-center justify-center p-3 bg-purple-50 rounded-lg">
-                            <Clipboard
-                                className="text-purple-700 mb-2"
-                                size={24}
-                            />
-                            <span className="text-sm font-medium text-gray-700">
-                                Catatan Nifas
-                            </span>
-                        </button>
-                        <button className="flex flex-col items-center justify-center p-3 bg-purple-50 rounded-lg">
-                            <Calendar
-                                className="text-purple-700 mb-2"
-                                size={24}
-                            />
-                            <span className="text-sm font-medium text-gray-700">
-                                Jadwal Kunjungan
-                            </span>
-                        </button>
-                        <button className="flex flex-col items-center justify-center p-3 bg-purple-50 rounded-lg">
-                            <Info className="text-purple-700 mb-2" size={24} />
-                            <span className="text-sm font-medium text-gray-700">
-                                Info Nifas
-                            </span>
-                        </button>
-                    </div>
-                </div>
-
-                {/* Reminders */}
-                <div className="bg-white rounded-lg p-6 shadow-md">
-                    <h3 className="text-lg font-medium text-gray-800 mb-4">
-                        Pengingat
-                    </h3>
-                    <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-md">
-                        <div className="flex">
-                            <div className="flex-shrink-0">
-                                <Bell className="text-yellow-500" size={20} />
-                            </div>
-                            <div className="ml-3">
-                                <h4 className="text-sm font-medium text-yellow-800">
-                                    Kunjungan KF 2
-                                </h4>
-                                <p className="text-sm text-yellow-700 mt-1">
-                                    Jangan lupa jadwal kunjungan KF 2 pada
-                                    tanggal 9 Mei 2025
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </main>
-
-            {/* Bottom Navigation */}
-            <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 py-2">
-                <div className="container mx-auto flex justify-around">
-                    <button className="flex flex-col items-center p-2 text-purple-700">
-                        <Home size={20} />
-                        <span className="text-xs mt-1">Beranda</span>
-                    </button>
-                    <button className="flex flex-col items-center p-2 text-gray-500">
-                        <Calendar size={20} />
-                        <span className="text-xs mt-1">Jadwal</span>
-                    </button>
-                    <button className="flex flex-col items-center p-2 text-gray-500">
-                        <Edit size={20} />
-                        <span className="text-xs mt-1">Catatan</span>
-                    </button>
-                    <button className="flex flex-col items-center p-2 text-gray-500">
-                        <User size={20} />
-                        <span className="text-xs mt-1">Profil</span>
-                    </button>
-                </div>
-            </div>
 
             {/* Modal untuk detail KF dan checklist */}
             {showModal && (
@@ -510,7 +493,11 @@ export default function DashboardNifas() {
                             </h4>
                             <div className="space-y-2">
                                 {nifasTask
-                                    .filter(task => task.nifas_task.fase_nifas_id === activeKF)
+                                    .filter(
+                                        (task) =>
+                                            task.nifas_task.fase_nifas_id ===
+                                            activeKF
+                                    )
                                     .map((task) => (
                                         <div
                                             key={task.id}
@@ -518,13 +505,28 @@ export default function DashboardNifas() {
                                         >
                                             <input
                                                 type="checkbox"
-                                                checked={checkedTasks[task.id] || task.is_completed === 1}
-                                                onChange={(e) => handleCheckboxChange(task.id, e.target.checked)}
+                                                checked={
+                                                    checkedTasks[task.id] ||
+                                                    task.is_completed === 1
+                                                }
+                                                onChange={(e) =>
+                                                    handleCheckboxChange(
+                                                        task.id,
+                                                        e.target.checked
+                                                    )
+                                                }
                                                 className="mr-3"
                                             />
                                             <div className="flex flex-col">
-                                                <span className="font-medium">{task.nifas_task.name}</span>
-                                                <span className="text-sm text-gray-600">{task.nifas_task.description}</span>
+                                                <span className="font-medium">
+                                                    {task.nifas_task.name}
+                                                </span>
+                                                <span className="text-sm text-gray-600">
+                                                    {
+                                                        task.nifas_task
+                                                            .description
+                                                    }
+                                                </span>
                                             </div>
                                         </div>
                                     ))}
@@ -535,12 +537,37 @@ export default function DashboardNifas() {
                             <h4 className="font-medium mb-2">
                                 Lokasi Kunjungan:
                             </h4>
-                            <select className="w-full p-2 border border-gray-300 rounded">
-                                <option>Puskesmas Sejahtera</option>
-                                <option>Puskesmas Harapan</option>
-                                <option>Klinik Bidan</option>
-                                <option>Rumah Sakit</option>
+                            <select
+                                className="w-full p-2 border border-gray-300 rounded"
+                                value={selectedPuskesmas}
+                                onChange={(e) =>
+                                    setSelectedPuskesmas(e.target.value)
+                                }
+                            >
+                                <option value="Puskesmas Sejahtera">
+                                    Puskesmas Sejahtera
+                                </option>
+                                <option value="Puskesmas Harapan">
+                                    Puskesmas Harapan
+                                </option>
+                                <option value="Klinik Bidan">
+                                    Klinik Bidan
+                                </option>
+                                <option value="Rumah Sakit">Rumah Sakit</option>
+                                <option value="other">Lainnya</option>
                             </select>
+
+                            {selectedPuskesmas === "other" && (
+                                <input
+                                    type="text"
+                                    className="w-full mt-2 p-2 border border-gray-300 rounded"
+                                    placeholder="Tulis nama puskesmas..."
+                                    value={customPuskesmas}
+                                    onChange={(e) =>
+                                        setCustomPuskesmas(e.target.value)
+                                    }
+                                />
+                            )}
                         </div>
 
                         <div className="mb-6">
@@ -549,6 +576,8 @@ export default function DashboardNifas() {
                                 className="w-full p-2 border border-gray-300 rounded"
                                 rows={3}
                                 placeholder="Tuliskan catatan tentang kondisi Anda..."
+                                value={notes}
+                                onChange={(e) => setNotes(e.target.value)}
                             ></textarea>
                         </div>
 
@@ -569,7 +598,6 @@ export default function DashboardNifas() {
                     </div>
                 </div>
             )}
-            
         </div>
     );
 }
