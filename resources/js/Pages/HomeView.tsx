@@ -33,7 +33,13 @@ export default function HomeView() {
     // Scroll spy effect
     useEffect(() => {
         const handleScroll = () => {
-            const sections = ["hero", "problem", "fase-nifas", "features", "join"];
+            const sections = [
+                "hero",
+                "problem",
+                "fase-nifas",
+                "features",
+                "join",
+            ];
             const scrollPosition = window.scrollY + 100;
 
             for (const section of sections) {
@@ -149,23 +155,6 @@ export default function HomeView() {
                             </div>
                         </div>
                     </motion.div>
-
-                    {/* <motion.div variants={itemVariants} className="mt-16">
-          <div className="relative w-full max-w-4xl mx-auto h-64 md:h-80 bg-blue-100 rounded-2xl overflow-hidden">
-            <motion.div
-              animate={{
-                x: [0, 10, 0],
-                y: [0, -5, 0],
-              }}
-              transition={{
-                repeat: Infinity,
-                duration: 6,
-                ease: "easeInOut",
-              }}
-              className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-64 h-64 bg-blue-200 rounded-full"
-            />
-          </div>
-        </motion.div> */}
                 </motion.section>
 
                 {/* Problem Section */}
@@ -175,7 +164,15 @@ export default function HomeView() {
                 <NifasSection></NifasSection>
 
                 {/* Solution Section */}
-                <FiturCard></FiturCard>
+                <motion.div
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5 }}
+                    className="mt-16"
+                >
+                    <FiturCard></FiturCard>
+                </motion.div>
 
                 {/* Join Us Section */}
                 <JoinUs></JoinUs>

@@ -4,7 +4,8 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-
+use App\Http\Controllers\NifasController;
+use App\Http\Controllers\NifasTaskController;
 Route::get('/', function () {
     return Inertia::render('HomeView', [
         'canLogin' => Route::has('login'),
@@ -28,4 +29,14 @@ Route::middleware('auth')->group(function () {
 Route::get('/maternal', function () {
     return Inertia::render('MaternalDashboard');
 })->name('maternal');
+
+Route::get('/user-dashboard', function () {
+    return Inertia::render('UserDashboardView');
+})->name('user-dashboard');
+
+Route::get('/api/nifas/user', [NifasController::class, 'getNifasByUser']);
+
+Route::get('/api/nifastask/user', [NifasTaskController::class, 'getNifasTaskProgressByUser']);
+Route::get('/api/nifastask/percentage', [NifasTaskController::class, 'getAllFaseNifasWithPercentage']);
+
 require __DIR__ . '/auth.php';
