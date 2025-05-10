@@ -32,6 +32,8 @@ Route::get('/nifas-task', [NifasTaskController::class, 'getNifasTask']);
 Route::get('/nifas-task/{id}', [NifasTaskController::class, 'getNifasTaskById']);
 Route::post('/nifas-task', [NifasTaskController::class, 'createNifasTask']);
 Route::get('/nifas-task-progress/{nifasId}', [NifasTaskController::class, 'getNifasTaskProgressByNifasId']);
+Route::post('/nifasprogress/update', [NifasTaskController::class, 'updateProgress']);
+Route::post('/nifastasks/updatebatch', [NifasTaskController::class, 'updateBatchTasks']);
 
 
 Route::get('/fase-nifas', [FaseNifasController::class, 'getFaseNifas']);

@@ -40,25 +40,18 @@ interface NifasProgress {
 
 interface NifasTask {
     id: number;
+    nifas_progress_id: number;
     nifas_task: {
         id: number;
-        fase_nifas_id: {
-            id: number;
-            name: string;
-            description: string;
-        };
+        fase_nifas_id: number;
         name: string;
         description: string;
     };
-    text: string;
     is_completed: boolean | number;
+    completed_at: string; 
 }
 
-interface NifasTaskProgress {
-    nifas_task_id: number;
-    is_completed: boolean;
-    completed_at: string;
-}
+
 
 export default function DashboardNifas() {
     const [activeKF, setActiveKF] = useState<number>(1);
@@ -66,11 +59,10 @@ export default function DashboardNifas() {
     const [completedKFs, setCompletedKFs] = useState<number[]>([]);
     const [nifas, setNifas] = useState<Nifas | null>(null);
     const [faseNifas, setFaseNifas] = useState<FaseNifas[]>([]);
-    const [nifasProgress, setNifasProgress] = useState<NifasProgress[]>([]);
     const [nifasTask, setNifasTask] = useState<NifasTask[]>([]);
-    const [nifasTaskProgress, setNifasTaskProgress] = useState<
-        NifasTaskProgress[]
-    >([]);
+    const [checkedTasks, setCheckedTasks] = useState<{[key: number]: boolean}>({});
+
+    
 
     useEffect(() => {
         fetch("/api/nifas/user", {
@@ -85,7 +77,6 @@ export default function DashboardNifas() {
             });
     }, []);
 
-    const nifasId = nifas?.id;
 
     useEffect(() => {
         fetch("/api/nifastask/percentage")
@@ -95,7 +86,6 @@ export default function DashboardNifas() {
             });
     }, []);
 
-    console.log(faseNifas);
 
     useEffect(() => {
         fetch("/api/nifastask/user")
@@ -108,92 +98,7 @@ export default function DashboardNifas() {
     console.log(nifasTask);
 
     // Contoh data untuk KF
-    const kfData = [
-        {
-            id: 1,
-            name: "KF 1",
-            period: "6-8 jam setelah persalinan",
-            progress: 100,
-            tasks: [
-                { id: 1, text: "Pemeriksaan tanda vital", completed: true },
-                {
-                    id: 2,
-                    text: "Pemeriksaan tinggi fundus uteri",
-                    completed: true,
-                },
-                {
-                    id: 3,
-                    text: "Pemeriksaan lochia dan perdarahan",
-                    completed: true,
-                },
-            ],
-        },
-        {
-            id: 2,
-            name: "KF 2",
-            period: "6 hari setelah persalinan",
-            progress: 65,
-            tasks: [
-                {
-                    id: 1,
-                    text: "Memastikan involusi uterus berjalan normal",
-                    completed: true,
-                },
-                {
-                    id: 2,
-                    text: "Menilai adanya tanda-tanda demam, infeksi",
-                    completed: true,
-                },
-                {
-                    id: 3,
-                    text: "Memastikan ibu mendapat makanan bergizi",
-                    completed: false,
-                },
-            ],
-        },
-        {
-            id: 3,
-            name: "KF 3",
-            period: "2 minggu setelah persalinan",
-            progress: 30,
-            tasks: [
-                {
-                    id: 1,
-                    text: "Menanyakan kesulitan-kesulitan yang dihadapi",
-                    completed: true,
-                },
-                {
-                    id: 2,
-                    text: "Memberikan konseling KB secara dini",
-                    completed: false,
-                },
-                {
-                    id: 3,
-                    text: "Menganjurkan pemberian ASI eksklusif",
-                    completed: false,
-                },
-            ],
-        },
-        {
-            id: 4,
-            name: "KF 4",
-            period: "6 minggu setelah persalinan",
-            progress: 0,
-            tasks: [
-                {
-                    id: 1,
-                    text: "Menanyakan penyulit-penyulit yang dialami",
-                    completed: false,
-                },
-                { id: 2, text: "Memberikan konseling KB", completed: false },
-                {
-                    id: 3,
-                    text: "Menjelaskan jadwal kontrol ulang",
-                    completed: false,
-                },
-            ],
-        },
-    ];
+    
 
     // Fungsi untuk menampilkan modal
     const handleKFClick = (kfId: number) => {
@@ -201,12 +106,84 @@ export default function DashboardNifas() {
         setShowModal(true);
     };
 
+    const handleCheckboxChange = (taskId: number, checked: boolean) => {
+        setCheckedTasks(prev => ({
+            ...prev,
+            [taskId]: checked
+        }));
+    };
+
     // Fungsi untuk menyelesaikan KF
-    const completeKF = () => {
-        if (!completedKFs.includes(activeKF)) {
-            setCompletedKFs([...completedKFs, activeKF]);
+    const completeKF = async () => {
+        try {
+            // 1. Perbarui status KF (nifas_progress)
+            const kfResponse = await fetch('/api/nifasprogress/update', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    nifas_progress_id: nifasTask.find(task => task.nifas_task.fase_nifas_id === activeKF)?.nifas_progress_id,
+                    is_completed: 1,
+                    completed_at: new Date().toISOString()
+                })
+            });
+            
+            
+            if (!kfResponse.ok) {
+                throw new Error('Gagal memperbarui status KF');                
+            }
+            
+            // 2. Perbarui status task yang dicentang
+            const taskUpdates = Object.entries(checkedTasks)
+                .filter(([_, checked]) => checked)
+                .map(([taskId]) => parseInt(taskId));
+                
+            const tasksResponse = await fetch('/api/nifastasks/updatebatch', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    tasks: taskUpdates.map(taskId => ({
+                        id: taskId,
+                        is_completed: 1,
+                        completed_at: new Date().toISOString()
+                    }))
+                })
+            });
+            
+            if (!tasksResponse.ok) {
+                throw new Error('Gagal memperbarui status task');
+            }
+            
+            // 3. Perbarui state lokal
+            setNifasTask(prev => prev.map(task => {
+                if (checkedTasks[task.id]) {
+                    return {
+                        ...task,
+                        is_completed: 1,
+                        completed_at: new Date().toISOString()
+                    };
+                }
+                return task;
+            }));
+            
+            // 4. Tambahkan KF ke daftar yang sudah selesai
+            if (!completedKFs.includes(activeKF)) {
+                setCompletedKFs([...completedKFs, activeKF]);
+            }
+            
+            // 5. Tutup modal
+            setShowModal(false);
+            
+            // 6. Tampilkan notifikasi sukses (opsional)
+            alert('Kunjungan berhasil diselesaikan!');
+            
+        } catch (error) {
+            console.error('Error completing KF:', error);
+            alert('Terjadi kesalahan saat menyelesaikan kunjungan.');
         }
-        setShowModal(false);
     };
 
     // Add these helper functions at the top of the file, after the interfaces
@@ -523,8 +500,8 @@ export default function DashboardNifas() {
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
                     <div className="bg-white rounded-lg w-full max-w-md p-6">
                         <h3 className="text-xl font-bold mb-4">
-                            {kfData[activeKF - 1].name}:{" "}
-                            {kfData[activeKF - 1].period}
+                            {faseNifas[activeKF - 1].name}:{" "}
+                            {faseNifas[activeKF - 1].description}
                         </h3>
 
                         <div className="mb-6">
@@ -532,19 +509,25 @@ export default function DashboardNifas() {
                                 Checklist Kunjungan:
                             </h4>
                             <div className="space-y-2">
-                                {kfData[activeKF - 1].tasks.map((task) => (
-                                    <div
-                                        key={task.id}
-                                        className="flex items-center p-2 bg-gray-50 rounded"
-                                    >
-                                        <input
-                                            type="checkbox"
-                                            defaultChecked={task.completed}
-                                            className="mr-3"
-                                        />
-                                        <span>{task.text}</span>
-                                    </div>
-                                ))}
+                                {nifasTask
+                                    .filter(task => task.nifas_task.fase_nifas_id === activeKF)
+                                    .map((task) => (
+                                        <div
+                                            key={task.id}
+                                            className="flex items-center p-2 bg-gray-50 rounded"
+                                        >
+                                            <input
+                                                type="checkbox"
+                                                checked={checkedTasks[task.id] || task.is_completed === 1}
+                                                onChange={(e) => handleCheckboxChange(task.id, e.target.checked)}
+                                                className="mr-3"
+                                            />
+                                            <div className="flex flex-col">
+                                                <span className="font-medium">{task.nifas_task.name}</span>
+                                                <span className="text-sm text-gray-600">{task.nifas_task.description}</span>
+                                            </div>
+                                        </div>
+                                    ))}
                             </div>
                         </div>
 
@@ -580,12 +563,13 @@ export default function DashboardNifas() {
                                 onClick={completeKF}
                                 className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700"
                             >
-                                Selesaikan {kfData[activeKF - 1].name}
+                                Selesaikan {faseNifas[activeKF - 1].name}
                             </button>
                         </div>
                     </div>
                 </div>
             )}
+            
         </div>
     );
 }
