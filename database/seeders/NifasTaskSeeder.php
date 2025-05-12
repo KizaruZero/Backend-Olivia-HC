@@ -14,36 +14,35 @@ class NifasTaskSeeder extends Seeder
     {
         //
         $tasks = [
-            // KF1 (0-6 hari)
-            1 => [
-                ['name' => 'Pemeriksaan tanda vital', 'description' => 'Periksa tekanan darah, nadi, suhu, dan pernapasan'],
-                ['name' => 'Penilaian perdarahan', 'description' => 'Pantau jumlah dan warna lokia'],
-                ['name' => 'Perawatan luka jahitan', 'description' => 'Bersihkan dan evaluasi luka perineum/sectio'],
-                ['name' => 'Edukasi perawatan bayi', 'description' => 'Ajarkan teknik menyusui dan perawatan tali pusat']
+            1 => [ // Fase Akut (0–24 jam postpartum)
+                ['name' => 'Periksa tanda vital', 'description' => 'Pantau tekanan darah, suhu, nadi, dan napas secara berkala'],
+                ['name' => 'Observasi kontraksi dan lokia', 'description' => 'Pantau kontraksi rahim dan pengeluaran lokia'],
+                ['name' => 'Periksa luka persalinan', 'description' => 'Cek kondisi luka jahitan atau bekas operasi caesar'],
+                ['name' => 'Inisiasi Menyusui Dini (IMD)', 'description' => 'Lakukan kontak kulit ke kulit dan bantu pelekatan awal'],
+                ['name' => 'Edukasi menyusui', 'description' => 'Ajarkan posisi dan pelekatan menyusui yang benar'],
+                ['name' => 'Pantau kondisi mental ibu', 'description' => 'Identifikasi tanda stres atau baby blues'],
+                ['name' => 'Anjurkan istirahat dan makan bergizi', 'description' => 'Pastikan ibu mendapat istirahat cukup dan nutrisi seimbang'],
+                ['name' => 'Pantau buang air kecil ibu', 'description' => 'Pastikan ibu dapat BAK dalam 6 jam pertama']
             ],
-            
-            // KF2 (7-14 hari)
-            2 => [
-                ['name' => 'Penilaian involusi uteri', 'description' => 'Periksa tinggi fundus uteri'],
-                ['name' => 'Evaluasi laktasi', 'description' => 'Pantau produksi ASI dan teknik menyusui'],
-                ['name' => 'Skrining depresi postpartum', 'description' => 'Lakukan wawancara tentang kondisi psikologis'],
-                ['name' => 'Edukasi KB pasca persalinan', 'description' => 'Berikan informasi kontrasepsi yang sesuai']
+
+            2 => [ // Fase Awal (1–7 hari postpartum)
+                ['name' => 'Pantau lokia harian', 'description' => 'Amati jumlah, warna, dan bau lokia setiap hari'],
+                ['name' => 'Rawat luka perineum/operasi', 'description' => 'Jaga kebersihan luka dan berikan perawatan bila perlu'],
+                ['name' => 'Lanjutkan menyusui eksklusif', 'description' => 'Berikan ASI setiap 2–3 jam dan pantau respons bayi'],
+                ['name' => 'Cegah sembelit', 'description' => 'Anjurkan konsumsi serat dan cairan yang cukup'],
+                ['name' => 'Perawatan payudara', 'description' => 'Gunakan kompres hangat jika payudara bengkak atau nyeri'],
+                ['name' => 'Kenali tanda bahaya', 'description' => 'Edukasi ibu dan keluarga tentang demam, nyeri hebat, dan perdarahan berlebih'],
+                ['name' => 'Libatkan keluarga', 'description' => 'Ajak suami/keluarga untuk bantu perawatan ibu dan bayi']
             ],
-            
-            // KF3 (15-28 hari)
-            3 => [
-                ['name' => 'Pemeriksaan hemoglobin', 'description' => 'Evaluasi kadar Hb untuk deteksi anemia'],
-                ['name' => 'Penilaian penyembuhan luka', 'description' => 'Periksa kondisi luka jahitan'],
-                ['name' => 'Evaluasi tumbuh kembang bayi', 'description' => 'Pantau berat badan dan refleks bayi'],
-                ['name' => 'Konseling nutrisi', 'description' => 'Berikan panduan gizi untuk ibu menyusui']
-            ],
-            
-            // KF4 (29-40 hari)
-            4 => [
-                ['name' => 'Pemeriksaan lengkap postpartum', 'description' => 'Evaluasi fisik komprehensif'],
-                ['name' => 'Tes Pap smear (jika diperlukan)', 'description' => 'Untuk deteksi dini kanker serviks'],
-                ['name' => 'Pemantauan KB yang digunakan', 'description' => 'Evaluasi efek samping kontrasepsi'],
-                ['name' => 'Persiapan kembali bekerja', 'description' => 'Konseling manajemen ASI perah']
+
+            3 => [ // Fase Akhir (8 hari – 6 minggu postpartum)
+                ['name' => 'Pemeriksaan lanjutan', 'description' => 'Datangi fasilitas kesehatan untuk pemeriksaan hari ke-6 dan ke-42'],
+                ['name' => 'Skrining kesehatan mental', 'description' => 'Cek gejala depresi postpartum atau perubahan suasana hati'],
+                ['name' => 'Latihan ringan dan senam nifas', 'description' => 'Anjurkan gerakan ringan untuk pemulihan otot dasar panggul'],
+                ['name' => 'Diskusi KB', 'description' => 'Diskusikan pilihan kontrasepsi sesuai kebutuhan ibu'],
+                ['name' => 'Lanjutkan pola hidup sehat', 'description' => 'Pertahankan pola makan bergizi dan istirahat cukup'],
+                ['name' => 'Perawatan diri', 'description' => 'Jaga kebersihan tubuh dan organ intim'],
+                ['name' => 'Adaptasi peran ibu', 'description' => 'Berikan tips manajemen stres dan pola tidur bayi']
             ]
         ];
 
@@ -55,6 +54,6 @@ class NifasTaskSeeder extends Seeder
                     'description' => $task['description']
                 ]);
             }
-        }        
+        }
     }
 }

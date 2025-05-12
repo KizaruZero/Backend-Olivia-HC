@@ -167,6 +167,8 @@ class NifasTaskController extends Controller
                 'id' => $faseNifas->id,
                 'name' => $faseNifas->name,
                 'description' => $faseNifas->description,
+                'twibbon_image' => $faseNifas->twibbon_image,
+                'border_style' => $faseNifas->border_style,
                 'progress' => round($percentage, 2)
             ];
         }

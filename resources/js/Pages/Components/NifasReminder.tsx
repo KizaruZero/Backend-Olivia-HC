@@ -11,7 +11,7 @@ const NifasReminder: React.FC<NifasReminderProps> = ({
     nextPhase,
     reminderDate,
 }) => {
-    if (currentPhase >= 4) {
+    if (currentPhase >= 3) {
         return null; // Tidak menampilkan reminder jika sudah fase 4 atau selesai
     }
 

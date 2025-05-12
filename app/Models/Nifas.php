@@ -14,6 +14,19 @@ use DateInterval;
 use Twilio\Rest\Client;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Queue;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Broadcast;
+use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Response;
 
 class Nifas extends Model
 {
@@ -107,10 +120,84 @@ class Nifas extends Model
         return $today->between($this->start_date, $this->end_date);
     }
 
+    public static function calculateNifasPhase($daysPassed)
+    {
+        if ($daysPassed <= 10)
+            return 1;
+        if ($daysPassed <= 20)
+            return 2;
+        if ($daysPassed <= 30)
+            return 3;
+        if ($daysPassed <= 42)
+            return 4;
+        return 0; // Nifas period ended
+    }
 
+    public static function checkAndSendReminder($nifas)
+    {
+        if (!$nifas->is_active) {
+            Log::info('Nifas is not active', ['nifas_id' => $nifas->id]);
+            return;
+        }
 
+        $startDate = Carbon::parse($nifas->start_date);
+        $daysPassed = $startDate->diffInDays(now());
+        $currentPhase = self::calculateNifasPhase($daysPassed);
 
+        Log::info('Checking nifas phase', [
+            'nifas_id' => $nifas->id,
+            'days_passed' => $daysPassed,
+            'current_phase' => $currentPhase,
+            'last_phase_checked' => $nifas->last_phase_checked
+        ]);
 
+        // If phase hasn't changed, don't send reminder
+        if ($nifas->last_phase_checked == $currentPhase) {
+            Log::info('Phase has not changed', ['nifas_id' => $nifas->id]);
+            return;
+        }
 
+        // Update the last checked phase
+        $nifas->last_phase_checked = $currentPhase;
+        $nifas->save();
 
+        // If nifas period has ended, don't send reminder
+        if ($currentPhase === 0) {
+            Log::info('Nifas period has ended', ['nifas_id' => $nifas->id]);
+            return;
+        }
+
+        // Send email reminder
+        $user = $nifas->user;
+        $message = "Selamat datang di fase nifas ke-" . $currentPhase . "!\n\n";
+
+        switch ($currentPhase) {
+            case 1:
+                $message .= "Jangan lupa untuk melakukan pemeriksaan di puskesmas terdekat. Ini adalah fase awal masa nifas Anda.";
+                break;
+            case 2:
+                $message .= "Anda telah memasuki fase kedua masa nifas. Tetap jaga kesehatan dan lakukan pemeriksaan rutin.";
+                break;
+            case 3:
+                $message .= "Selamat memasuki fase ketiga masa nifas. Terus pantau kesehatan Anda dan konsultasikan dengan bidan.";
+                break;
+            case 4:
+                $message .= "Anda telah memasuki fase terakhir masa nifas. Tetap jaga kesehatan dan lakukan pemeriksaan akhir.";
+                break;
+        }
+
+        try {
+            Mail::to($user->email)->send(new NifasPhaseReminder($message));
+            Log::info('Email sent successfully', [
+                'nifas_id' => $nifas->id,
+                'user_email' => $user->email,
+                'phase' => $currentPhase
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Failed to send email', [
+                'nifas_id' => $nifas->id,
+                'error' => $e->getMessage()
+            ]);
+        }
+    }
 }

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import {
     Calendar,
     Bell,
@@ -18,6 +18,8 @@ import {
 import { motion } from "framer-motion";
 import Swal from "sweetalert2";
 import NifasReminder from "./Components/NifasReminder";
+import GuestLayout from "@/Layouts/GuestLayout";
+import TwibbonSystem from "./Components/TwibbonSection";
 interface FaseNifas {
     id: number;
     name: string;
@@ -77,6 +79,12 @@ export default function DashboardNifas() {
     const [customPuskesmas, setCustomPuskesmas] = useState("");
     const [notes, setNotes] = useState("");
     const [reminder, setReminder] = useState<any>(null);
+    const [userImage, setUserImage] = useState<string | null>(null);
+
+    const handleSaveImage = (imageData: string) => {
+        console.log("Twibbon berhasil disimpan!");
+        setUserImage(imageData);
+    };
 
     useEffect(() => {
         fetch("/api/nifas/user", {
@@ -264,10 +272,9 @@ export default function DashboardNifas() {
     const calculateNifasPhase = (startDate: string): number => {
         const start = new Date(startDate);
         const daysPassed = calculateDaysPassed(startDate);
-        if (daysPassed <= 10) return 1;
-        if (daysPassed <= 20) return 2;
-        if (daysPassed <= 30) return 3;
-        if (daysPassed <= 42) return 4;
+        if (daysPassed <= 1) return 1;
+        if (daysPassed <= 7) return 2;
+        if (daysPassed <= 42) return 3;
         return 0;
     };
 
@@ -314,39 +321,50 @@ export default function DashboardNifas() {
     return (
         <div className="bg-gray-50 min-h-screen">
             {/* Header */}
-            <header className="bg-purple-700 text-white p-4">
-                <div className="container mx-auto flex justify-between items-center">
-                    <h1 className="text-2xl font-bold">BundaCare</h1>
-                    <div className="flex items-center space-x-3">
-                        <button className="p-2 rounded-full bg-purple-600 hover:bg-purple-800">
-                            <Bell size={20} />
-                        </button>
-                        <div className="flex items-center">
-                            <div
-                                className={`relative w-10 h-10 rounded-full bg-purple-500 flex items-center justify-center text-lg font-bold ${
-                                    completedKFs.length > 0
-                                        ? "ring-2 ring-yellow-400 ring-offset-2"
-                                        : ""
-                                }`}
-                            >
-                                S
+            <GuestLayout>
+                {/* Main Content */}
+                <main className="container mx-auto p-4">
+                    {/* Welcome Section */}
+                    <div className="mb-6 bg-white rounded-lg p-6 shadow-md">
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <h2 className="text-xl font-bold text-gray-800">
+                                    Selamat Datang, Bunda Sarah!
+                                </h2>
+                                <p className="text-gray-600">
+                                    Masa nifas dimulai:{" "}
+                                    {nifas?.start_date
+                                        ? new Date(
+                                              nifas.start_date
+                                          ).toLocaleDateString("id-ID", {
+                                              day: "numeric",
+                                              month: "long",
+                                              year: "numeric",
+                                          })
+                                        : "-"}
+                                </p>
                             </div>
+                            {completedKFs.length > 0 && (
+                                <div className="flex items-center space-x-2">
+                                    <Award
+                                        className="text-yellow-500"
+                                        size={24}
+                                    />
+                                    <span className="text-sm font-medium">
+                                        {completedKFs.length} KF Selesai
+                                    </span>
+                                </div>
+                            )}
                         </div>
                     </div>
-                </div>
-            </header>
 
-            {/* Main Content */}
-            <main className="container mx-auto p-4">
-                {/* Welcome Section */}
-                <div className="mb-6 bg-white rounded-lg p-6 shadow-md">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <h2 className="text-xl font-bold text-gray-800">
-                                Selamat Datang, Bunda Sarah!
-                            </h2>
-                            <p className="text-gray-600">
-                                Masa nifas dimulai:{" "}
+                    {/* Progress Bar */}
+                    <div className="mb-6 bg-white rounded-lg p-6 shadow-md">
+                        <div className="flex justify-between items-center mb-4">
+                            <h3 className="text-lg font-medium text-gray-800">
+                                Progress Masa Nifas
+                            </h3>
+                            <span className="text-sm font-medium text-purple-700">
                                 {nifas?.start_date
                                     ? new Date(
                                           nifas.start_date
@@ -355,560 +373,575 @@ export default function DashboardNifas() {
                                           month: "long",
                                           year: "numeric",
                                       })
-                                    : "-"}
-                            </p>
-                        </div>
-                        {completedKFs.length > 0 && (
-                            <div className="flex items-center space-x-2">
-                                <Award className="text-yellow-500" size={24} />
-                                <span className="text-sm font-medium">
-                                    {completedKFs.length} KF Selesai
-                                </span>
-                            </div>
-                        )}
-                    </div>
-                </div>
-
-                {/* Progress Bar */}
-                <div className="mb-6 bg-white rounded-lg p-6 shadow-md">
-                    <div className="flex justify-between items-center mb-4">
-                        <h3 className="text-lg font-medium text-gray-800">
-                            Progress Masa Nifas
-                        </h3>
-                        <span className="text-sm font-medium text-purple-700">
-                            {nifas?.start_date
-                                ? new Date(nifas.start_date).toLocaleDateString(
-                                      "id-ID",
-                                      {
-                                          day: "numeric",
-                                          month: "long",
-                                          year: "numeric",
-                                      }
-                                  )
-                                : "-"}{" "}
-                            -{" "}
-                            {nifas?.end_date
-                                ? new Date(nifas.end_date).toLocaleDateString(
-                                      "id-ID",
-                                      {
-                                          day: "numeric",
-                                          month: "long",
-                                          year: "numeric",
-                                      }
-                                  )
-                                : "-"}
-                        </span>
-                    </div>
-
-                    <div className="w-full bg-gray-200 rounded-full h-4 mb-6 relative group">
-                        <div
-                            className="bg-purple-600 h-4 rounded-full transition-all duration-300"
-                            style={{
-                                width: nifas
-                                    ? `${calculateProgress(
-                                          nifas.start_date,
+                                    : "-"}{" "}
+                                -{" "}
+                                {nifas?.end_date
+                                    ? new Date(
                                           nifas.end_date
+                                      ).toLocaleDateString("id-ID", {
+                                          day: "numeric",
+                                          month: "long",
+                                          year: "numeric",
+                                      })
+                                    : "-"}
+                            </span>
+                        </div>
+
+                        <div className="w-full bg-gray-200 rounded-full h-4 mb-6 relative group">
+                            <div
+                                className="bg-purple-600 h-4 rounded-full transition-all duration-300"
+                                style={{
+                                    width: nifas
+                                        ? `${calculateProgress(
+                                              nifas.start_date,
+                                              nifas.end_date
+                                          )}%`
+                                        : "0%",
+                                }}
+                            ></div>
+                            <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-2 py-1 rounded text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                                {nifas
+                                    ? `${Math.round(
+                                          calculateProgress(
+                                              nifas.start_date,
+                                              nifas.end_date
+                                          )
                                       )}%`
-                                    : "0%",
-                            }}
-                        ></div>
-                        <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-2 py-1 rounded text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                            {nifas
-                                ? `${Math.round(
-                                      calculateProgress(
+                                    : "0%"}{" "}
+                                Selesai
+                            </div>
+                        </div>
+
+                        <div className="flex justify-between text-sm">
+                            <span>
+                                Hari ke-
+                                {nifas
+                                    ? calculateDaysPassed(nifas.start_date)
+                                    : 0}
+                            </span>
+                            <span>
+                                Total{" "}
+                                {nifas
+                                    ? calculateTotalDays(
                                           nifas.start_date,
                                           nifas.end_date
                                       )
-                                  )}%`
-                                : "0%"}{" "}
-                            Selesai
+                                    : 0}{" "}
+                                hari
+                            </span>
                         </div>
                     </div>
 
-                    <div className="flex justify-between text-sm">
-                        <span>
-                            Hari ke-
-                            {nifas ? calculateDaysPassed(nifas.start_date) : 0}
-                        </span>
-                        <span>
-                            Total{" "}
-                            {nifas
-                                ? calculateTotalDays(
-                                      nifas.start_date,
-                                      nifas.end_date
-                                  )
-                                : 0}{" "}
-                            hari
-                        </span>
+                    {/* Reminders */}
+                    <div>
+                        {reminder && (
+                            <NifasReminder
+                                currentPhase={reminder.current_phase}
+                                nextPhase={reminder.reminder.phase}
+                                reminderDate={reminder.reminder.date}
+                            />
+                        )}
                     </div>
-                </div>
 
-                {/* Reminders */}
-                <div>
-                    {reminder && (
-                        <NifasReminder
-                            currentPhase={reminder.current_phase}
-                            nextPhase={reminder.reminder.phase}
-                            reminderDate={reminder.reminder.date}
-                        />
-                    )}
-                </div>
-
-                {/* KF Progress Cards */}
-                <h3 className="text-lg font-medium text-gray-800 mb-4 mt-4">
-                    Kunjungan Nifas
-                </h3>
-                {/* jika progress fase nifas belum mencapai maka card tidak bisa di klik , misal saat ini fase 1 belum selesai maka card fase 2 tidak bisa di klik */}
-                <div className="grid gap-4 mb-6">
-                    {faseNifas.map((kf) => (
-                        <div
-                            key={kf.id}
-                            onClick={() => handleKFClick(kf.id)}
-                            className={`bg-white rounded-lg p-4 shadow-md cursor-pointer transition-all hover:shadow-lg ${
-                                nifasTask.find(
-                                    (task) =>
-                                        task.nifas_task.fase_nifas_id === kf.id
-                                )?.is_completed
-                                    ? "border-l-4 border-green-500"
-                                    : ""
-                            }`}
-                        >
-                            <div className="flex justify-between items-center">
-                                <div className="flex items-center space-x-3">
-                                    {nifasTask.find(
-                                        (task) =>
-                                            task.nifas_task.fase_nifas_id ===
-                                            kf.id
-                                    )?.is_completed ? (
-                                        <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
-                                            <CheckCircle
-                                                className="text-green-500"
-                                                size={20}
-                                            />
-                                        </div>
-                                    ) : (
-                                        <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center">
-                                            <Calendar
-                                                className="text-purple-500"
-                                                size={20}
-                                            />
-                                        </div>
-                                    )}
-                                    <div>
-                                        <h4 className="font-medium text-gray-800">
-                                            {kf.name}
-                                        </h4>
-
-                                        <p className="text-sm text-gray-500">
-                                            {kf.description}
-                                        </p>
-                                    </div>
-                                </div>
-
-                                <div className="flex items-center space-x-3">
-                                    <div className="w-16 text-right">
-                                        <span className="text-sm font-medium">
-                                            {kf.progress}%
-                                        </span>
-                                    </div>
-                                    <ChevronRight
-                                        size={18}
-                                        className="text-gray-400"
-                                    />
-                                </div>
-                            </div>
-
-                            {/* Progress Bar for each KF */}
-                            <div className="w-full bg-gray-200 rounded-full h-2 mt-3">
+                    {/* KF Progress Cards */}
+                    <h3 className="text-lg font-medium text-gray-800 mb-4 mt-4">
+                        Kunjungan Nifas
+                    </h3>
+                    {/* jika progress fase nifas belum mencapai maka card tidak bisa di klik , misal saat ini fase 1 belum selesai maka card fase 2 tidak bisa di klik */}
+                    <div className="grid gap-4 mb-6">
+                        {faseNifas.map((kf) => (
+                            <div className="aowkao">
                                 <div
-                                    className={`h-2 rounded-full ${
-                                        kf.progress === 100
-                                            ? "bg-green-500"
-                                            : "bg-purple-600"
+                                    key={kf.id}
+                                    onClick={() => handleKFClick(kf.id)}
+                                    className={`bg-white rounded-lg p-4 shadow-md cursor-pointer transition-all hover:shadow-lg ${
+                                        nifasTask.find(
+                                            (task) =>
+                                                task.nifas_task
+                                                    .fase_nifas_id === kf.id
+                                        )?.is_completed
+                                            ? "border-l-4 border-green-500"
+                                            : ""
                                     }`}
-                                    style={{ width: `${kf.progress}%` }}
-                                ></div>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            </main>
-
-            {/* Modal untuk detail KF dan checklist */}
-            {showModal && (
-                <motion.div
-                    className="fixed inset-0 flex items-center justify-center z-50 p-4"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                >
-                    {/* Backdrop with blur effect */}
-                    <motion.div
-                        className="absolute inset-0 bg-gradient-to-br from-blue-900/70 to-blue-500/70 backdrop-blur-sm"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        onClick={() => setShowModal(false)}
-                    />
-
-                    {/* Modal Container - Wider for desktop */}
-                    <motion.div
-                        className="bg-white rounded-2xl w-full max-w-4xl relative overflow-hidden shadow-2xl"
-                        initial={{ scale: 0.9, y: 20 }}
-                        animate={{ scale: 1, y: 0 }}
-                        transition={{ type: "spring", damping: 25 }}
-                    >
-                        {/* Decorative curved shape at top */}
-                        <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-r from-blue-600 to-blue-400 rounded-b-[50%] -translate-y-1/2" />
-
-                        {/* Modal Content */}
-                        <div className="relative z-10 p-6">
-                            {/* Header - Top Section */}
-                            <div className="flex justify-between items-start mb-6">
-                                <div>
-                                    <motion.h3
-                                        className="text-2xl font-bold text-blue-900"
-                                        initial={{ x: -20, opacity: 0 }}
-                                        animate={{ x: 0, opacity: 1 }}
-                                        transition={{ delay: 0.1 }}
-                                    >
-                                        {faseNifas[activeKF - 1].name}
-                                    </motion.h3>
-                                    <motion.p
-                                        className="text-blue-600"
-                                        initial={{ x: -20, opacity: 0 }}
-                                        animate={{ x: 0, opacity: 1 }}
-                                        transition={{ delay: 0.15 }}
-                                    >
-                                        {faseNifas[activeKF - 1].description}
-                                    </motion.p>
-                                </div>
-
-                                {/* Close button */}
-                                <motion.button
-                                    onClick={() => setShowModal(false)}
-                                    className="h-8 w-8 flex items-center justify-center rounded-full bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors"
-                                    whileHover={{ rotate: 90 }}
-                                    transition={{
-                                        type: "spring",
-                                        stiffness: 300,
-                                    }}
                                 >
-                                    <X size={16} />
-                                </motion.button>
-                            </div>
-
-                            {/* Progress indicator - Below header */}
-                            <motion.div
-                                className="flex justify-between mb-8 relative"
-                                initial={{ opacity: 0, y: 10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: 0.2 }}
-                            >
-                                {/* Line connecting dots */}
-                                <div className="absolute h-0.5 bg-gray-200 top-4 left-4 right-4 -z-10" />
-
-                                {faseNifas.map((fase) => (
-                                    <div
-                                        key={fase.id}
-                                        className="flex flex-col items-center relative"
-                                    >
-                                        <motion.div
-                                            className={`h-8 w-8 rounded-full flex items-center justify-center ${
-                                                fase.id < activeKF
-                                                    ? "bg-green-500 text-white"
-                                                    : fase.id === activeKF
-                                                    ? "bg-blue-600 text-white"
-                                                    : "bg-gray-200 text-gray-500"
-                                            }`}
-                                            whileHover={{ scale: 1.1 }}
-                                        >
-                                            {fase.id < activeKF ? (
-                                                <Check size={16} />
-                                            ) : (
-                                                fase.id
-                                            )}
-                                        </motion.div>
-                                        <span
-                                            className={`text-xs mt-1 font-medium ${
-                                                fase.id === activeKF
-                                                    ? "text-blue-600"
-                                                    : "text-gray-500"
-                                            }`}
-                                        >
-                                            {fase.name}
-                                        </span>
-                                    </div>
-                                ))}
-                            </motion.div>
-
-                            {/* Main Content - Horizontal Layout */}
-                            <div className="flex flex-col lg:flex-row gap-6">
-                                {/* Left Column - Checklist (60% width) */}
-                                <motion.div
-                                    className="lg:w-3/5 bg-blue-50 rounded-xl p-4 shadow-sm"
-                                    initial={{ opacity: 0, x: -20 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    transition={{ delay: 0.3 }}
-                                >
-                                    <div className="flex items-center gap-2 mb-3 text-blue-800">
-                                        <ClipboardList size={18} />
-                                        <h4 className="font-semibold">
-                                            Checklist Kunjungan
-                                        </h4>
-                                    </div>
-
-                                    <div className="space-y-2 max-h-96 overflow-y-auto pr-2">
-                                        {nifasTask
-                                            .filter(
+                                    <div className="flex justify-between items-center">
+                                        <div className="flex items-center space-x-3">
+                                            {nifasTask.find(
                                                 (task) =>
                                                     task.nifas_task
-                                                        .fase_nifas_id ===
-                                                    activeKF
-                                            )
-                                            .map((task) => (
-                                                <motion.div
-                                                    key={task.id}
-                                                    className="flex items-start gap-3 p-3 bg-white rounded-lg shadow-sm border-l-4 border-blue-400"
-                                                    whileHover={{ x: 5 }}
-                                                    initial={{
-                                                        opacity: 0,
-                                                        x: -10,
-                                                    }}
-                                                    animate={{
-                                                        opacity: 1,
-                                                        x: 0,
-                                                    }}
-                                                    transition={{
-                                                        delay:
-                                                            0.4 + task.id * 0.1,
-                                                    }}
-                                                >
-                                                    <div className="relative pt-0.5">
-                                                        <input
-                                                            type="checkbox"
-                                                            id={`task-${task.id}`}
-                                                            checked={
-                                                                checkedTasks[
-                                                                    task.id
-                                                                ] ||
-                                                                task.is_completed ===
-                                                                    1
-                                                            }
-                                                            onChange={(e) =>
-                                                                handleCheckboxChange(
-                                                                    task.id,
-                                                                    e.target
-                                                                        .checked
-                                                                )
-                                                            }
-                                                            className="opacity-0 absolute h-5 w-5 cursor-pointer"
-                                                        />
-                                                        <div
-                                                            className={`h-5 w-5 rounded border ${
-                                                                checkedTasks[
-                                                                    task.id
-                                                                ] ||
-                                                                task.is_completed ===
-                                                                    1
-                                                                    ? "bg-blue-600 border-blue-600"
-                                                                    : "border-gray-300"
-                                                            } flex items-center justify-center transition-colors duration-200`}
-                                                        >
-                                                            {(checkedTasks[
-                                                                task.id
-                                                            ] ||
-                                                                task.is_completed ===
-                                                                    1) && (
-                                                                <motion.div
-                                                                    initial={{
-                                                                        scale: 0,
-                                                                    }}
-                                                                    animate={{
-                                                                        scale: 1,
-                                                                    }}
-                                                                    transition={{
-                                                                        type: "spring",
-                                                                        stiffness: 500,
-                                                                    }}
-                                                                >
-                                                                    <Check
-                                                                        size={
-                                                                            14
-                                                                        }
-                                                                        className="text-white"
-                                                                    />
-                                                                </motion.div>
-                                                            )}
-                                                        </div>
-                                                    </div>
+                                                        .fase_nifas_id === kf.id
+                                            )?.is_completed ? (
+                                                <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
+                                                    <CheckCircle
+                                                        className="text-green-500"
+                                                        size={20}
+                                                    />
+                                                </div>
+                                            ) : (
+                                                <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center">
+                                                    <Calendar
+                                                        className="text-purple-500"
+                                                        size={20}
+                                                    />
+                                                </div>
+                                            )}
+                                            <div>
+                                                <h4 className="font-medium text-gray-800">
+                                                    {kf.name}
+                                                </h4>
 
-                                                    <div className="flex flex-col">
-                                                        <label
-                                                            htmlFor={`task-${task.id}`}
-                                                            className={`font-medium cursor-pointer ${
-                                                                checkedTasks[
-                                                                    task.id
-                                                                ] ||
-                                                                task.is_completed ===
-                                                                    1
-                                                                    ? "text-gray-500 line-through"
-                                                                    : "text-gray-800"
-                                                            }`}
-                                                        >
-                                                            {
-                                                                task.nifas_task
-                                                                    .name
-                                                            }
-                                                        </label>
-                                                        <span className="text-sm text-gray-500">
-                                                            {
-                                                                task.nifas_task
-                                                                    .description
-                                                            }
-                                                        </span>
-                                                    </div>
-                                                </motion.div>
-                                            ))}
-                                    </div>
-                                </motion.div>
-
-                                {/* Right Column - Location & Notes (40% width) */}
-                                <div className="lg:w-2/5 space-y-6">
-                                    {/* Location Section */}
-                                    <motion.div
-                                        className="bg-blue-50 rounded-xl p-4 shadow-sm"
-                                        initial={{ opacity: 0, y: 20 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        transition={{ delay: 0.4 }}
-                                    >
-                                        <div className="flex items-center gap-2 mb-3 text-blue-800">
-                                            <MapPin size={18} />
-                                            <h4 className="font-semibold">
-                                                Lokasi Kunjungan
-                                            </h4>
-                                        </div>
-
-                                        <div className="relative">
-                                            <select
-                                                className="w-full p-3 pl-4 pr-10 bg-white border border-blue-100 rounded-lg appearance-none focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all"
-                                                value={selectedPuskesmas}
-                                                onChange={(e) =>
-                                                    setSelectedPuskesmas(
-                                                        e.target.value
-                                                    )
-                                                }
-                                            >
-                                                <option value="Puskesmas Sejahtera">
-                                                    Puskesmas Sejahtera
-                                                </option>
-                                                <option value="Puskesmas Harapan">
-                                                    Puskesmas Harapan
-                                                </option>
-                                                <option value="Klinik Bidan">
-                                                    Klinik Bidan
-                                                </option>
-                                                <option value="Rumah Sakit">
-                                                    Rumah Sakit
-                                                </option>
-                                                <option value="other">
-                                                    Lainnya
-                                                </option>
-                                            </select>
-                                            <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none text-blue-400">
-                                                <ChevronRight
-                                                    size={18}
-                                                    className="rotate-90"
-                                                />
+                                                <p className="text-sm text-gray-500">
+                                                    {kf.description}
+                                                </p>
                                             </div>
                                         </div>
 
-                                        {selectedPuskesmas === "other" && (
-                                            <motion.div
-                                                initial={{
-                                                    height: 0,
-                                                    opacity: 0,
-                                                }}
-                                                animate={{
-                                                    height: "auto",
-                                                    opacity: 1,
-                                                }}
-                                                exit={{ height: 0, opacity: 0 }}
-                                                className="overflow-hidden"
-                                            >
-                                                <input
-                                                    type="text"
-                                                    className="w-full mt-2 p-3 bg-white border border-blue-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
-                                                    placeholder="Tulis nama puskesmas..."
-                                                    value={customPuskesmas}
-                                                    onChange={(e) =>
-                                                        setCustomPuskesmas(
-                                                            e.target.value
-                                                        )
-                                                    }
-                                                />
-                                            </motion.div>
-                                        )}
-                                    </motion.div>
+                                        <div className="flex items-center space-x-3">
+                                            <div className="w-16 text-right">
+                                                <span className="text-sm font-medium">
+                                                    {kf.progress}%
+                                                </span>
+                                            </div>
+                                            <ChevronRight
+                                                size={18}
+                                                className="text-gray-400"
+                                            />
+                                        </div>
+                                    </div>
 
-                                    {/* Notes Section */}
+                                    {/* Progress Bar for each KF */}
+                                    <div className="w-full bg-gray-200 rounded-full h-2 mt-3">
+                                        <div
+                                            className={`h-2 rounded-full ${
+                                                kf.progress === 100
+                                                    ? "bg-green-500"
+                                                    : "bg-purple-600"
+                                            }`}
+                                            style={{ width: `${kf.progress}%` }}
+                                        ></div>
+                                    </div>
+
+                                    {/* Twibbon for completed phases */}
+                                    {kf.progress === 100 && (
+                                        <motion.div
+                                            initial={{ scale: 0, rotate: -15 }}
+                                            animate={{ scale: 1, rotate: -15 }}
+                                            transition={{
+                                                type: "spring",
+                                                stiffness: 260,
+                                                damping: 20,
+                                            }}
+                                            className="absolute -top-2 -right-2 bg-gradient-to-r from-blue-300 to-blue-500 text-gray-700 px-3 py-1 rounded-full shadow-lg"
+                                        >
+                                            <div className="flex items-center gap-1">
+                                                <Award size={16} />
+                                                <span className="text-sm font-medium">
+                                                    Selesai!
+                                                </span>
+                                            </div>
+                                        </motion.div>
+                                    )}
+                                </div>
+                                {/* twibbon only for completed fase */}
+                                {kf.progress === 100 && (
+                                    <TwibbonSystem
+                                        faseNifas={faseNifas}
+                                        currentFaseId={kf.id} // Sesuai dengan id fase yang dipilih
+                                        userImage={userImage}
+                                        onSaveImage={handleSaveImage}
+                                    />
+                                )}
+                            </div>
+                        ))}
+                    </div>
+                </main>
+
+                {/* Modal untuk detail KF dan checklist */}
+                {showModal && (
+                    <motion.div
+                        className="fixed inset-0 flex items-center justify-center z-50 p-4"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                    >
+                        {/* Backdrop with blur effect */}
+                        <motion.div
+                            className="absolute inset-0 bg-gradient-to-br from-blue-900/70 to-blue-500/70 backdrop-blur-sm"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            onClick={() => setShowModal(false)}
+                        />
+
+                        {/* Modal Container - Wider for desktop */}
+                        <motion.div
+                            className="bg-white rounded-2xl w-full max-w-4xl relative overflow-hidden shadow-2xl"
+                            initial={{ scale: 0.9, y: 20 }}
+                            animate={{ scale: 1, y: 0 }}
+                            transition={{ type: "spring", damping: 25 }}
+                        >
+                            {/* Decorative curved shape at top */}
+                            <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-r from-blue-600 to-blue-400 rounded-b-[50%] -translate-y-1/2" />
+
+                            {/* Modal Content */}
+                            <div className="relative z-10 p-6">
+                                {/* Header - Top Section */}
+                                <div className="flex justify-between items-start mb-6">
+                                    <div>
+                                        <motion.h3
+                                            className="text-2xl font-bold text-blue-900"
+                                            initial={{ x: -20, opacity: 0 }}
+                                            animate={{ x: 0, opacity: 1 }}
+                                            transition={{ delay: 0.1 }}
+                                        >
+                                            {faseNifas[activeKF - 1].name}
+                                        </motion.h3>
+                                        <motion.p
+                                            className="text-blue-600"
+                                            initial={{ x: -20, opacity: 0 }}
+                                            animate={{ x: 0, opacity: 1 }}
+                                            transition={{ delay: 0.15 }}
+                                        >
+                                            {
+                                                faseNifas[activeKF - 1]
+                                                    .description
+                                            }
+                                        </motion.p>
+                                    </div>
+
+                                    {/* Close button */}
+                                    <motion.button
+                                        onClick={() => setShowModal(false)}
+                                        className="h-8 w-8 flex items-center justify-center rounded-full bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors"
+                                        whileHover={{ rotate: 90 }}
+                                        transition={{
+                                            type: "spring",
+                                            stiffness: 300,
+                                        }}
+                                    >
+                                        <X size={16} />
+                                    </motion.button>
+                                </div>
+
+                                {/* Progress indicator - Below header */}
+                                <motion.div
+                                    className="flex justify-between mb-8 relative"
+                                    initial={{ opacity: 0, y: 10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: 0.2 }}
+                                >
+                                    {/* Line connecting dots */}
+                                    <div className="absolute h-0.5 bg-gray-200 top-4 left-4 right-4 -z-10" />
+
+                                    {faseNifas.map((fase) => (
+                                        <div
+                                            key={fase.id}
+                                            className="flex flex-col items-center relative"
+                                        >
+                                            <motion.div
+                                                className={`h-8 w-8 rounded-full flex items-center justify-center ${
+                                                    fase.id < activeKF
+                                                        ? "bg-green-500 text-white"
+                                                        : fase.id === activeKF
+                                                        ? "bg-blue-600 text-white"
+                                                        : "bg-gray-200 text-gray-500"
+                                                }`}
+                                                whileHover={{ scale: 1.1 }}
+                                            >
+                                                {fase.id < activeKF ? (
+                                                    <Check size={16} />
+                                                ) : (
+                                                    fase.id
+                                                )}
+                                            </motion.div>
+                                            <span
+                                                className={`text-xs mt-1 font-medium ${
+                                                    fase.id === activeKF
+                                                        ? "text-blue-600"
+                                                        : "text-gray-500"
+                                                }`}
+                                            >
+                                                {fase.name}
+                                            </span>
+                                        </div>
+                                    ))}
+                                </motion.div>
+
+                                {/* Main Content - Horizontal Layout */}
+                                <div className="flex flex-col lg:flex-row gap-6">
+                                    {/* Left Column - Checklist (60% width) */}
                                     <motion.div
-                                        className="bg-blue-50 rounded-xl p-4 shadow-sm"
-                                        initial={{ opacity: 0, y: 20 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        transition={{ delay: 0.5 }}
+                                        className="lg:w-3/5 bg-blue-50 rounded-xl p-4 shadow-sm"
+                                        initial={{ opacity: 0, x: -20 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        transition={{ delay: 0.3 }}
                                     >
                                         <div className="flex items-center gap-2 mb-3 text-blue-800">
-                                            <FileText size={18} />
+                                            <ClipboardList size={18} />
                                             <h4 className="font-semibold">
-                                                Catatan
+                                                Checklist Kunjungan
                                             </h4>
                                         </div>
 
-                                        <textarea
-                                            className="w-full p-3 bg-white border border-blue-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent resize-none transition-all"
-                                            rows={5}
-                                            placeholder="Tuliskan catatan tentang kondisi Anda..."
-                                            value={notes}
-                                            onChange={(e) =>
-                                                setNotes(e.target.value)
-                                            }
-                                        ></textarea>
-                                    </motion.div>
-                                </div>
-                            </div>
+                                        <div className="space-y-2 max-h-96 overflow-y-auto pr-2">
+                                            {nifasTask
+                                                .filter(
+                                                    (task) =>
+                                                        task.nifas_task
+                                                            .fase_nifas_id ===
+                                                        activeKF
+                                                )
+                                                .map((task) => (
+                                                    <motion.div
+                                                        key={task.id}
+                                                        className="flex items-start gap-3 p-3 bg-white rounded-lg shadow-sm border-l-4 border-blue-400"
+                                                        whileHover={{ x: 5 }}
+                                                        initial={{
+                                                            opacity: 0,
+                                                            x: -10,
+                                                        }}
+                                                        animate={{
+                                                            opacity: 1,
+                                                            x: 0,
+                                                        }}
+                                                        transition={{
+                                                            delay:
+                                                                0.4 +
+                                                                task.id * 0.1,
+                                                        }}
+                                                    >
+                                                        <div className="relative pt-0.5">
+                                                            <input
+                                                                type="checkbox"
+                                                                id={`task-${task.id}`}
+                                                                checked={
+                                                                    checkedTasks[
+                                                                        task.id
+                                                                    ] ||
+                                                                    task.is_completed ===
+                                                                        1
+                                                                }
+                                                                onChange={(e) =>
+                                                                    handleCheckboxChange(
+                                                                        task.id,
+                                                                        e.target
+                                                                            .checked
+                                                                    )
+                                                                }
+                                                                className="opacity-0 absolute h-5 w-5 cursor-pointer"
+                                                            />
+                                                            <div
+                                                                className={`h-5 w-5 rounded border ${
+                                                                    checkedTasks[
+                                                                        task.id
+                                                                    ] ||
+                                                                    task.is_completed ===
+                                                                        1
+                                                                        ? "bg-blue-600 border-blue-600"
+                                                                        : "border-gray-300"
+                                                                } flex items-center justify-center transition-colors duration-200`}
+                                                            >
+                                                                {(checkedTasks[
+                                                                    task.id
+                                                                ] ||
+                                                                    task.is_completed ===
+                                                                        1) && (
+                                                                    <motion.div
+                                                                        initial={{
+                                                                            scale: 0,
+                                                                        }}
+                                                                        animate={{
+                                                                            scale: 1,
+                                                                        }}
+                                                                        transition={{
+                                                                            type: "spring",
+                                                                            stiffness: 500,
+                                                                        }}
+                                                                    >
+                                                                        <Check
+                                                                            size={
+                                                                                14
+                                                                            }
+                                                                            className="text-white"
+                                                                        />
+                                                                    </motion.div>
+                                                                )}
+                                                            </div>
+                                                        </div>
 
-                            {/* Action Buttons - Bottom */}
-                            <motion.div
-                                className="flex justify-end space-x-3 mt-6"
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: 0.6 }}
-                            >
-                                <motion.button
-                                    onClick={() => setShowModal(false)}
-                                    className="px-4 py-2.5 border border-blue-200 rounded-lg text-blue-600 hover:bg-blue-50 transition-colors"
-                                    whileHover={{ scale: 1.03 }}
-                                    whileTap={{ scale: 0.98 }}
+                                                        <div className="flex flex-col">
+                                                            <label
+                                                                htmlFor={`task-${task.id}`}
+                                                                className={`font-medium cursor-pointer ${
+                                                                    checkedTasks[
+                                                                        task.id
+                                                                    ] ||
+                                                                    task.is_completed ===
+                                                                        1
+                                                                        ? "text-gray-500 line-through"
+                                                                        : "text-gray-800"
+                                                                }`}
+                                                            >
+                                                                {
+                                                                    task
+                                                                        .nifas_task
+                                                                        .name
+                                                                }
+                                                            </label>
+                                                            <span className="text-sm text-gray-500">
+                                                                {
+                                                                    task
+                                                                        .nifas_task
+                                                                        .description
+                                                                }
+                                                            </span>
+                                                        </div>
+                                                    </motion.div>
+                                                ))}
+                                        </div>
+                                    </motion.div>
+
+                                    {/* Right Column - Location & Notes (40% width) */}
+                                    <div className="lg:w-2/5 space-y-6">
+                                        {/* Location Section */}
+                                        <motion.div
+                                            className="bg-blue-50 rounded-xl p-4 shadow-sm"
+                                            initial={{ opacity: 0, y: 20 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            transition={{ delay: 0.4 }}
+                                        >
+                                            <div className="flex items-center gap-2 mb-3 text-blue-800">
+                                                <MapPin size={18} />
+                                                <h4 className="font-semibold">
+                                                    Lokasi Kunjungan
+                                                </h4>
+                                            </div>
+
+                                            <div className="relative">
+                                                <select
+                                                    className="w-full p-3 pl-4 pr-10 bg-white border border-blue-100 rounded-lg appearance-none focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all"
+                                                    value={selectedPuskesmas}
+                                                    onChange={(e) =>
+                                                        setSelectedPuskesmas(
+                                                            e.target.value
+                                                        )
+                                                    }
+                                                >
+                                                    <option value="Puskesmas Sejahtera">
+                                                        Puskesmas Sejahtera
+                                                    </option>
+                                                    <option value="Puskesmas Harapan">
+                                                        Puskesmas Harapan
+                                                    </option>
+                                                    <option value="Klinik Bidan">
+                                                        Klinik Bidan
+                                                    </option>
+                                                    <option value="Rumah Sakit">
+                                                        Rumah Sakit
+                                                    </option>
+                                                    <option value="other">
+                                                        Lainnya
+                                                    </option>
+                                                </select>
+                                                <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none text-blue-400">
+                                                    <ChevronRight
+                                                        size={18}
+                                                        className="rotate-90"
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            {selectedPuskesmas === "other" && (
+                                                <motion.div
+                                                    initial={{
+                                                        height: 0,
+                                                        opacity: 0,
+                                                    }}
+                                                    animate={{
+                                                        height: "auto",
+                                                        opacity: 1,
+                                                    }}
+                                                    exit={{
+                                                        height: 0,
+                                                        opacity: 0,
+                                                    }}
+                                                    className="overflow-hidden"
+                                                >
+                                                    <input
+                                                        type="text"
+                                                        className="w-full mt-2 p-3 bg-white border border-blue-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
+                                                        placeholder="Tulis nama puskesmas..."
+                                                        value={customPuskesmas}
+                                                        onChange={(e) =>
+                                                            setCustomPuskesmas(
+                                                                e.target.value
+                                                            )
+                                                        }
+                                                    />
+                                                </motion.div>
+                                            )}
+                                        </motion.div>
+
+                                        {/* Notes Section */}
+                                        <motion.div
+                                            className="bg-blue-50 rounded-xl p-4 shadow-sm"
+                                            initial={{ opacity: 0, y: 20 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            transition={{ delay: 0.5 }}
+                                        >
+                                            <div className="flex items-center gap-2 mb-3 text-blue-800">
+                                                <FileText size={18} />
+                                                <h4 className="font-semibold">
+                                                    Catatan
+                                                </h4>
+                                            </div>
+
+                                            <textarea
+                                                className="w-full p-3 bg-white border border-blue-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent resize-none transition-all"
+                                                rows={5}
+                                                placeholder="Tuliskan catatan tentang kondisi Anda..."
+                                                value={notes}
+                                                onChange={(e) =>
+                                                    setNotes(e.target.value)
+                                                }
+                                            ></textarea>
+                                        </motion.div>
+                                    </div>
+                                </div>
+
+                                {/* Action Buttons - Bottom */}
+                                <motion.div
+                                    className="flex justify-end space-x-3 mt-6"
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: 0.6 }}
                                 >
-                                    Tutup
-                                </motion.button>
-                                <motion.button
-                                    onClick={completeKF}
-                                    className="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-lg shadow-md hover:shadow-lg transition-all"
-                                    whileHover={{
-                                        scale: 1.03,
-                                        boxShadow:
-                                            "0 10px 15px -3px rgba(59, 130, 246, 0.3)",
-                                    }}
-                                    whileTap={{ scale: 0.98 }}
-                                >
-                                    Selesaikan {faseNifas[activeKF - 1].name}
-                                </motion.button>
-                            </motion.div>
-                        </div>
+                                    <motion.button
+                                        onClick={() => setShowModal(false)}
+                                        className="px-4 py-2.5 border border-blue-200 rounded-lg text-blue-600 hover:bg-blue-50 transition-colors"
+                                        whileHover={{ scale: 1.03 }}
+                                        whileTap={{ scale: 0.98 }}
+                                    >
+                                        Tutup
+                                    </motion.button>
+                                    <motion.button
+                                        onClick={completeKF}
+                                        className="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-lg shadow-md hover:shadow-lg transition-all"
+                                        whileHover={{
+                                            scale: 1.03,
+                                            boxShadow:
+                                                "0 10px 15px -3px rgba(59, 130, 246, 0.3)",
+                                        }}
+                                        whileTap={{ scale: 0.98 }}
+                                    >
+                                        Selesaikan{" "}
+                                        {faseNifas[activeKF - 1].name}
+                                    </motion.button>
+                                </motion.div>
+                            </div>
+                        </motion.div>
                     </motion.div>
-                </motion.div>
-            )}
+                )}
+            </GuestLayout>
         </div>
     );
 }

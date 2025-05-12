@@ -58,27 +58,24 @@ class NifasController extends Controller
 
     private function calculateNifasPhase($daysPassed)
     {
-        if ($daysPassed <= 10)
+        if ($daysPassed <= 1)
             return 1;
-        if ($daysPassed <= 20)
+        if ($daysPassed <= 7)
             return 2;
-        if ($daysPassed <= 30)
-            return 3;
         if ($daysPassed <= 42)
-            return 4;
+            return 3;
         return 0;
     }
 
     private function getNextPhaseDate($startDate, $nextPhase)
     {
         $phaseDays = [
-            1 => 10,
-            2 => 20,
-            3 => 30,
-            4 => 42
+            1 => 1,
+            2 => 7,
+            3 => 42,
         ];
 
-        if ($nextPhase > 4)
+        if ($nextPhase > 3)
             return null;
 
         $targetDays = $phaseDays[$nextPhase];
@@ -90,7 +87,7 @@ class NifasController extends Controller
 
     private function generateReminder($nextPhase, $nextPhaseDate)
     {
-        if (!$nextPhaseDate || $nextPhase > 4) {
+        if (!$nextPhaseDate || $nextPhase > 3) {
             return 0;
         }
 

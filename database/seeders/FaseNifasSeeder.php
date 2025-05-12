@@ -15,54 +15,40 @@ class FaseNifasSeeder extends Seeder
         //
         $faseNifas = [
             [
-                'name' => 'Fase 1',
+                'name' => 'Fase Akut',
                 'start_day' => 0,
-                'end_day' => 14,
-                'description' => "Periode kritis pasca-melahirkan yang memerlukan pemantauan ketat terhadap perdarahan, tekanan darah, dan kontraksi rahim",
+                'end_day' => 1,
+                'description' => "Fase kritis dalam 24 jam pertama setelah persalinan, fokus pada pemantauan tanda vital, kontraksi rahim, perdarahan, dan inisiasi menyusui dini.",
                 'video_url' => 'https://www.youtube.com/watch?v=UJ76qKD12LU',
                 'leaflet_url' => 'https://www.google.com',
                 'article_url' => 'https://www.google.com',
-                'twibbon_image' => 'twibbon/kf1.png',
+                'twibbon_image' => 'twibbon/01JV1VKGM794FBZZ5P9PGBPW7H.png',
                 'border_style' => 'border-primary',
             ],
             [
-                'name' => 'Fase 2',
-                'start_day' => 15,
-                'end_day' => 28,
-                'description' => "Fase pemulihan awal dengan fokus pada perawatan luka, manajemen nyeri, dan inisiasi menyusui",
+                'name' => 'Fase Awal',
+                'start_day' => 2,
+                'end_day' => 7,
+                'description' => "Fase pemulihan awal dengan fokus pada pemantauan involusi uterus, perawatan luka, produksi ASI, serta pencegahan infeksi dan gangguan psikologis.",
                 'video_url' => 'https://www.youtube.com/watch?v=UJ76qKD12LU',
                 'leaflet_url' => 'https://www.google.com',
                 'article_url' => 'https://www.google.com',
                 'twibbon_image' => 'twibbon/kf2.png',
-                'border_style' => 'border-secondary',
+                'border_style' => 'border-warning',
             ],
             [
-                'name' => 'Fase 3',
-                'start_day' => 29,
+                'name' => 'Fase Akhir',
+                'start_day' => 8,
                 'end_day' => 42,
-                'description' => "Fase pemulihan lanjut dengan fokus pada pemulihan fisik, pemulihan kesehatan, dan pengembangan keterampilan menyusui",
+                'description' => "Fase pemulihan lanjutan hingga 6 minggu postpartum untuk pemulihan menyeluruh, konseling KB, kesehatan mental, dan adaptasi peran sebagai ibu.",
                 'video_url' => 'https://www.youtube.com/watch?v=UJ76qKD12LU',
                 'leaflet_url' => 'https://www.google.com',
                 'article_url' => 'https://www.google.com',
                 'twibbon_image' => 'twibbon/kf3.png',
                 'border_style' => 'border-success',
             ],
-
-            [
-                'name' => 'Fase 4',
-                'start_day' => 43,
-                'end_day' => 56,
-                'description' => "Fase pemulihan lanjut dengan fokus pada pemulihan fisik, pemulihan kesehatan, dan pengembangan keterampilan menyusui",
-                'video_url' => 'https://www.youtube.com/watch?v=UJ76qKD12LU',
-                'leaflet_url' => 'https://www.google.com',
-                'article_url' => 'https://www.google.com',
-                'twibbon_image' => 'twibbon/kf4.png',
-                'border_style' => 'border-danger',
-            ],
-            
-            
-
         ];
+
 
         foreach ($faseNifas as $faseNifa) {
             FaseNifas::create($faseNifa);
