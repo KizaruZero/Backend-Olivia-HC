@@ -20,6 +20,7 @@ import Swal from "sweetalert2";
 import NifasReminder from "./Components/NifasReminder";
 import GuestLayout from "@/Layouts/GuestLayout";
 import TwibbonSystem from "./Components/TwibbonSection";
+import { usePage } from "@inertiajs/react";
 interface FaseNifas {
     id: number;
     name: string;
@@ -80,6 +81,7 @@ export default function DashboardNifas() {
     const [notes, setNotes] = useState("");
     const [reminder, setReminder] = useState<any>(null);
     const [userImage, setUserImage] = useState<string | null>(null);
+    const user = usePage().props.auth.user;
 
     const handleSaveImage = (imageData: string) => {
         console.log("Twibbon berhasil disimpan!");
@@ -96,6 +98,17 @@ export default function DashboardNifas() {
             .then((response) => response.json())
             .then((data) => {
                 setNifas(data[0]);
+                if (data.length === 0) {
+                    // show alert untuk mengisi masa nifas lalu jika di konfrimasi maka redirect ke /nifas/create
+                    Swal.fire({
+                        icon: "warning",
+                        title: "Masa nifas belum dimulai",
+                        text: "Silakan mengisi masa nifas terlebih dahulu",
+                        confirmButtonText: "Ok",
+                    }).then(() => {
+                        window.location.href = "/nifas/create";
+                    });
+                }
             });
     }, []);
 
@@ -329,7 +342,7 @@ export default function DashboardNifas() {
                         <div className="flex items-center justify-between">
                             <div>
                                 <h2 className="text-xl font-bold text-gray-800">
-                                    Selamat Datang, Bunda Sarah!
+                                    Selamat Datang, Bunda {user?.name}
                                 </h2>
                                 <p className="text-gray-600">
                                     Masa nifas dimulai:{" "}

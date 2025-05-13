@@ -54,7 +54,7 @@ class AuthenticatedSessionController extends Controller
         Auth::login($user, true);
 
 
-        return redirect()->intended(route('/', absolute: false));
+        return redirect()->intended(route('home', absolute: false));
     }
 
     /**
@@ -118,6 +118,6 @@ class AuthenticatedSessionController extends Controller
         // Explicitly save the session before redirect
         session()->save();
 
-        return redirect()->intended('/'); // Use simple path instead of route()
+        return redirect()->intended('home'); // Use simple path instead of route()
     }
 }

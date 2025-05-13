@@ -8,6 +8,9 @@ use App\Models\NifasProgress;
 use App\Models\NifasTask;
 use App\Models\NifasTaskProgress;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
+
 class NifasController extends Controller
 {
     //
@@ -17,9 +20,33 @@ class NifasController extends Controller
         return response()->json($nifas);
     }
 
+    public function createNifas(Request $request)
+    {
+        $user = Auth::user();
+        $validator = Validator::make($request->all(), [
+            'start_date' => 'required|date',
+            'end_date' => 'required|date',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 422);
+        }
+
+        $nifas = Nifas::create([
+            'user_id' => $user->id,
+            'start_date' => $request->start_date,
+            'end_date' => $request->end_date,
+        ]);
+        return response()->json($nifas);
+    }
+
+
+
+
     public function getNifasByUser()
     {
         $user = Auth::user();
+
 
         if (!$user) {
             return response()->json(['error' => 'Unauthorized'], 401);

@@ -6,6 +6,8 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\NifasController;
 use App\Http\Controllers\NifasTaskController;
+use App\Http\Controllers\UserController;
+
 Route::get('/', function () {
     return Inertia::render('HomeView', [
         'canLogin' => Route::has('login'),
@@ -35,9 +37,20 @@ Route::get('/user-dashboard', function () {
 })->name('user-dashboard');
 
 Route::get('/api/nifas/user', [NifasController::class, 'getNifasByUser']);
+Route::post('/api/nifas/user', [NifasController::class, 'createNifas']);
+
 
 Route::get('/api/nifastask/user', [NifasTaskController::class, 'getNifasTaskProgressByUser']);
 Route::get('/api/nifastask/percentage', [NifasTaskController::class, 'getAllFaseNifasWithPercentage']);
 Route::get('/api/nifas/reminder', [NifasController::class, 'getFaseNifasReminderByUser']);
+
+Route::get('profile-page', function () {
+    return Inertia::render('Profile/ProfilePage');
+})->name('profile-page');
+
+
+Route::get('/api/user/current', [UserController::class, 'getCurrentUser']);
+Route::post('/api/user/current', [UserController::class, 'updateUser']);
+Route::post('/api/user/update-profile-picture', [UserController::class, 'updateProfilePicture']);
 
 require __DIR__ . '/auth.php';
