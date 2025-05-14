@@ -18,9 +18,10 @@ import {
 import { motion } from "framer-motion";
 import Swal from "sweetalert2";
 import NifasReminder from "./Components/NifasReminder";
-import GuestLayout from "@/Layouts/GuestLayout";
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import TwibbonSystem from "./Components/TwibbonSection";
 import { usePage } from "@inertiajs/react";
+import GuestLayout from "@/Layouts/GuestLayout";
 interface FaseNifas {
     id: number;
     name: string;
@@ -106,7 +107,7 @@ export default function DashboardNifas() {
                         text: "Silakan mengisi masa nifas terlebih dahulu",
                         confirmButtonText: "Ok",
                     }).then(() => {
-                        window.location.href = "/nifas/create";
+                        window.location.href = "/profile";
                     });
                 }
             });
@@ -334,7 +335,7 @@ export default function DashboardNifas() {
     return (
         <div className="bg-gray-50 min-h-screen">
             {/* Header */}
-            <GuestLayout>
+            <AuthenticatedLayout>
                 {/* Main Content */}
                 <main className="container mx-auto p-4">
                     {/* Welcome Section */}
@@ -954,7 +955,7 @@ export default function DashboardNifas() {
                         </motion.div>
                     </motion.div>
                 )}
-            </GuestLayout>
+            </AuthenticatedLayout>
         </div>
     );
 }

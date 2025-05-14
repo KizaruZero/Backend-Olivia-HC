@@ -22,7 +22,7 @@ class FaseNifasSeeder extends Seeder
                 'video_url' => 'https://www.youtube.com/watch?v=UJ76qKD12LU',
                 'leaflet_url' => 'https://www.google.com',
                 'article_url' => 'https://www.google.com',
-                'twibbon_image' => 'twibbon/01JV1VKGM794FBZZ5P9PGBPW7H.png',
+                'twibbon_image' => 'twibbon/fase1.png',
                 'border_style' => 'border-primary',
             ],
             [
@@ -33,7 +33,7 @@ class FaseNifasSeeder extends Seeder
                 'video_url' => 'https://www.youtube.com/watch?v=UJ76qKD12LU',
                 'leaflet_url' => 'https://www.google.com',
                 'article_url' => 'https://www.google.com',
-                'twibbon_image' => 'twibbon/kf2.png',
+                'twibbon_image' => 'twibbon/fase2.png',
                 'border_style' => 'border-warning',
             ],
             [
@@ -44,7 +44,7 @@ class FaseNifasSeeder extends Seeder
                 'video_url' => 'https://www.youtube.com/watch?v=UJ76qKD12LU',
                 'leaflet_url' => 'https://www.google.com',
                 'article_url' => 'https://www.google.com',
-                'twibbon_image' => 'twibbon/kf3.png',
+                'twibbon_image' => 'twibbon/fase3.png',
                 'border_style' => 'border-success',
             ],
         ];

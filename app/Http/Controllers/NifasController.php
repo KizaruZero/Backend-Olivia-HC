@@ -40,6 +40,28 @@ class NifasController extends Controller
         return response()->json($nifas);
     }
 
+    public function updateNifas(Request $request, $id)
+    {
+        $nifas = Nifas::find($id);
+        if (!$nifas) {
+            return response()->json(['message' => 'Data nifas tidak ditemukan'], 404);
+        }
+        
+        $nifas->update($request->all());
+        
+        if ($nifas->save()) {
+            return response()->json([
+                'message' => 'Data nifas berhasil diubah',
+                'id' => $nifas->id,
+                'start_date' => $nifas->start_date,
+                'end_date' => $nifas->end_date,
+                'is_active' => $nifas->is_active
+            ], 200);
+        } else {
+            return response()->json(['message' => 'Data nifas gagal diubah'], 400);
+        }
+    }
+
 
 
 

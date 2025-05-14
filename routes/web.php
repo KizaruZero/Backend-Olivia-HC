@@ -18,13 +18,13 @@ Route::get('/', function () {
 })->name('home');
 
 Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
+    return Inertia::render('UserDashboardView');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::get('/profile-page', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile-page', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile-page', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
 
@@ -38,13 +38,13 @@ Route::get('/user-dashboard', function () {
 
 Route::get('/api/nifas/user', [NifasController::class, 'getNifasByUser']);
 Route::post('/api/nifas/user', [NifasController::class, 'createNifas']);
-
+Route::post('/api/nifas/user/{id}', [NifasController::class, 'updateNifas']);
 
 Route::get('/api/nifastask/user', [NifasTaskController::class, 'getNifasTaskProgressByUser']);
 Route::get('/api/nifastask/percentage', [NifasTaskController::class, 'getAllFaseNifasWithPercentage']);
 Route::get('/api/nifas/reminder', [NifasController::class, 'getFaseNifasReminderByUser']);
 
-Route::get('profile-page', function () {
+Route::get('profile', function () {
     return Inertia::render('Profile/ProfilePage');
 })->name('profile-page');
 

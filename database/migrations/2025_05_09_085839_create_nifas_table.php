@@ -18,7 +18,7 @@ return new class extends Migration
             $table->date('end_date')->nullable(); // Tanggal berakhir masa nifas (opsional, bisa dihitung)
             $table->boolean('is_active')->default(true);
             $table->timestamps();
-        });
+        }); 
     }
 
     /**

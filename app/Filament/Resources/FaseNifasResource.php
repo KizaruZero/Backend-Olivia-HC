@@ -36,7 +36,7 @@ class FaseNifasResource extends Resource
                     ->columnSpanFull()
                     ->rows(3),
                 Forms\Components\FileUpload::make('twibbon_image')
-                    ->disk('public')
+                    ->disk('public')    
                     ->directory('twibbon')
                     ->image(),
                 Forms\Components\TextInput::make('video_url')

@@ -15,9 +15,10 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import Swal from "sweetalert2";
 import { error } from "console";
-import GuestLayout from "@/Layouts/GuestLayout";
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 
 interface NifasData {
+    id: number;
     start_date: string;
     end_date: string;
     is_active: boolean;
@@ -124,9 +125,62 @@ export default function ProfilePage() {
     }, []);
 
     // Fungsi untuk menyimpan perubahan data nifas
-    const saveNifasData = async () => {
+    // Fungsi saveNifasData yang terpisah dengan parameter
+const saveNifasData = async (startDateParam: string, endDateParam: string) => {
+    try {
+        // Gunakan parameter yang diterima, bukan dari state
+        const response = await fetch("/api/nifas/user", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN":
+                    document
+                        .querySelector('meta[name="csrf-token"]')
+                        ?.getAttribute("content") || "",
+                Authorization: "Bearer " + localStorage.getItem("token"),
+            },
+            credentials: "include",
+            body: JSON.stringify({
+                start_date: startDateParam,
+                end_date: endDateParam,
+            }),
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            setNifas(data);
+            setIsEditingNifas(false);
+            setStartDate(data.start_date);
+            setEndDate(data.end_date);
+            Swal.fire({
+                icon: "success",
+                title: "Berhasil!",
+                text: "Data nifas berhasil disimpan",
+                timer: 2000,
+                showConfirmButton: false,
+            });
+        } else {
+            const errorData = await response.json();
+            console.error("API error:", errorData);
+            Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: errorData.error ? JSON.stringify(errorData.error) : "Terjadi kesalahan saat menyimpan data nifas",
+            });
+        }
+    } catch (error) {
+        console.error("Error saving nifas data:", error);
+        Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "Terjadi kesalahan saat menyimpan data nifas",
+        });
+    }
+};
+
+    const updateNifasData = async () => {
         try {
-            const response = await fetch("/api/nifas/user", {
+            const response = await fetch(`/api/nifas/user/${nifas?.id}`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -145,24 +199,66 @@ export default function ProfilePage() {
 
             if (response.ok) {
                 const data = await response.json();
-                setNifas(data);
-                setIsEditingNifas(false);
-                Swal.fire({
-                    icon: "success",
-                    title: "Berhasil!",
-                    text: "Data nifas berhasil disimpan",
-                    timer: 2000,
-                    showConfirmButton: false,
-                });
+                console.log('Received data from API:', data);
+                
+                // Only update if we have the nifas data
+                if (data.start_date && data.end_date) {
+                    setNifas({
+                        id: data.id,
+                        start_date: data.start_date,
+                        end_date: data.end_date,
+                        is_active: data.is_active
+                    });
+                    setStartDate(data.start_date);
+                    setEndDate(data.end_date);
+                    setIsEditingNifas(false);
+                    Swal.fire({
+                        icon: "success",
+                        title: "Berhasil!",
+                        text: data.message || "Data nifas berhasil diubah",
+                        timer: 2000,
+                        showConfirmButton: false,
+                    });
+                } else {
+                    // If we don't have the data, fetch it again
+                    const nifasResponse = await fetch("/api/nifas/user", {
+                        headers: {
+                            Authorization: "Bearer " + localStorage.getItem("token"),
+                        },
+                        credentials: "include",
+                    });
+                    
+                    if (nifasResponse.ok) {
+                        const nifasData = await nifasResponse.json();
+                        if (nifasData.length > 0) {
+                            setNifas(nifasData[0]);
+                            setStartDate(nifasData[0].start_date);
+                            setEndDate(nifasData[0].end_date);
+                            setIsEditingNifas(false);
+                            Swal.fire({
+                                icon: "success",
+                                title: "Berhasil!",
+                                text: data.message || "Data nifas berhasil diubah",
+                                timer: 2000,
+                                showConfirmButton: false,
+                            });
+                        }
+                    }
+                }
             } else {
                 console.error(response);
+                Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: "Terjadi kesalahan saat mengupdate data nifas",
+                });
             }
         } catch (error) {
-            console.error("Error saving nifas data:", error);
+            console.error("Error updating nifas data:", error);
             Swal.fire({
                 icon: "error",
                 title: "Oops...",
-                text: "Terjadi kesalahan saat menyimpan data nifas",
+                text: "Terjadi kesalahan saat mengupdate data nifas",
             });
         }
     };
@@ -277,7 +373,7 @@ export default function ProfilePage() {
     };
 
     return (
-        <GuestLayout>
+        <AuthenticatedLayout>
             <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-200">
                 {loading ? (
                     <div className="flex items-center justify-center min-h-screen">
@@ -500,7 +596,7 @@ export default function ProfilePage() {
                                                                 </button>
                                                                 <button
                                                                     onClick={
-                                                                        saveNifasData
+                                                                        updateNifasData
                                                                     }
                                                                     className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors flex items-center"
                                                                 >
@@ -653,49 +749,34 @@ export default function ProfilePage() {
                                                     Belum ada data masa nifas
                                                     yang tersimpan
                                                 </p>
-                                                <button
-                                                    onClick={() => {
-                                                        setNifas({
-                                                            start_date:
-                                                                new Date()
-                                                                    .toISOString()
-                                                                    .split(
-                                                                        "T"
-                                                                    )[0],
-                                                            end_date: new Date(
-                                                                Date.now() +
-                                                                    40 *
-                                                                        24 *
-                                                                        60 *
-                                                                        60 *
-                                                                        1000
-                                                            )
-                                                                .toISOString()
-                                                                .split("T")[0],
-                                                            is_active: true,
-                                                        });
-                                                        setStartDate(
-                                                            new Date()
-                                                                .toISOString()
-                                                                .split("T")[0]
-                                                        );
-                                                        setEndDate(
-                                                            new Date(
-                                                                Date.now() +
-                                                                    40 *
-                                                                        24 *
-                                                                        60 *
-                                                                        60 *
-                                                                        1000
-                                                            )
-                                                                .toISOString()
-                                                                .split("T")[0]
-                                                        );
-                                                    }}
-                                                    className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-                                                >
-                                                    Tambah Data Nifas Baru
-                                                </button>
+                                                // Fungsi onClick pada tombol
+                                            <button
+                                                onClick={async () => {
+                                                    const newStartDate = new Date().toISOString().split("T")[0];
+                                                    const newEndDate = new Date(Date.now() + 40 * 24 * 60 * 60 * 1000)
+                                                        .toISOString()
+                                                        .split("T")[0];
+                                                    
+                                                    // Simpan tanggal baru ke state
+                                                    setStartDate(newStartDate);
+                                                    setEndDate(newEndDate);
+                                                    setNifas({
+                                                        id: 0,
+                                                        start_date: newStartDate,
+                                                        end_date: newEndDate,
+                                                        is_active: true,
+                                                    });
+                                                    
+                                                    // Tunggu update state selesai
+                                                    await new Promise(resolve => setTimeout(resolve, 100));
+                                                    
+                                                    // Panggil fungsi saveNifasData
+                                                    saveNifasData(newStartDate, newEndDate);
+                                                }}
+                                                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                                            >
+                                                Tambah Data Nifas Baru
+                                            </button>
                                             </div>
                                         )}
                                     </div>
@@ -883,6 +964,6 @@ export default function ProfilePage() {
                     </div>
                 )}
             </div>
-        </GuestLayout>
+        </AuthenticatedLayout>
     );
 }

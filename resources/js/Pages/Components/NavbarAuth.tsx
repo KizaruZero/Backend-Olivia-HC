@@ -2,23 +2,22 @@ import { router, usePage } from "@inertiajs/react";
 import { motion } from "framer-motion";
 import { useState, type SetStateAction } from "react";
 
-export default function Navbar() {
+export default function NavbarAuth() {
     const [activeSection, setActiveSection] = useState<string | null>(null);
     const user = usePage().props.auth.user;
 
     const navItems = [
-        { name: "Beranda", id: "hero" },
-        { name: "Masalah", id: "problem" },
-        { name: "Fase Nifas", id: "fase-nifas" },
-        { name: "Fitur", id: "features" },
-        { name: "Bergabung", id: "join" },
+        { name: "Dashboard", id: "dashboard" },
+        { name: "Profile", id: "profile" },
+        // add method post logout
+        { name: "Logout", id: "logout", method: "post" },
     ];
 
-    const handleScroll = (id: string) => {
-        const element = document.getElementById(id);
-        element?.scrollIntoView({ behavior: "smooth" });
-        setActiveSection(id);
-    };
+    // const handleScroll = (id: string) => {
+    //     const element = document.getElementById(id);
+    //     element?.scrollIntoView({ behavior: "smooth" });
+    //     setActiveSection(id);
+    // };
 
     return (
         <header className="sticky top-0 z-50 bg-white shadow-sm px-12">
@@ -43,7 +42,13 @@ export default function Navbar() {
                         {navItems.map((item) => (
                             <li key={item.id}>
                                 <button
-                                    onClick={() => handleScroll(item.id)}
+                                    onClick={() => {
+                                        if (item.method) {
+                                            router.post(item.id);
+                                        } else {
+                                            router.visit(item.id);
+                                        }
+                                    }}
                                     className={`px-3 py-2  rounded-md transition-colors ${
                                         activeSection === item.id
                                             ? "text-blue-500 font-medium"
@@ -62,7 +67,7 @@ export default function Navbar() {
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                             className="bg-blue-600 text-white px-6 py-2 rounded-full shadow-md hover:bg-blue-700 transition-colors"
-                            onClick={() => router.visit("/dashboard")}
+                            onClick={() => router.visit("/maternal")}
                         >
                             Dashboard
                         </motion.button>
