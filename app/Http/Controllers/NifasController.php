@@ -42,23 +42,48 @@ class NifasController extends Controller
 
     public function updateNifas(Request $request, $id)
     {
-        $nifas = Nifas::find($id);
-        if (!$nifas) {
-            return response()->json(['message' => 'Data nifas tidak ditemukan'], 404);
-        }
-        
-        $nifas->update($request->all());
-        
-        if ($nifas->save()) {
+        try {
+            $nifas = Nifas::find($id);
+            if (!$nifas) {
+                return response()->json(['message' => 'Data nifas tidak ditemukan'], 404);
+            }
+
+            // Validate the start_date
+            $validator = Validator::make($request->all(), [
+                'start_date' => 'required|date',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json(['error' => $validator->errors()], 422);
+            }
+
+            // Update start_date
+            $nifas->start_date = $request->start_date;
+            
+            // Calculate end_date (40 days after start_date)
+            $nifas->end_date = \Carbon\Carbon::parse($nifas->start_date)->addDays(40);
+            
+            // Check if nifas period is still active
+            $today = \Carbon\Carbon::now();
+            $nifas->is_active = $today->lte($nifas->end_date);
+
+            if ($nifas->save()) {
+                return response()->json([
+                    'message' => 'Data nifas berhasil diubah',
+                    'id' => $nifas->id,
+                    'start_date' => $nifas->start_date,
+                    'end_date' => $nifas->end_date,
+                    'is_active' => $nifas->is_active
+                ], 200);
+            } else {
+                return response()->json(['message' => 'Data nifas gagal diubah'], 400);
+            }
+        } catch (\Exception $e) {
+            \Log::error('Error updating nifas: ' . $e->getMessage());
             return response()->json([
-                'message' => 'Data nifas berhasil diubah',
-                'id' => $nifas->id,
-                'start_date' => $nifas->start_date,
-                'end_date' => $nifas->end_date,
-                'is_active' => $nifas->is_active
-            ], 200);
-        } else {
-            return response()->json(['message' => 'Data nifas gagal diubah'], 400);
+                'message' => 'Terjadi kesalahan saat mengubah data nifas',
+                'error' => $e->getMessage()
+            ], 500);
         }
     }
 

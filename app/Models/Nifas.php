@@ -37,6 +37,12 @@ class Nifas extends Model
         'is_active',
     ];
 
+    protected $casts = [
+        'start_date' => 'date',
+        'end_date' => 'date',
+        'is_active' => 'boolean',
+    ];
+
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -83,15 +89,15 @@ class Nifas extends Model
             }
         });
 
-        static::created(function ($nifas) {
-            // For newly created records, check if we need to send initial reminder
-            self::checkAndSendReminder($nifas);
-        });
+        // static::created(function ($nifas) {
+        //     // For newly created records, check if we need to send initial reminder
+        //     self::checkAndSendReminder($nifas);
+        // });
 
-        static::updated(function ($nifas) {
-            // For updated records, check if we need to send reminder
-            self::checkAndSendReminder($nifas);
-        });
+        // static::updated(function ($nifas) {
+        //     // For updated records, check if we need to send reminder
+        //     self::checkAndSendReminder($nifas);
+        // });
     }
 
     public function faseNifas()

@@ -56,6 +56,12 @@ export default function ProfilePage() {
     const [previewUrl, setPreviewUrl] = useState<string>("");
     const fileInputRef = useRef<HTMLInputElement>(null);
 
+    // Add this function near the top of the component, after the state declarations
+    const formatDateForInput = (dateString: string) => {
+        if (!dateString) return '';
+        return new Date(dateString).toISOString().split('T')[0];
+    };
+
     // Mendapatkan data user dan nifas saat komponen dimuat
     useEffect(() => {
         // Simulasi fetch data user
@@ -77,8 +83,8 @@ export default function ProfilePage() {
             .then((data) => {
                 if (data.length > 0) {
                     setNifas(data[0]);
-                    setStartDate(data[0].start_date);
-                    setEndDate(data[0].end_date);
+                    setStartDate(formatDateForInput(data[0].start_date));
+                    setEndDate(formatDateForInput(data[0].end_date));
                 }
             })
             .catch((error) =>
@@ -125,61 +131,70 @@ export default function ProfilePage() {
     }, []);
 
     // Fungsi untuk menyimpan perubahan data nifas
-    // Fungsi saveNifasData yang terpisah dengan parameter
-const saveNifasData = async (startDateParam: string, endDateParam: string) => {
-    try {
-        // Gunakan parameter yang diterima, bukan dari state
-        const response = await fetch("/api/nifas/user", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRF-TOKEN":
-                    document
-                        .querySelector('meta[name="csrf-token"]')
-                        ?.getAttribute("content") || "",
-                Authorization: "Bearer " + localStorage.getItem("token"),
-            },
-            credentials: "include",
-            body: JSON.stringify({
-                start_date: startDateParam,
-                end_date: endDateParam,
-            }),
-        });
-
-        if (response.ok) {
-            const data = await response.json();
-            setNifas(data);
-            setIsEditingNifas(false);
-            setStartDate(data.start_date);
-            setEndDate(data.end_date);
-            Swal.fire({
-                icon: "success",
-                title: "Berhasil!",
-                text: "Data nifas berhasil disimpan",
-                timer: 2000,
-                showConfirmButton: false,
+    // Modify the saveNifasData function
+    const saveNifasData = async (startDateParam: string, endDateParam: string) => {
+        try {
+            const response = await fetch("/api/nifas/user", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN":
+                        document
+                            .querySelector('meta[name="csrf-token"]')
+                            ?.getAttribute("content") || "",
+                    Authorization: "Bearer " + localStorage.getItem("token"),
+                },
+                credentials: "include",
+                body: JSON.stringify({
+                    start_date: startDateParam,
+                }),
             });
-        } else {
-            const errorData = await response.json();
-            console.error("API error:", errorData);
+
+            if (response.ok) {
+                const data = await response.json();
+                setNifas(data);
+                setIsEditingNifas(false);
+                setStartDate(formatDateForInput(data.start_date));
+                setEndDate(formatDateForInput(data.end_date));
+                Swal.fire({
+                    icon: "success",
+                    title: "Berhasil!",
+                    text: "Data nifas berhasil disimpan",
+                    timer: 2000,
+                    showConfirmButton: false,
+                });
+            } else {
+                const errorData = await response.json();
+                console.error("API error:", errorData);
+                Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: errorData.error ? JSON.stringify(errorData.error) : "Terjadi kesalahan saat menyimpan data nifas",
+                });
+            }
+        } catch (error) {
+            console.error("Error saving nifas data:", error);
             Swal.fire({
                 icon: "error",
                 title: "Oops...",
-                text: errorData.error ? JSON.stringify(errorData.error) : "Terjadi kesalahan saat menyimpan data nifas",
+                text: "Terjadi kesalahan saat menyimpan data nifas",
             });
         }
-    } catch (error) {
-        console.error("Error saving nifas data:", error);
-        Swal.fire({
-            icon: "error",
-            title: "Oops...",
-            text: "Terjadi kesalahan saat menyimpan data nifas",
-        });
-    }
-};
+    };
 
+    // Modify the updateNifasData function
     const updateNifasData = async () => {
         try {
+            // Show loading indicator
+            Swal.fire({
+                title: 'Menyimpan...',
+                text: 'Mohon tunggu sebentar',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+            
             const response = await fetch(`/api/nifas/user/${nifas?.id}`, {
                 method: "POST",
                 headers: {
@@ -193,15 +208,23 @@ const saveNifasData = async (startDateParam: string, endDateParam: string) => {
                 credentials: "include",
                 body: JSON.stringify({
                     start_date: startDate,
-                    end_date: endDate,
                 }),
             });
-
+    
+            // Close loading indicator
+            Swal.close();
+            
+            // Always try to parse the response, even if it's an error
+            let data;
+            try {
+                const textResponse = await response.text();
+                data = textResponse ? JSON.parse(textResponse) : {};
+            } catch (parseError) {
+                console.error("Error parsing response:", parseError);
+                data = { message: "Terjadi kesalahan saat memproses respons server" };
+            }
+    
             if (response.ok) {
-                const data = await response.json();
-                console.log('Received data from API:', data);
-                
-                // Only update if we have the nifas data
                 if (data.start_date && data.end_date) {
                     setNifas({
                         id: data.id,
@@ -209,8 +232,8 @@ const saveNifasData = async (startDateParam: string, endDateParam: string) => {
                         end_date: data.end_date,
                         is_active: data.is_active
                     });
-                    setStartDate(data.start_date);
-                    setEndDate(data.end_date);
+                    setStartDate(formatDateForInput(data.start_date));
+                    setEndDate(formatDateForInput(data.end_date));
                     setIsEditingNifas(false);
                     Swal.fire({
                         icon: "success",
@@ -219,39 +242,24 @@ const saveNifasData = async (startDateParam: string, endDateParam: string) => {
                         timer: 2000,
                         showConfirmButton: false,
                     });
-                } else {
-                    // If we don't have the data, fetch it again
-                    const nifasResponse = await fetch("/api/nifas/user", {
-                        headers: {
-                            Authorization: "Bearer " + localStorage.getItem("token"),
-                        },
-                        credentials: "include",
-                    });
-                    
-                    if (nifasResponse.ok) {
-                        const nifasData = await nifasResponse.json();
-                        if (nifasData.length > 0) {
-                            setNifas(nifasData[0]);
-                            setStartDate(nifasData[0].start_date);
-                            setEndDate(nifasData[0].end_date);
-                            setIsEditingNifas(false);
-                            Swal.fire({
-                                icon: "success",
-                                title: "Berhasil!",
-                                text: data.message || "Data nifas berhasil diubah",
-                                timer: 2000,
-                                showConfirmButton: false,
-                            });
-                        }
-                    }
                 }
             } else {
-                console.error(response);
-                Swal.fire({
-                    icon: "error",
-                    title: "Oops...",
-                    text: "Terjadi kesalahan saat mengupdate data nifas",
-                });
+                // Handle validation errors
+                if (response.status === 422) {
+                    const errorMessage = data.error ? Object.values(data.error).join('\n') : 'Terjadi kesalahan validasi';
+                    Swal.fire({
+                        icon: "error",
+                        title: "Validasi Error",
+                        text: errorMessage,
+                    });
+                } else {
+                    // Handle other errors
+                    Swal.fire({
+                        icon: "error",
+                        title: "Oops...",
+                        text: data.message || "Terjadi kesalahan saat mengupdate data nifas",
+                    });
+                }
             }
         } catch (error) {
             console.error("Error updating nifas data:", error);
@@ -531,49 +539,28 @@ const saveNifasData = async (startDateParam: string, endDateParam: string) => {
                                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                                 <div>
                                                                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                                                                        Tanggal
-                                                                        Mulai
-                                                                        Nifas
+                                                                        Tanggal Mulai Nifas
                                                                     </label>
                                                                     <input
                                                                         type="date"
-                                                                        value={
-                                                                            startDate
-                                                                        }
-                                                                        onChange={(
-                                                                            e
-                                                                        ) =>
-                                                                            setStartDate(
-                                                                                e
-                                                                                    .target
-                                                                                    .value
-                                                                            )
-                                                                        }
+                                                                        value={startDate}
+                                                                        onChange={(e) => setStartDate(e.target.value)}
                                                                         className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                                                                     />
                                                                 </div>
                                                                 <div>
                                                                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                                                                        Tanggal
-                                                                        Selesai
-                                                                        Nifas
+                                                                        Tanggal Selesai Nifas
                                                                     </label>
                                                                     <input
                                                                         type="date"
-                                                                        value={
-                                                                            endDate
-                                                                        }
-                                                                        onChange={(
-                                                                            e
-                                                                        ) =>
-                                                                            setEndDate(
-                                                                                e
-                                                                                    .target
-                                                                                    .value
-                                                                            )
-                                                                        }
-                                                                        className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                                                                        value={endDate}
+                                                                        disabled
+                                                                        className="w-full p-2 border border-gray-300 rounded-md bg-gray-100 cursor-not-allowed"
                                                                     />
+                                                                    <p className="text-xs text-gray-500 mt-1">
+                                                                        Tanggal selesai akan dihitung otomatis (40 hari setelah tanggal mulai)
+                                                                    </p>
                                                                 </div>
                                                             </div>
 
@@ -749,7 +736,6 @@ const saveNifasData = async (startDateParam: string, endDateParam: string) => {
                                                     Belum ada data masa nifas
                                                     yang tersimpan
                                                 </p>
-                                                // Fungsi onClick pada tombol
                                             <button
                                                 onClick={async () => {
                                                     const newStartDate = new Date().toISOString().split("T")[0];
