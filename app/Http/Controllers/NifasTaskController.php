@@ -184,6 +184,7 @@ class NifasTaskController extends Controller
             'is_completed' => 'required|boolean',
             'puskesmas' => 'nullable|string',
             'notes' => 'nullable|string',
+            'tanggal_periksa' => 'nullable|date',
         ]);
 
         if ($validator->fails()) {
@@ -197,7 +198,7 @@ class NifasTaskController extends Controller
             $nifasProgress->puskesmas = $request->puskesmas;
             $nifasProgress->notes = $request->notes;
             $nifasProgress->completed_at = Carbon::now();
-
+            $nifasProgress->tanggal_periksa = $request->tanggal_periksa;
             $nifasProgress->save();
 
             return response()->json([

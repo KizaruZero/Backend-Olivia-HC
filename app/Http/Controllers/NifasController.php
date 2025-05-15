@@ -25,8 +25,10 @@ class NifasController extends Controller
         $user = Auth::user();
         $validator = Validator::make($request->all(), [
             'start_date' => 'required|date',
-            'end_date' => 'required|date',
+
         ]);
+
+        $end_date = \Carbon\Carbon::parse($request->start_date)->addDays(42);
 
         if ($validator->fails()) {
             return response()->json(['error' => $validator->errors()], 422);
@@ -35,7 +37,7 @@ class NifasController extends Controller
         $nifas = Nifas::create([
             'user_id' => $user->id,
             'start_date' => $request->start_date,
-            'end_date' => $request->end_date,
+            'end_date' => $end_date
         ]);
         return response()->json($nifas);
     }
@@ -59,10 +61,10 @@ class NifasController extends Controller
 
             // Update start_date
             $nifas->start_date = $request->start_date;
-            
+
             // Calculate end_date (40 days after start_date)
             $nifas->end_date = \Carbon\Carbon::parse($nifas->start_date)->addDays(40);
-            
+
             // Check if nifas period is still active
             $today = \Carbon\Carbon::now();
             $nifas->is_active = $today->lte($nifas->end_date);
@@ -132,12 +134,14 @@ class NifasController extends Controller
 
     private function calculateNifasPhase($daysPassed)
     {
-        if ($daysPassed <= 1)
+        if ($daysPassed <= 2)
             return 1;
         if ($daysPassed <= 7)
             return 2;
-        if ($daysPassed <= 42)
+        if ($daysPassed <= 28)
             return 3;
+        if ($daysPassed <= 42)
+            return 4;
         return 0;
     }
 
@@ -161,7 +165,7 @@ class NifasController extends Controller
 
     private function generateReminder($nextPhase, $nextPhaseDate)
     {
-        if (!$nextPhaseDate || $nextPhase > 3) {
+        if (!$nextPhaseDate || $nextPhase > 4) {
             return 0;
         }
 

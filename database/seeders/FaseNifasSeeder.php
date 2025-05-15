@@ -17,7 +17,7 @@ class FaseNifasSeeder extends Seeder
             [
                 'name' => 'Fase Akut',
                 'start_day' => 0,
-                'end_day' => 1,
+                'end_day' => 2,
                 'description' => "Fase kritis dalam 24 jam pertama setelah persalinan, fokus pada pemantauan tanda vital, kontraksi rahim, perdarahan, dan inisiasi menyusui dini.",
                 'video_url' => 'https://www.youtube.com/watch?v=UJ76qKD12LU',
                 'leaflet_url' => 'https://www.google.com',
@@ -27,7 +27,7 @@ class FaseNifasSeeder extends Seeder
             ],
             [
                 'name' => 'Fase Awal',
-                'start_day' => 2,
+                'start_day' => 3,
                 'end_day' => 7,
                 'description' => "Fase pemulihan awal dengan fokus pada pemantauan involusi uterus, perawatan luka, produksi ASI, serta pencegahan infeksi dan gangguan psikologis.",
                 'video_url' => 'https://www.youtube.com/watch?v=UJ76qKD12LU',
@@ -39,13 +39,20 @@ class FaseNifasSeeder extends Seeder
             [
                 'name' => 'Fase Akhir',
                 'start_day' => 8,
-                'end_day' => 42,
+                'end_day' => 28,
                 'description' => "Fase pemulihan lanjutan hingga 6 minggu postpartum untuk pemulihan menyeluruh, konseling KB, kesehatan mental, dan adaptasi peran sebagai ibu.",
                 'video_url' => 'https://www.youtube.com/watch?v=UJ76qKD12LU',
                 'leaflet_url' => 'https://www.google.com',
                 'article_url' => 'https://www.google.com',
                 'twibbon_image' => 'twibbon/fase3.png',
                 'border_style' => 'border-success',
+            ],
+            [
+                'name' => 'Fase Akhir',
+                'start_day' => 29,
+                'end_day' => 42,
+                'description' => "Fase pemulihan lanjutan hingga 6 minggu postpartum untuk pemulihan menyeluruh, konseling KB, kesehatan mental, dan adaptasi peran sebagai ibu.",
+                'video_url' => 'https://www.youtube.com/watch?v=UJ76qKD12LU',
             ],
         ];
 

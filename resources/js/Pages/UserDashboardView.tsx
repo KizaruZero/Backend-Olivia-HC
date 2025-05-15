@@ -14,6 +14,7 @@ import {
     FileText,
     X,
     Info,
+    CalendarDays,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import Swal from "sweetalert2";
@@ -54,6 +55,7 @@ interface NifasTask {
     nifas_progress: {
         puskesmas: string;
         notes: string;
+        tanggal_periksa: string;
     };
     nifas_task: {
         id: number;
@@ -79,6 +81,7 @@ export default function DashboardNifas() {
         "Puskesmas Sejahtera"
     );
     const [customPuskesmas, setCustomPuskesmas] = useState("");
+    const [selectedDate, setSelectedDate] = useState<string | null>(null);
     const [notes, setNotes] = useState("");
     const [reminder, setReminder] = useState<any>(null);
     const [userImage, setUserImage] = useState<string | null>(null);
@@ -87,6 +90,11 @@ export default function DashboardNifas() {
     const handleSaveImage = (imageData: string) => {
         console.log("Twibbon berhasil disimpan!");
         setUserImage(imageData);
+    };
+
+    const formatDateForInput = (dateString: string) => {
+        if (!dateString) return "";
+        return new Date(dateString).toISOString().split("T")[0];
     };
 
     useEffect(() => {
@@ -141,6 +149,8 @@ export default function DashboardNifas() {
                 throw new Error("Nifas Progress ID not found");
             }
 
+            console.log(selectedDate);
+
             // Get CSRF token from meta tag
             const token = document
                 .querySelector('meta[name="csrf-token"]')
@@ -163,6 +173,7 @@ export default function DashboardNifas() {
                             ? customPuskesmas
                             : selectedPuskesmas,
                     notes: notes,
+                    tanggal_periksa: selectedDate,
                 }),
             });
 
@@ -286,9 +297,10 @@ export default function DashboardNifas() {
     const calculateNifasPhase = (startDate: string): number => {
         const start = new Date(startDate);
         const daysPassed = calculateDaysPassed(startDate);
-        if (daysPassed <= 1) return 1;
+        if (daysPassed <= 2) return 1;
         if (daysPassed <= 7) return 2;
-        if (daysPassed <= 42) return 3;
+        if (daysPassed <= 28) return 3;
+        if (daysPassed <= 42) return 4;
         return 0;
     };
 
@@ -320,7 +332,8 @@ export default function DashboardNifas() {
                         "Puskesmas Sejahtera" ||
                     taskData.nifas_progress.puskesmas === "Puskesmas Harapan" ||
                     taskData.nifas_progress.puskesmas === "Klinik Bidan" ||
-                    taskData.nifas_progress.puskesmas === "Rumah Sakit"
+                    taskData.nifas_progress.puskesmas === "Rumah Sakit" ||
+                    taskData.nifas_progress.puskesmas === "Rumah Sakit Bidan"
                 ) {
                     setSelectedPuskesmas(taskData.nifas_progress.puskesmas);
                     setCustomPuskesmas("");
@@ -328,6 +341,7 @@ export default function DashboardNifas() {
                     setSelectedPuskesmas("other");
                     setCustomPuskesmas(taskData.nifas_progress.puskesmas || "");
                 }
+                setSelectedDate(taskData.nifas_progress.tanggal_periksa || "");
             }
         }
     }, [showModal, activeKF, nifasTask]);
@@ -823,6 +837,36 @@ export default function DashboardNifas() {
                                             animate={{ opacity: 1, y: 0 }}
                                             transition={{ delay: 0.4 }}
                                         >
+                                            {/* tanggal periks
+                                            a */}
+                                            <div className="flex items-center gap-2 mb-3 text-blue-800">
+                                                <Calendar size={18} />
+                                                <h4 className="font-semibold">
+                                                    Tanggal Periksa
+                                                </h4>
+                                            </div>
+                                            <div className="relative mb-4">
+                                                <input
+                                                    type="date"
+                                                    className="w-full p-3 pl-4 pr-10 bg-white border border-blue-100 rounded-lg appearance-none focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all"
+                                                    value={
+                                                        selectedDate
+                                                            ? formatDateForInput(
+                                                                  selectedDate
+                                                              )
+                                                            : ""
+                                                    }
+                                                    onChange={(e) =>
+                                                        setSelectedDate(
+                                                            e.target.value
+                                                        )
+                                                    }
+                                                />
+                                                <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none text-blue-400">
+                                                    <CalendarDays size={18} />
+                                                </div>
+                                            </div>
+
                                             <div className="flex items-center gap-2 mb-3 text-blue-800">
                                                 <MapPin size={18} />
                                                 <h4 className="font-semibold">

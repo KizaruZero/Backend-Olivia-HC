@@ -58,8 +58,8 @@ export default function ProfilePage() {
 
     // Add this function near the top of the component, after the state declarations
     const formatDateForInput = (dateString: string) => {
-        if (!dateString) return '';
-        return new Date(dateString).toISOString().split('T')[0];
+        if (!dateString) return "";
+        return new Date(dateString).toISOString().split("T")[0];
     };
 
     // Mendapatkan data user dan nifas saat komponen dimuat
@@ -132,7 +132,10 @@ export default function ProfilePage() {
 
     // Fungsi untuk menyimpan perubahan data nifas
     // Modify the saveNifasData function
-    const saveNifasData = async (startDateParam: string, endDateParam: string) => {
+    const saveNifasData = async (
+        startDateParam: string,
+        endDateParam: string
+    ) => {
         try {
             const response = await fetch("/api/nifas/user", {
                 method: "POST",
@@ -169,7 +172,9 @@ export default function ProfilePage() {
                 Swal.fire({
                     icon: "error",
                     title: "Oops...",
-                    text: errorData.error ? JSON.stringify(errorData.error) : "Terjadi kesalahan saat menyimpan data nifas",
+                    text: errorData.error
+                        ? JSON.stringify(errorData.error)
+                        : "Terjadi kesalahan saat menyimpan data nifas",
                 });
             }
         } catch (error) {
@@ -187,14 +192,14 @@ export default function ProfilePage() {
         try {
             // Show loading indicator
             Swal.fire({
-                title: 'Menyimpan...',
-                text: 'Mohon tunggu sebentar',
+                title: "Menyimpan...",
+                text: "Mohon tunggu sebentar",
                 allowOutsideClick: false,
                 didOpen: () => {
                     Swal.showLoading();
-                }
+                },
             });
-            
+
             const response = await fetch(`/api/nifas/user/${nifas?.id}`, {
                 method: "POST",
                 headers: {
@@ -210,10 +215,10 @@ export default function ProfilePage() {
                     start_date: startDate,
                 }),
             });
-    
+
             // Close loading indicator
             Swal.close();
-            
+
             // Always try to parse the response, even if it's an error
             let data;
             try {
@@ -221,16 +226,18 @@ export default function ProfilePage() {
                 data = textResponse ? JSON.parse(textResponse) : {};
             } catch (parseError) {
                 console.error("Error parsing response:", parseError);
-                data = { message: "Terjadi kesalahan saat memproses respons server" };
+                data = {
+                    message: "Terjadi kesalahan saat memproses respons server",
+                };
             }
-    
+
             if (response.ok) {
                 if (data.start_date && data.end_date) {
                     setNifas({
                         id: data.id,
                         start_date: data.start_date,
                         end_date: data.end_date,
-                        is_active: data.is_active
+                        is_active: data.is_active,
                     });
                     setStartDate(formatDateForInput(data.start_date));
                     setEndDate(formatDateForInput(data.end_date));
@@ -246,7 +253,9 @@ export default function ProfilePage() {
             } else {
                 // Handle validation errors
                 if (response.status === 422) {
-                    const errorMessage = data.error ? Object.values(data.error).join('\n') : 'Terjadi kesalahan validasi';
+                    const errorMessage = data.error
+                        ? Object.values(data.error).join("\n")
+                        : "Terjadi kesalahan validasi";
                     Swal.fire({
                         icon: "error",
                         title: "Validasi Error",
@@ -257,7 +266,9 @@ export default function ProfilePage() {
                     Swal.fire({
                         icon: "error",
                         title: "Oops...",
-                        text: data.message || "Terjadi kesalahan saat mengupdate data nifas",
+                        text:
+                            data.message ||
+                            "Terjadi kesalahan saat mengupdate data nifas",
                     });
                 }
             }
@@ -285,9 +296,9 @@ export default function ProfilePage() {
 
     // Menghitung hari tersisa masa nifas (standar 40 hari)
     const calculateDaysRemaining = () => {
-        if (!nifas?.start_date) return 40;
+        if (!nifas?.start_date) return 42;
 
-        const totalDays = 40;
+        const totalDays = 42;
         const elapsedDays = calculateDaysElapsed();
         return Math.max(0, totalDays - elapsedDays);
     };
@@ -539,27 +550,51 @@ export default function ProfilePage() {
                                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                                 <div>
                                                                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                                                                        Tanggal Mulai Nifas
+                                                                        Tanggal
+                                                                        Mulai
+                                                                        Nifas
                                                                     </label>
                                                                     <input
                                                                         type="date"
-                                                                        value={startDate}
-                                                                        onChange={(e) => setStartDate(e.target.value)}
+                                                                        value={
+                                                                            startDate
+                                                                        }
+                                                                        onChange={(
+                                                                            e
+                                                                        ) =>
+                                                                            setStartDate(
+                                                                                e
+                                                                                    .target
+                                                                                    .value
+                                                                            )
+                                                                        }
                                                                         className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                                                                     />
                                                                 </div>
                                                                 <div>
                                                                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                                                                        Tanggal Selesai Nifas
+                                                                        Tanggal
+                                                                        Selesai
+                                                                        Nifas
                                                                     </label>
                                                                     <input
                                                                         type="date"
-                                                                        value={endDate}
+                                                                        value={
+                                                                            endDate
+                                                                        }
                                                                         disabled
                                                                         className="w-full p-2 border border-gray-300 rounded-md bg-gray-100 cursor-not-allowed"
                                                                     />
                                                                     <p className="text-xs text-gray-500 mt-1">
-                                                                        Tanggal selesai akan dihitung otomatis (40 hari setelah tanggal mulai)
+                                                                        Tanggal
+                                                                        selesai
+                                                                        akan
+                                                                        dihitung
+                                                                        otomatis
+                                                                        (40 hari
+                                                                        setelah
+                                                                        tanggal
+                                                                        mulai)
                                                                     </p>
                                                                 </div>
                                                             </div>
@@ -695,7 +730,7 @@ export default function ProfilePage() {
                                                                     </span>
                                                                     <span className="text-blue-600 font-medium">
                                                                         {calculateDaysElapsed()}{" "}
-                                                                        dari 40
+                                                                        dari 42
                                                                         hari
                                                                     </span>
                                                                 </div>
@@ -736,33 +771,57 @@ export default function ProfilePage() {
                                                     Belum ada data masa nifas
                                                     yang tersimpan
                                                 </p>
-                                            <button
-                                                onClick={async () => {
-                                                    const newStartDate = new Date().toISOString().split("T")[0];
-                                                    const newEndDate = new Date(Date.now() + 40 * 24 * 60 * 60 * 1000)
-                                                        .toISOString()
-                                                        .split("T")[0];
-                                                    
-                                                    // Simpan tanggal baru ke state
-                                                    setStartDate(newStartDate);
-                                                    setEndDate(newEndDate);
-                                                    setNifas({
-                                                        id: 0,
-                                                        start_date: newStartDate,
-                                                        end_date: newEndDate,
-                                                        is_active: true,
-                                                    });
-                                                    
-                                                    // Tunggu update state selesai
-                                                    await new Promise(resolve => setTimeout(resolve, 100));
-                                                    
-                                                    // Panggil fungsi saveNifasData
-                                                    saveNifasData(newStartDate, newEndDate);
-                                                }}
-                                                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-                                            >
-                                                Tambah Data Nifas Baru
-                                            </button>
+                                                <button
+                                                    onClick={async () => {
+                                                        const newStartDate =
+                                                            new Date()
+                                                                .toISOString()
+                                                                .split("T")[0];
+                                                        const newEndDate =
+                                                            new Date(
+                                                                Date.now() +
+                                                                    40 *
+                                                                        24 *
+                                                                        60 *
+                                                                        60 *
+                                                                        1000
+                                                            )
+                                                                .toISOString()
+                                                                .split("T")[0];
+
+                                                        // Simpan tanggal baru ke state
+                                                        setStartDate(
+                                                            newStartDate
+                                                        );
+                                                        setEndDate(newEndDate);
+                                                        setNifas({
+                                                            id: 0,
+                                                            start_date:
+                                                                newStartDate,
+                                                            end_date:
+                                                                newEndDate,
+                                                            is_active: true,
+                                                        });
+
+                                                        // Tunggu update state selesai
+                                                        await new Promise(
+                                                            (resolve) =>
+                                                                setTimeout(
+                                                                    resolve,
+                                                                    100
+                                                                )
+                                                        );
+
+                                                        // Panggil fungsi saveNifasData
+                                                        saveNifasData(
+                                                            newStartDate,
+                                                            newEndDate
+                                                        );
+                                                    }}
+                                                    className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                                                >
+                                                    Tambah Data Nifas Baru
+                                                </button>
                                             </div>
                                         )}
                                     </div>
