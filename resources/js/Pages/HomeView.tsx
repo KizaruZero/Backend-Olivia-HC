@@ -7,6 +7,7 @@ import FiturCard from "./Components/FiturSection";
 import GuestLayout from "@/Layouts/GuestLayout";
 import { usePage, router } from "@inertiajs/react";
 import NifasSection from "./Components/FaseNifasSection";
+import EducationSection from "./Components/EducationSection";
 export default function HomeView() {
     // Animation variants
     const containerVariants = {
@@ -157,11 +158,14 @@ export default function HomeView() {
                     </motion.div>
                 </motion.section>
 
-                {/* Problem Section */}
-                <ProblemSection></ProblemSection>
-
                 {/* Fase Nifas Section */}
                 <NifasSection></NifasSection>
+
+                {/* Education Section */}
+                <EducationSection></EducationSection>
+
+                {/* Problem Section */}
+                <ProblemSection></ProblemSection>
 
                 {/* Solution Section */}
                 <motion.div

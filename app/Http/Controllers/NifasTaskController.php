@@ -261,5 +261,28 @@ class NifasTaskController extends Controller
         }
     }
 
+    /**
+     * Get count of completed nifas progress for authenticated user
+     * 
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getCompletedNifasProgressByUser()
+    {
+        try {
+            if (!Auth::check()) {
+                return response()->json(['error' => 'Unauthorized'], 401);
+            }
+            $user = Auth::user();
+            $nifas = Nifas::where('user_id', $user->id)->where('is_active', true)->first();
+            $nifasProgress = NifasProgress::where('nifas_id', $nifas->id)
+                ->where('is_completed', 1)
+                ->count();
+
+            return response()->json($nifasProgress);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to get nifas progress'], 500);
+        }
+    }
+
 
 }

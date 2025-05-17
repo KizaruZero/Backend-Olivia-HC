@@ -63,7 +63,7 @@ class NifasController extends Controller
             $nifas->start_date = $request->start_date;
 
             // Calculate end_date (40 days after start_date)
-            $nifas->end_date = \Carbon\Carbon::parse($nifas->start_date)->addDays(40);
+            $nifas->end_date = \Carbon\Carbon::parse($nifas->start_date)->addDays(42);
 
             // Check if nifas period is still active
             $today = \Carbon\Carbon::now();
@@ -88,9 +88,6 @@ class NifasController extends Controller
             ], 500);
         }
     }
-
-
-
 
     public function getNifasByUser()
     {
@@ -148,12 +145,13 @@ class NifasController extends Controller
     private function getNextPhaseDate($startDate, $nextPhase)
     {
         $phaseDays = [
-            1 => 1,
-            2 => 7,
-            3 => 42,
+            1 => 1,  // Phase 1 dimulai hari ke-1
+            2 => 3,  // Phase 2 dimulai hari ke-3
+            3 => 8,  // Phase 3 dimulai hari ke-8
+            4 => 29, // Phase 4 dimulai hari ke-29
         ];
 
-        if ($nextPhase > 3)
+        if ($nextPhase > 4)
             return null;
 
         $targetDays = $phaseDays[$nextPhase];

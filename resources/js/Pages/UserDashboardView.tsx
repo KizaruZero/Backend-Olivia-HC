@@ -12,6 +12,7 @@ import {
     Check,
     MapPin,
     FileText,
+    Clock,
     X,
     Info,
     CalendarDays,
@@ -71,6 +72,7 @@ export default function DashboardNifas() {
     const [activeKF, setActiveKF] = useState<number>(1);
     const [showModal, setShowModal] = useState<boolean>(false);
     const [completedKFs, setCompletedKFs] = useState<number[]>([]);
+    const [completedKFsCount, setCompletedKFsCount] = useState<number>(0);
     const [nifas, setNifas] = useState<Nifas | null>(null);
     const [faseNifas, setFaseNifas] = useState<FaseNifas[]>([]);
     const [nifasTask, setNifasTask] = useState<NifasTask[]>([]);
@@ -267,6 +269,15 @@ export default function DashboardNifas() {
             });
     }, []);
 
+    useEffect(() => {
+        fetch("/api/nifasprogress/user")
+            .then((response) => response.json())
+            .then((data) => {
+                setCompletedKFsCount(data);
+                console.log(data);
+            });
+    }, []);
+
     // Add these helper functions at the top of the file, after the interfaces
     const calculateProgress = (startDate: string, endDate: string): number => {
         const start = new Date(startDate);
@@ -311,8 +322,16 @@ export default function DashboardNifas() {
             setShowModal(true);
         } else {
             Swal.fire({
-                icon: "error",
-                title: "Fase nifas belum dimulai",
+                title: "Ibu, sabar ya ❤️",
+                html: `Fase nifas ${kfId} belum dimulai. <br><br>Tubuh butuh waktu untuk memulihkan diri secara alami. <br>Nanti akan ada notifikasi ketika waktunya tiba.`,
+                icon: "info",
+                confirmButtonText: "Mengerti",
+                background: "#fffaf7",
+                showClass: {
+                    popup: "animate__animated animate__fadeIn",
+                },
+                timer: 5000, // Otomatis hilang setelah 5 detik (opsional)
+                timerProgressBar: true,
             });
         }
     };
@@ -353,37 +372,61 @@ export default function DashboardNifas() {
                 {/* Main Content */}
                 <main className="container mx-auto p-4">
                     {/* Welcome Section */}
-                    <div className="mb-6 bg-white rounded-lg p-6 shadow-md">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <h2 className="text-xl font-bold text-gray-800">
+                    <div className="bg-gradient-to-r from-blue-500 to-blue-700 p-6 mb-6 rounded-lg">
+                        <motion.div
+                            className="flex items-center justify-between"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ delay: 0.2 }}
+                        >
+                            <div className="text-white">
+                                <motion.h2
+                                    className="text-2xl font-bold"
+                                    initial={{ x: -20, opacity: 0 }}
+                                    animate={{ x: 0, opacity: 1 }}
+                                    transition={{ delay: 0.3 }}
+                                >
                                     Selamat Datang, Bunda {user?.name}
-                                </h2>
-                                <p className="text-gray-600">
-                                    Masa nifas dimulai:{" "}
-                                    {nifas?.start_date
-                                        ? new Date(
-                                              nifas.start_date
-                                          ).toLocaleDateString("id-ID", {
-                                              day: "numeric",
-                                              month: "long",
-                                              year: "numeric",
-                                          })
-                                        : "-"}
-                                </p>
+                                </motion.h2>
+                                <motion.div
+                                    className="flex items-center mt-2"
+                                    initial={{ x: -20, opacity: 0 }}
+                                    animate={{ x: 0, opacity: 1 }}
+                                    transition={{ delay: 0.4 }}
+                                >
+                                    <Calendar size={16} className="mr-2" />
+                                    <p>
+                                        Masa nifas dimulai:{" "}
+                                        {nifas?.start_date
+                                            ? new Date(
+                                                  nifas.start_date
+                                              ).toLocaleDateString("id-ID", {
+                                                  day: "numeric",
+                                                  month: "long",
+                                                  year: "numeric",
+                                              })
+                                            : "-"}
+                                    </p>
+                                </motion.div>
                             </div>
-                            {completedKFs.length > 0 && (
-                                <div className="flex items-center space-x-2">
-                                    <Award
-                                        className="text-yellow-500"
-                                        size={24}
-                                    />
-                                    <span className="text-sm font-medium">
-                                        {completedKFs.length} KF Selesai
-                                    </span>
-                                </div>
-                            )}
-                        </div>
+
+                            <motion.div
+                                className="flex items-center bg-white bg-opacity-20 rounded-lg p-2 px-4"
+                                initial={{ scale: 0.8, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                transition={{ delay: 0.5, type: "spring" }}
+                                whileHover={{ scale: 1.05 }}
+                            >
+                                <Clock className="text-white mr-2" size={20} />
+                                <span className="text-white font-medium">
+                                    Hari ke-
+                                    {calculateDaysPassed(
+                                        nifas?.start_date || ""
+                                    )}{" "}
+                                    Nifas
+                                </span>
+                            </motion.div>
+                        </motion.div>
                     </div>
 
                     {/* Progress Bar */}
@@ -392,6 +435,18 @@ export default function DashboardNifas() {
                             <h3 className="text-lg font-medium text-gray-800">
                                 Progress Masa Nifas
                             </h3>
+
+                            <div className="flex justify-between items-center mb-3">
+                                {completedKFsCount > 0 && (
+                                    <div className="flex items-center space-x-2 bg-blue-600 text-white px-3 py-1 rounded-full">
+                                        <Award size={16} />
+                                        <span className="text-sm font-medium">
+                                            {completedKFsCount} KF Selesai
+                                        </span>
+                                    </div>
+                                )}
+                            </div>
+
                             <span className="text-sm font-medium text-purple-700">
                                 {nifas?.start_date
                                     ? new Date(
@@ -417,7 +472,7 @@ export default function DashboardNifas() {
 
                         <div className="w-full bg-gray-200 rounded-full h-4 mb-6 relative group">
                             <div
-                                className="bg-purple-600 h-4 rounded-full transition-all duration-300"
+                                className="bg-gradient-to-r from-blue-400 to-blue-600 h-4 rounded-full transition-all duration-300"
                                 style={{
                                     width: nifas
                                         ? `${calculateProgress(

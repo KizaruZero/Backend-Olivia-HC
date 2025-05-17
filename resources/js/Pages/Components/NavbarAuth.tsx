@@ -7,6 +7,7 @@ export default function NavbarAuth() {
     const user = usePage().props.auth.user;
 
     const navItems = [
+        { name: "Home", id: "/" },
         { name: "Dashboard", id: "dashboard" },
         { name: "Profile", id: "profile" },
         // add method post logout
@@ -67,7 +68,7 @@ export default function NavbarAuth() {
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                             className="bg-blue-600 text-white px-6 py-2 rounded-full shadow-md hover:bg-blue-700 transition-colors"
-                            onClick={() => router.visit("/maternal")}
+                            onClick={() => router.visit("/dashboard")}
                         >
                             Dashboard
                         </motion.button>
