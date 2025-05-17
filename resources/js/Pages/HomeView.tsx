@@ -97,7 +97,7 @@ export default function HomeView() {
                     >
                         <div className="hero flex flex-col md:flex-row w-full  justify-center">
                             <div className="w-full md:w-1/2 ">
-                                <button className="outline-1 mb-4 outline-sky-200 hover:bg-blue-600 px-6 py-3 rounded-3xl text-gray-600 hover:text-white transition duration-300">
+                                <button className="border-2 mb-4 border-sky-200 hover:bg-blue-600 px-6 py-3 rounded-3xl text-gray-600 hover:text-white transition duration-300">
                                     Health Matters: Setiap Bunda Berhak Sehat
                                 </button>
                                 <motion.h3

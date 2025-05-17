@@ -274,6 +274,9 @@ class NifasTaskController extends Controller
             }
             $user = Auth::user();
             $nifas = Nifas::where('user_id', $user->id)->where('is_active', true)->first();
+            if (!$nifas) {
+                return response()->json(0);
+            }
             $nifasProgress = NifasProgress::where('nifas_id', $nifas->id)
                 ->where('is_completed', 1)
                 ->count();
