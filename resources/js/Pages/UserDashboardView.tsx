@@ -417,11 +417,11 @@ export default function DashboardNifas() {
     }, [showModal, activeKF, nifasTask]);
 
     return (
-        <div className="container mx-auto bg-gray-50 min-h-screen px-6 p-8 min-h-screen">
+        <div className=" mx-auto bg-gray-50 min-h-screen ">
             {/* Header */}
             <AuthenticatedLayout>
                 {/* Main Content */}
-                <main className="container mx-auto  mx-auto px-6 p-8 min-h-screen">
+                <main className="container mx-auto px-6 p-8 min-h-screen">
                     {/* Welcome Section */}
                     <div className="bg-gradient-to-r from-blue-500 to-blue-700 p-6 mb-6 rounded-lg">
                         <motion.div
@@ -572,35 +572,32 @@ export default function DashboardNifas() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.5, delay: 0.6 }}
-                        >
+                    >
                         <div className="p-6">
-                                        <div className="flex justify-between items-center mb-4">
-                                            <h3 className="text-xl font-semibold flex items-center">
-                                                <Quote
-                                                    className="mr-2"
-                                                    size={20}
-                                                />
-                                                Quote Inspirasi
-                                            </h3>
-                                        </div>
+                            <div className="flex justify-between items-center mb-4">
+                                <h3 className="text-xl font-semibold flex items-center">
+                                    <Quote className="mr-2" size={20} />
+                                    Quote Inspirasi
+                                </h3>
+                            </div>
 
-                                        <AnimatePresence mode="wait">
-                                            <motion.div
-                                                key={currentQuote.text}
-                                                initial={{ opacity: 0 }}
-                                                animate={{ opacity: 1 }}
-                                                exit={{ opacity: 0 }}
-                                                transition={{ duration: 0.5 }}
-                                                className="italic"
-                                            >
-                                                <p className="text-lg mb-2">
-                                                    "{currentQuote.text}"
-                                                </p>
-                                                <p className="text-right text-blue-100">
-                                                    - {currentQuote.author}
-                                                </p>
-                                            </motion.div>
-                                        </AnimatePresence>
+                            <AnimatePresence mode="wait">
+                                <motion.div
+                                    key={currentQuote.text}
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    exit={{ opacity: 0 }}
+                                    transition={{ duration: 0.5 }}
+                                    className="italic"
+                                >
+                                    <p className="text-lg mb-2">
+                                        "{currentQuote.text}"
+                                    </p>
+                                    <p className="text-right text-blue-100">
+                                        - {currentQuote.author}
+                                    </p>
+                                </motion.div>
+                            </AnimatePresence>
                         </div>
                     </motion.div>
 

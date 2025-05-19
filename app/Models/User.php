@@ -66,5 +66,5 @@ class User extends Authenticatable
     {
         return $this->hasMany(NifasTask::class);
     }
-    
+
 }
