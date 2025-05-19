@@ -184,6 +184,7 @@ class NifasTaskController extends Controller
             'is_completed' => 'required|boolean',
             'puskesmas' => 'nullable|string',
             'notes' => 'nullable|string',
+            'tanggal_periksa' => 'nullable|date',
         ]);
 
         if ($validator->fails()) {
@@ -197,7 +198,7 @@ class NifasTaskController extends Controller
             $nifasProgress->puskesmas = $request->puskesmas;
             $nifasProgress->notes = $request->notes;
             $nifasProgress->completed_at = Carbon::now();
-
+            $nifasProgress->tanggal_periksa = $request->tanggal_periksa;
             $nifasProgress->save();
 
             return response()->json([
@@ -257,6 +258,32 @@ class NifasTaskController extends Controller
                 'message' => 'Gagal memperbarui tasks',
                 'error' => $e->getMessage()
             ], 500);
+        }
+    }
+
+    /**
+     * Get count of completed nifas progress for authenticated user
+     * 
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getCompletedNifasProgressByUser()
+    {
+        try {
+            if (!Auth::check()) {
+                return response()->json(['error' => 'Unauthorized'], 401);
+            }
+            $user = Auth::user();
+            $nifas = Nifas::where('user_id', $user->id)->where('is_active', true)->first();
+            if (!$nifas) {
+                return response()->json(0);
+            }
+            $nifasProgress = NifasProgress::where('nifas_id', $nifas->id)
+                ->where('is_completed', 1)
+                ->count();
+
+            return response()->json($nifasProgress);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to get nifas progress'], 500);
         }
     }
 

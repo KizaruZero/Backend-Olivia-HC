@@ -25,6 +25,19 @@ class UserSeeder extends Seeder
                 'role' => 'user',
                 'password' => bcrypt('password'),
             ],
+            [
+                'name' => 'Ardya Pusaka',
+                'email' => 'ardyapusak1@gmail.com',
+                'role' => 'user',
+                'password' => bcrypt('password'),
+            ],
+
+            [
+                'name' => 'Ardya Pusaka',
+                'email' => 'ardyapusaka2@gmail.com',
+                'role' => 'user',
+                'password' => bcrypt('password'),
+            ],
         ];
         foreach ($users as $user) {
             User::create($user);

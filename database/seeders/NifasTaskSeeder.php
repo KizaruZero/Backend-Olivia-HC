@@ -43,6 +43,15 @@ class NifasTaskSeeder extends Seeder
                 ['name' => 'Lanjutkan pola hidup sehat', 'description' => 'Pertahankan pola makan bergizi dan istirahat cukup'],
                 ['name' => 'Perawatan diri', 'description' => 'Jaga kebersihan tubuh dan organ intim'],
                 ['name' => 'Adaptasi peran ibu', 'description' => 'Berikan tips manajemen stres dan pola tidur bayi']
+            ],
+
+            4 => [ // Fase Akhir (29 hari – 42 minggu postpartum)
+                ['name' => 'Pemeriksaan lanjutan', 'description' => 'Datangi fasilitas kesehatan untuk pemeriksaan hari ke-6 dan ke-42'],
+                ['name' => 'Skrining kesehatan mental', 'description' => 'Cek gejala depresi postpartum atau perubahan suasana hati'],
+                ['name' => 'Latihan ringan dan senam nifas', 'description' => 'Anjurkan gerakan ringan untuk pemulihan otot dasar panggul'],
+                ['name' => 'Konseling KB', 'description' => 'Diskusikan pilihan kontrasepsi sesuai kebutuhan ibu'],
+                ['name' => 'Perawatan diri', 'description' => 'Jaga kebersihan tubuh dan organ intim'],
+                ['name' => 'Adaptasi peran ibu', 'description' => 'Berikan tips manajemen stres dan pola tidur bayi']
             ]
         ];
 

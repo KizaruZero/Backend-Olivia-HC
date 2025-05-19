@@ -13,8 +13,13 @@ class NifasProgress extends Model
         'fase_nifas_id',
         'is_completed',
         'completed_at',
+        'tanggal_periksa',
         'puskesmas',
         'notes',
+    ];
+
+    protected $casts = [
+        'tanggal_periksa' => 'date',
     ];
 
     public function nifas()
@@ -25,8 +30,8 @@ class NifasProgress extends Model
     public function tasks()
     {
         return $this->belongsToMany(NifasTask::class, 'nifas_task_progress')
-                    ->withPivot('is_completed', 'completed_at')
-                    ->withTimestamps();
+            ->withPivot('is_completed', 'completed_at')
+            ->withTimestamps();
     }
 
     public function faseNifas()

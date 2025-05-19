@@ -39,6 +39,7 @@ Route::get('/user-dashboard', function () {
 Route::get('/api/nifas/user', [NifasController::class, 'getNifasByUser']);
 Route::post('/api/nifas/user', [NifasController::class, 'createNifas']);
 Route::post('/api/nifas/user/{id}', [NifasController::class, 'updateNifas']);
+Route::get('/api/nifasprogress/user', [NifasTaskController::class, 'getCompletedNifasProgressByUser']);
 
 Route::get('/api/nifastask/user', [NifasTaskController::class, 'getNifasTaskProgressByUser']);
 Route::get('/api/nifastask/percentage', [NifasTaskController::class, 'getAllFaseNifasWithPercentage']);
@@ -46,7 +47,7 @@ Route::get('/api/nifas/reminder', [NifasController::class, 'getFaseNifasReminder
 
 Route::get('profile', function () {
     return Inertia::render('Profile/ProfilePage');
-})->name('profile-page');
+})->name('profile');
 
 
 Route::get('/api/user/current', [UserController::class, 'getCurrentUser']);

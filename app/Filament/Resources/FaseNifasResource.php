@@ -12,7 +12,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-
+use Illuminate\Support\Facades\Storage;
 class FaseNifasResource extends Resource
 {
     protected static ?string $model = FaseNifas::class;
@@ -36,7 +36,7 @@ class FaseNifasResource extends Resource
                     ->columnSpanFull()
                     ->rows(3),
                 Forms\Components\FileUpload::make('twibbon_image')
-                    ->disk('public')    
+                    ->disk('public')
                     ->directory('twibbon')
                     ->image(),
                 Forms\Components\TextInput::make('video_url')
@@ -65,7 +65,8 @@ class FaseNifasResource extends Resource
                 Tables\Columns\TextColumn::make('description')
                     ->limit(50)
                     ->searchable(),
-                Tables\Columns\ImageColumn::make('twibbon_image'),
+                Tables\Columns\ImageColumn::make('twibbon_image')
+                    ->url(fn(FaseNifas $record) => Storage::url($record->twibbon_image)),
                 Tables\Columns\TextColumn::make('video_url')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('leaflet_url')

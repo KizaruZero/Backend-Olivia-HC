@@ -7,6 +7,7 @@ import FiturCard from "./Components/FiturSection";
 import GuestLayout from "@/Layouts/GuestLayout";
 import { usePage, router } from "@inertiajs/react";
 import NifasSection from "./Components/FaseNifasSection";
+import EducationSection from "./Components/EducationSection";
 export default function HomeView() {
     // Animation variants
     const containerVariants = {
@@ -96,7 +97,7 @@ export default function HomeView() {
                     >
                         <div className="hero flex flex-col md:flex-row w-full  justify-center">
                             <div className="w-full md:w-1/2 ">
-                                <button className="outline-1 mb-4 outline-sky-200 hover:bg-blue-600 px-6 py-3 rounded-3xl text-gray-600 hover:text-white transition duration-300">
+                                <button className="border-2 mb-4 border-sky-200 hover:bg-blue-600 px-6 py-3 rounded-3xl text-gray-600 hover:text-white transition duration-300">
                                     Health Matters: Setiap Bunda Berhak Sehat
                                 </button>
                                 <motion.h3
@@ -157,11 +158,14 @@ export default function HomeView() {
                     </motion.div>
                 </motion.section>
 
-                {/* Problem Section */}
-                <ProblemSection></ProblemSection>
-
                 {/* Fase Nifas Section */}
                 <NifasSection></NifasSection>
+
+                {/* Education Section */}
+                <EducationSection></EducationSection>
+
+                {/* Problem Section */}
+                <ProblemSection></ProblemSection>
 
                 {/* Solution Section */}
                 <motion.div

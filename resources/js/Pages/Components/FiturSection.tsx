@@ -58,6 +58,7 @@ export default function FiturSection() {
                 className="text-center py-16"
             >
                 {/* Judul Utama */}
+
                 <motion.h2
                     variants={{
                         hidden: { opacity: 0, y: 30 },

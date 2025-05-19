@@ -54,7 +54,7 @@ class Nifas extends Model
 
         static::creating(function ($nifas) {
             if (!$nifas->end_date) {
-                $nifas->end_date = Carbon::parse($nifas->start_date)->addDays(40);
+                $nifas->end_date = Carbon::parse($nifas->start_date)->addDays(42);
             }
         });
 
@@ -128,11 +128,11 @@ class Nifas extends Model
 
     public static function calculateNifasPhase($daysPassed)
     {
-        if ($daysPassed <= 10)
+        if ($daysPassed <= 2)
             return 1;
-        if ($daysPassed <= 20)
+        if ($daysPassed <= 7)
             return 2;
-        if ($daysPassed <= 30)
+        if ($daysPassed <= 28)
             return 3;
         if ($daysPassed <= 42)
             return 4;
