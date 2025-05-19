@@ -15,9 +15,12 @@ class Kernel extends ConsoleKernel
      * @param  \Illuminate\Console\Scheduling\Schedule  $schedule
      * @return void
      */
-    protected function schedule(Schedule $schedule)
+    protected function schedule(Schedule $schedule): void
     {
-        $schedule->command('nifas:check-phases')->daily();
+        // Jalankan pengiriman notifikasi nifas setiap hari pukul 08:00 pagi
+        $schedule->command('nifas:send-reminders')
+            ->dailyAt('08:00')
+            ->appendOutputTo(storage_path('logs/nifas-reminders.log'));
     }
 
     /**
@@ -25,7 +28,7 @@ class Kernel extends ConsoleKernel
      *
      * @return void
      */
-    protected function commands()
+    protected function commands(): void
     {
         $this->load(__DIR__ . '/Commands');
 

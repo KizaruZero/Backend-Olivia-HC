@@ -14,19 +14,7 @@ use DateInterval;
 use Twilio\Rest\Client;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Notification;
-use Illuminate\Support\Facades\Queue;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Broadcast;
-use Illuminate\Support\Facades\Event;
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\View;
-use Illuminate\Support\Facades\Response;
+
 
 class Nifas extends Model
 {
@@ -89,15 +77,11 @@ class Nifas extends Model
             }
         });
 
-        // static::created(function ($nifas) {
-        //     // For newly created records, check if we need to send initial reminder
-        //     self::checkAndSendReminder($nifas);
-        // });
+    }
 
-        // static::updated(function ($nifas) {
-        //     // For updated records, check if we need to send reminder
-        //     self::checkAndSendReminder($nifas);
-        // });
+    public function nifasNotification()
+    {
+        return $this->hasMany(NifasNotification::class);
     }
 
     public function faseNifas()
