@@ -1,7 +1,7 @@
 import { router, usePage } from "@inertiajs/react";
 import { motion } from "framer-motion";
 import { useState, type SetStateAction } from "react";
-
+import Swal from "sweetalert2";
 export default function NavbarAuth() {
     const [activeSection, setActiveSection] = useState<string | null>(null);
     const user = usePage().props.auth.user;
@@ -45,7 +45,22 @@ export default function NavbarAuth() {
                                 <button
                                     onClick={() => {
                                         if (item.method) {
-                                            router.post(item.id);
+                                            Swal.fire({
+                                                title: "Apakah anda yakin ingin logout?",
+                                                icon: "warning",
+                                                showCancelButton: true,
+                                                confirmButtonColor: "#3085d6",
+                                                cancelButtonColor: "#d33",
+                                                confirmButtonText: "Ya, Logout",
+                                            }).then((result) => {
+                                                if (result.isConfirmed) {
+                                                    router.post(item.id);
+                                                    Swal.fire({
+                                                        title: "Berhasil Logout",
+                                                        icon: "success",
+                                                    });
+                                                }
+                                            });
                                         } else {
                                             router.visit(item.id);
                                         }

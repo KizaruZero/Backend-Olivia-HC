@@ -21,6 +21,9 @@ export default function UpdateProfileInformation({
         useForm({
             name: user.name,
             email: user.email,
+            phone_number: user.phone_number,
+            birth_date: user.birth_date,
+            address: user.address,
         });
 
     const submit: FormEventHandler = (e) => {
@@ -72,6 +75,42 @@ export default function UpdateProfileInformation({
                     />
 
                     <InputError className="mt-2" message={errors.email} />
+                </div>
+
+                <div>
+                    <InputLabel htmlFor="phone_number" value="Phone Number" />
+                    <TextInput
+                        id="phone_number"
+                        className="mt-1 block w-full"
+                        value={data.phone_number}
+                        onChange={(e) => setData('phone_number', e.target.value)}
+                        required
+                        autoComplete="phone_number"
+                    />
+                </div>
+
+                <div>
+                    <InputLabel htmlFor="birth_date" value="Birth Date" />
+                    <TextInput
+                        id="birth_date"
+                        className="mt-1 block w-full"
+                        value={data.birth_date}
+                        onChange={(e) => setData('birth_date', e.target.value)}
+                        required
+                        autoComplete="birth_date"
+                    />
+                </div>
+
+                <div>
+                    <InputLabel htmlFor="address" value="Address" />
+                    <TextInput
+                        id="address"
+                        className="mt-1 block w-full"
+                        value={data.address}
+                        onChange={(e) => setData('address', e.target.value)}
+                        required
+                        autoComplete="address"
+                    />
                 </div>
 
                 {mustVerifyEmail && user.email_verified_at === null && (

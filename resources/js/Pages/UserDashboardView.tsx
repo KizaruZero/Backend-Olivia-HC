@@ -16,8 +16,9 @@ import {
     X,
     Info,
     CalendarDays,
+    Quote,
 } from "lucide-react";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import Swal from "sweetalert2";
 import NifasReminder from "./Components/NifasReminder";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
@@ -68,6 +69,11 @@ interface NifasTask {
     completed_at: string;
 }
 
+interface QuoteData {
+    text: string;
+    author: string;
+}
+
 export default function DashboardNifas() {
     const [activeKF, setActiveKF] = useState<number>(1);
     const [showModal, setShowModal] = useState<boolean>(false);
@@ -88,6 +94,51 @@ export default function DashboardNifas() {
     const [reminder, setReminder] = useState<any>(null);
     const [userImage, setUserImage] = useState<string | null>(null);
     const user = usePage().props.auth.user;
+    const [quotes, setQuotes] = useState<QuoteData[]>([]);
+    const [currentQuote, setCurrentQuote] = useState<QuoteData>({
+        text: "",
+        author: "",
+    });
+
+    useEffect(() => {
+        // Quotes tentang masa nifas
+        const nifasQuotes = [
+            {
+                text: "Masa nifas adalah waktu untuk memberi kasih sayang pada diri sendiri sama seperti Anda memberikan kasih sayang pada bayi Anda.",
+                author: "Bidan Sari",
+            },
+            {
+                text: "Perawatan nifas yang baik adalah investasi untuk kesehatan Anda di masa depan.",
+                author: "Dr. Amelia, Sp.OG",
+            },
+            {
+                text: "Dalam masa nifas, kekuatan seorang ibu benar-benar teruji. Tetap semangat dan jaga kesehatan Anda.",
+                author: "Dr. Farid, Sp.OG",
+            },
+            {
+                text: "Istirahat yang cukup selama masa nifas tidak hanya baik untuk Anda, tetapi juga untuk bayi Anda.",
+                author: "Ahli Gizi Ratna",
+            },
+            {
+                text: "Masa nifas adalah perjalanan penyembuhan yang membutuhkan kesabaran dan perhatian khusus.",
+                author: "Bidan Melati",
+            },
+        ];
+
+        setQuotes(nifasQuotes);
+        setCurrentQuote(
+            nifasQuotes[Math.floor(Math.random() * nifasQuotes.length)]
+        );
+
+        // Mengganti quote setiap 10 detik
+        const quoteInterval = setInterval(() => {
+            setCurrentQuote(
+                nifasQuotes[Math.floor(Math.random() * nifasQuotes.length)]
+            );
+        }, 10000);
+
+        return () => clearInterval(quoteInterval);
+    }, []);
 
     const handleSaveImage = (imageData: string) => {
         console.log("Twibbon berhasil disimpan!");
@@ -366,11 +417,11 @@ export default function DashboardNifas() {
     }, [showModal, activeKF, nifasTask]);
 
     return (
-        <div className="bg-gray-50 min-h-screen">
+        <div className="container mx-auto bg-gray-50 min-h-screen px-6 p-8 min-h-screen">
             {/* Header */}
             <AuthenticatedLayout>
                 {/* Main Content */}
-                <main className="container mx-auto p-4">
+                <main className="container mx-auto  mx-auto px-6 p-8 min-h-screen">
                     {/* Welcome Section */}
                     <div className="bg-gradient-to-r from-blue-500 to-blue-700 p-6 mb-6 rounded-lg">
                         <motion.div
@@ -514,6 +565,44 @@ export default function DashboardNifas() {
                             </span>
                         </div>
                     </div>
+
+                    {/* Quote Card */}
+                    <motion.div
+                        className="bg-gradient-to-r mb-6 from-blue-600 to-blue-400 text-white rounded-lg shadow-lg overflow-hidden"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5, delay: 0.6 }}
+                        >
+                        <div className="p-6">
+                                        <div className="flex justify-between items-center mb-4">
+                                            <h3 className="text-xl font-semibold flex items-center">
+                                                <Quote
+                                                    className="mr-2"
+                                                    size={20}
+                                                />
+                                                Quote Inspirasi
+                                            </h3>
+                                        </div>
+
+                                        <AnimatePresence mode="wait">
+                                            <motion.div
+                                                key={currentQuote.text}
+                                                initial={{ opacity: 0 }}
+                                                animate={{ opacity: 1 }}
+                                                exit={{ opacity: 0 }}
+                                                transition={{ duration: 0.5 }}
+                                                className="italic"
+                                            >
+                                                <p className="text-lg mb-2">
+                                                    "{currentQuote.text}"
+                                                </p>
+                                                <p className="text-right text-blue-100">
+                                                    - {currentQuote.author}
+                                                </p>
+                                            </motion.div>
+                                        </AnimatePresence>
+                        </div>
+                    </motion.div>
 
                     {/* Reminders */}
                     <div>

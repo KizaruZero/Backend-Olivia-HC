@@ -167,7 +167,7 @@ const TwibbonSystem = ({
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {/* Upload Section */}
                     <div className="p-6 bg-gray-50 rounded-lg">
-                        <h4 className="text-lg font-medium mb-4">
+                        <h4 className="text-xl font-medium mb-4 text-center">
                             Upload Foto
                         </h4>
                         <div className="mb-4">
@@ -200,7 +200,7 @@ const TwibbonSystem = ({
                                 <img
                                     src={userImage}
                                     alt="Preview"
-                                    className="max-h-48 rounded-lg shadow-sm"
+                                    className="max-h-24 rounded-lg shadow-sm"
                                 />
                             </div>
                         )}
@@ -208,21 +208,21 @@ const TwibbonSystem = ({
 
                     {/* Twibbon Preview Section */}
                     <div className="p-6 bg-gray-50 rounded-lg">
-                        <h4 className="text-lg font-medium mb-4">
+                        <h4 className="text-xl font-medium mb-4 text-center">
                             Preview Twibbon
                         </h4>
                         <div className="relative">
                             <img
                                 src={`${baseUrl}/storage/${selectedFase.twibbon_image}`}
                                 alt="Twibbon Frame"
-                                className="w-full rounded-lg shadow-sm"
+                                className="w-1/2 rounded-lg shadow-sm mx-auto"
                             />
                             {userImage && (
                                 <div className="absolute inset-0 flex items-center justify-center">
                                     <img
                                         src={userImage}
                                         alt="User Image"
-                                        className="max-h-32 max-w-32 object-cover rounded-full border-4 border-white shadow-lg"
+                                        className="max-h-48 max-w-48 object-cover rounded-full border-4 border-white shadow-lg"
                                     />
                                 </div>
                             )}

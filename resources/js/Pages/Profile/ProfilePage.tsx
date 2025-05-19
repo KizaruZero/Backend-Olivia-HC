@@ -28,7 +28,7 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import DeleteUserForm from "./Partials/DeleteUserForm";
 import UpdatePasswordForm from "./Partials/UpdatePasswordForm";
 import UpdateProfileInformationForm from "./Partials/UpdateProfileInformationForm";
-import { usePage } from "@inertiajs/react";
+import { router, usePage } from "@inertiajs/react";
 
 interface NifasData {
     id: number;
@@ -714,7 +714,7 @@ export default function ProfilePage() {
                                         />
                                     </div>
 
-                                    <div className="w-full space-y-3 mt-4">
+                                    {/* <div className="w-full space-y-3 mt-4">
                                         <div className="flex items-center">
                                             <Mail
                                                 className="text-blue-600 mr-2 flex-shrink-0"
@@ -760,7 +760,7 @@ export default function ProfilePage() {
                                                 {user.address}
                                             </p>
                                         </div>
-                                    </div>
+                                    </div> */}
                                 </div>
                             </motion.div>
 
