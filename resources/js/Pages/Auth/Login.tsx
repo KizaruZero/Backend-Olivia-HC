@@ -38,7 +38,7 @@ export default function Login({
         <GuestLayout>
             <Head title="Log in" />
             <div className="container mx-auto mt-20 grid grid-cols-3 gap-x-8 ">
-                <div className="hook items-center mx-auto my-auto">
+                <div className="hook items-center mx-6 my-auto ">
                     <h1 className="text-7xl font-bold  mb-4">
                         Sign In to get your nutrients
                     </h1>
@@ -63,7 +63,7 @@ export default function Login({
                         className="hidden md:block w-3/4 h-auto mx-auto"
                     />
                 </div>
-                <div className="form my-auto">
+                <div className="form  my-auto mx-auto">
                     <form onSubmit={submit} className="form ">
                         <div>
                             <h1 className="text-4xl font-bold mb-4">
