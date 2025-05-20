@@ -691,7 +691,7 @@ export default function DashboardNifas() {
                                     </div>
 
                                     {/* Twibbon for completed phases */}
-                                    {kf.progress === 100 && (
+                                    {kf.progress === 50 && (
                                         <motion.div
                                             initial={{ scale: 0, rotate: -15 }}
                                             animate={{ scale: 1, rotate: -15 }}
@@ -712,7 +712,7 @@ export default function DashboardNifas() {
                                     )}
                                 </div>
                                 {/* twibbon only for completed fase */}
-                                {kf.progress === 100 && (
+                                {kf.progress >= 50 && (
                                     <TwibbonSystem
                                         faseNifas={faseNifas}
                                         currentFaseId={kf.id} // Sesuai dengan id fase yang dipilih

@@ -54,12 +54,12 @@ class NifasPhaseReminder extends Notification
             ->subject('Pengingat ' . $this->phaseName . ' - Program Edukasi Ibu Hamil')
             ->greeting('Halo ' . $notifiable->name . ',')
             ->line('Ini adalah pengingat untuk masa nifas Anda.')
-            ->line('Anda telah memasuki ' . $this->phaseDescription . '.')
+            ->line('Anda ' . $this->phaseDescription . '.')
             ->line('Berikut beberapa hal yang perlu Anda perhatikan pada fase ini:')
             ->line('- Kontrol ke dokter/bidan')
             ->line('- Perhatikan tanda bahaya nifas')
             ->line('- Pastikan nutrisi yang baik untuk Anda dan bayi')
-            ->action('Lihat Detail di Website', url('/nifas/detail'))
+            ->action('Lihat Detail di Website', url('/dashboard'))
             ->line('Terima kasih telah menggunakan layanan kami!');
     }
 
@@ -73,7 +73,7 @@ class NifasPhaseReminder extends Notification
         return [
             'nifas_id' => $this->nifas->id,
             'phase_name' => $this->phaseName,
-            'message' => 'Anda telah memasuki ' . $this->phaseDescription,
+            'message' => 'Anda ' . $this->phaseDescription,
         ];
     }
 }
