@@ -23,12 +23,16 @@ class Nifas extends Model
         'start_date',
         'end_date',
         'is_active',
+        'is_completed',
+        'completed_at',
     ];
 
     protected $casts = [
         'start_date' => 'date',
         'end_date' => 'date',
         'is_active' => 'boolean',
+        'is_completed' => 'boolean',
+        'completed_at' => 'date',
     ];
 
     public function user()

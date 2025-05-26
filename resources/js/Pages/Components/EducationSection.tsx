@@ -9,7 +9,8 @@ import {
     AlertCircle,
     Info,
 } from "lucide-react";
-
+import EducationSSection from "./EducationSSection";
+import PostpartumMentalHealth from "./PostpartumMentalHealth";
 interface AvoidanceItem {
     id: number;
     title: string;
@@ -36,8 +37,10 @@ export default function EducationSection() {
             </motion.div>
 
             <div className="container mx-auto space-y-20">
+                <EducationSSection />
                 <AvoidanceSection />
                 <DangerSignsSection />
+                <PostpartumMentalHealth />
             </div>
         </section>
     );
