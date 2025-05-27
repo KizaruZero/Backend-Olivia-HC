@@ -14,7 +14,9 @@ use DateInterval;
 use Twilio\Rest\Client;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Database\Eloquent\Model;
-
+use App\Models\Imunisasi;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 
 class Nifas extends Model
 {
@@ -78,6 +80,36 @@ class Nifas extends Model
                 Nifas::where('user_id', $nifas->user_id)
                     ->where('id', '!=', $nifas->id)
                     ->update(['is_active' => false]);
+            }
+        });
+
+        static::updated(function ($nifas) {
+            if ($nifas->is_completed && $nifas->wasChanged('is_completed')) {
+                try {
+                    DB::beginTransaction();
+
+                    // Nonaktifkan imunisasi aktif lainnya
+                    Imunisasi::where('user_id', $nifas->user_id)
+                        ->where('is_active', true)
+                        ->update(['is_active' => false]);
+
+                    // Buat imunisasi baru
+                    Imunisasi::create([
+                        'user_id' => $nifas->user_id,
+                        'start_date' => Carbon::now(),
+                        'is_active' => true,
+                        'is_completed' => false,
+                    ]);
+
+                    DB::commit();
+                } catch (\Exception $e) {
+                    DB::rollBack();
+                    Log::error('Failed to create Imunisasi after Nifas completion: ' . $e->getMessage(), [
+                        'nifas_id' => $nifas->id,
+                        'user_id' => $nifas->user_id,
+                        'error' => $e->getMessage()
+                    ]);
+                }
             }
         });
 

@@ -11,6 +11,8 @@ import {
 } from "lucide-react";
 import EducationSSection from "./EducationSSection";
 import PostpartumMentalHealth from "./PostpartumMentalHealth";
+import MakananSection from "./MakananSection";
+import PostpartumDangerSigns from "./PostpartumDangerSigns";
 interface AvoidanceItem {
     id: number;
     title: string;
@@ -39,7 +41,8 @@ export default function EducationSection() {
             <div className="container mx-auto space-y-20">
                 <EducationSSection />
                 <AvoidanceSection />
-                <DangerSignsSection />
+                <MakananSection />
+                <PostpartumDangerSigns />
                 <PostpartumMentalHealth />
             </div>
         </section>

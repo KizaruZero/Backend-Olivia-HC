@@ -196,7 +196,7 @@ class NifasTaskController extends Controller
             $nifasProgress = NifasProgress::findOrFail($request->nifas_progress_id);
             $nifasProgress->is_completed = $request->is_completed;
             $nifasProgress->puskesmas = $request->puskesmas;
-            $nifasProgress->notes = $request->notes;    
+            $nifasProgress->notes = $request->notes;
             $nifasProgress->completed_at = Carbon::now();
             $nifasProgress->tanggal_periksa = $request->tanggal_periksa;
             $nifasProgress->save();
@@ -205,7 +205,8 @@ class NifasTaskController extends Controller
             $nifasId = $nifasProgress->nifas_id;
             if ($faseNifas == 4) {
                 $nifas = Nifas::where('id', $nifasId)->first();
-                $nifas->is_active = false;
+                $nifas->is_completed = true;
+                $nifas->completed_at = Carbon::now();
                 $nifas->save();
             }
 

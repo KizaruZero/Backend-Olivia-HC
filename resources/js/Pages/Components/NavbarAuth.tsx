@@ -1,21 +1,55 @@
 import { router, usePage } from "@inertiajs/react";
 import { motion } from "framer-motion";
-import { useState, type SetStateAction } from "react";
+import { useEffect, useState, type SetStateAction } from "react";
 import Swal from "sweetalert2";
+
+interface NavItem {
+    name: string;
+    id: string;
+    method?: string;
+}
 
 export default function NavbarAuth() {
     const [activeSection, setActiveSection] = useState<string | null>(null);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const user = usePage().props.auth.user;
+    const [isActiveNifas, setIsActiveNifas] = useState(false);
 
-    const navItems = [
+    useEffect(() => {
+        fetch("/api/nifas/user", {
+            headers: {
+                Authorization: "Bearer " + localStorage.getItem("token"),
+            },
+            credentials: "include",
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                if (data && data.length > 0 && data[0].is_completed) {
+                    setIsActiveNifas(true);
+                }
+            })
+            .catch((error) => {
+                console.error("Error fetching nifas data:", error);
+            });
+    }, []);
+
+    const baseNavItems: NavItem[] = [
         { name: "Home", id: "/" },
         { name: "Dashboard", id: "dashboard" },
         { name: "Profile", id: "profile" },
-        { name: "Logout", id: "logout", method: "post" },
     ];
 
-    const handleNavigation = (item: (typeof navItems)[0]) => {
+    const additionalNavItems: NavItem[] = [
+        { name: "KB", id: "kb" },
+        { name: "Imunisasi", id: "imunisasi" },
+    ];
+
+    const navItems = isActiveNifas
+        ? [...baseNavItems, ...additionalNavItems]
+        : baseNavItems;
+
+    const handleNavigation = (item: NavItem) => {
         if (item.method) {
             Swal.fire({
                 title: "Apakah anda yakin ingin logout?",
@@ -37,6 +71,27 @@ export default function NavbarAuth() {
             router.visit(item.id);
         }
         setIsMobileMenuOpen(false);
+        setIsDropdownOpen(false);
+    };
+
+    const handleLogout = () => {
+        Swal.fire({
+            title: "Apakah anda yakin ingin logout?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Ya, Logout",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                router.post("/logout");
+                Swal.fire({
+                    title: "Berhasil Logout",
+                    icon: "success",
+                });
+            }
+        });
+        setIsDropdownOpen(false);
     };
 
     return (
@@ -131,20 +186,68 @@ export default function NavbarAuth() {
                                     </button>
                                 </li>
                             ))}
+                            <li>
+                                <button
+                                    onClick={handleLogout}
+                                    className="w-full text-left px-3 py-2 rounded-md transition-colors text-red-600 hover:bg-red-50"
+                                >
+                                    Logout
+                                </button>
+                            </li>
                         </ul>
                     </nav>
                 </div>
 
-                <div className="hidden md:block">
+                <div className="hidden md:block relative">
                     {user ? (
-                        <motion.button
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                            className="bg-blue-600 text-white px-6 py-2 rounded-full shadow-md hover:bg-blue-700 transition-colors"
-                            onClick={() => router.visit("/dashboard")}
-                        >
-                            Dashboard
-                        </motion.button>
+                        <div className="relative">
+                            <motion.button
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                                className="bg-blue-600 text-white px-6 py-2 rounded-full shadow-md hover:bg-blue-700 transition-colors flex items-center"
+                                onClick={() =>
+                                    setIsDropdownOpen(!isDropdownOpen)
+                                }
+                            >
+                                Dashboard
+                                <svg
+                                    className={`w-4 h-4 ml-2 transition-transform ${
+                                        isDropdownOpen ? "rotate-180" : ""
+                                    }`}
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={2}
+                                        d="M19 9l-7 7-7-7"
+                                    />
+                                </svg>
+                            </motion.button>
+
+                            {/* Dropdown Menu */}
+                            {isDropdownOpen && (
+                                <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
+                                    <button
+                                        onClick={() => {
+                                            router.visit("/dashboard");
+                                            setIsDropdownOpen(false);
+                                        }}
+                                        className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                    >
+                                        Dashboard
+                                    </button>
+                                    <button
+                                        onClick={handleLogout}
+                                        className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+                                    >
+                                        Logout
+                                    </button>
+                                </div>
+                            )}
+                        </div>
                     ) : (
                         <motion.button
                             whileHover={{ scale: 1.05 }}
