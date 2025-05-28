@@ -179,6 +179,7 @@ export default function DashboardNifas() {
             .then((response) => response.json())
             .then((data) => {
                 setNifasTask(data);
+                
             });
     }, []);
 

@@ -65,4 +65,10 @@ Route::get('/api/imunisasi/user', [ImunisasiController::class, 'getImunisasi']);
 Route::get('/api/faseimunisasi/user', [ImunisasiController::class, 'getFaseImunisasi']);
 Route::put('/api/faseimunisasi/user/{id}', [ImunisasiController::class, 'updateFaseImunisasi']);
 
+Route::get('/api/kb', [KBController::class, 'index']);
+Route::post('/api/kb', [KBController::class, 'store']);
+Route::get('/api/kb/{id}', [KBController::class, 'show']);
+Route::put('/api/kb/{id}', [KBController::class, 'update']);
+Route::delete('/api/kb/{id}', [KBController::class, 'destroy']);
+
 require __DIR__ . '/auth.php';

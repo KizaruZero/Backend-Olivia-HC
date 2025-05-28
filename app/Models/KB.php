@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class KB extends Model
 {
+    use HasFactory;
+
     //
     protected $fillable = [
         'user_id',
@@ -14,6 +17,11 @@ class KB extends Model
         'tipe_kb',
         'catatan',
         'status_kb',
+    ];
+
+    protected $casts = [
+        'start_date' => 'date',
+        'end_date' => 'date'
     ];
 
     public function user()

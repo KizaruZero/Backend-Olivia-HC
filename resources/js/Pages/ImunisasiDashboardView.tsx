@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import axios from "axios";
 import Swal from "sweetalert2";
+import NavbarAuth from "./Components/NavbarAuth";
 
 interface Imunisasi {
     id: number;
@@ -438,28 +439,7 @@ const ImunisasiDashboardView = () => {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100">
-            {/* Header */}
-            <div className="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-8">
-                <div className="max-w-6xl mx-auto px-6">
-                    <motion.div
-                        initial={{ opacity: 0, y: -20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="flex items-center gap-4"
-                    >
-                        <div className="bg-white/20 p-3 rounded-full">
-                            <Baby className="w-8 h-8" />
-                        </div>
-                        <div>
-                            <h1 className="text-3xl font-bold">
-                                Dashboard Imunisasi Ibu Nifas
-                            </h1>
-                            <p className="text-blue-100 mt-1">
-                                Pantau dan kelola perjalanan pemulihan Anda
-                            </p>
-                        </div>
-                    </motion.div>
-                </div>
-            </div>
+            <NavbarAuth />
 
             <div className="max-w-6xl mx-auto px-6 py-8">
                 {/* Imunisasi Management */}

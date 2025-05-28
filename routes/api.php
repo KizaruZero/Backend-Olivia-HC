@@ -6,6 +6,7 @@ use App\Http\Controllers\FaseNifasController;
 use App\Http\Controllers\NifasController;
 use App\Http\Controllers\NifasTaskController;
 use App\Http\Controllers\NifasTaskProgressController;
+use App\Http\Controllers\KBController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -37,5 +38,8 @@ Route::post('/nifastasks/updatebatch', [NifasTaskController::class, 'updateBatch
 
 
 Route::get('/fase-nifas', [FaseNifasController::class, 'getFaseNifas']);
+
+// KB Routes
+
 
 require __DIR__ . '/auth.php';
