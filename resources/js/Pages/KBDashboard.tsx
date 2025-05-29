@@ -16,7 +16,7 @@ import {
   Baby,
   Stethoscope
 } from 'lucide-react';
-
+import NavbarAuth from './Components/NavbarAuth';
 interface KBRecord {
   id: number;
   user_id: number;
@@ -177,23 +177,7 @@ const KBDashboard = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100">
       {/* Header */}
-      <div className="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-8">
-        <div className="max-w-6xl mx-auto px-6">
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="flex items-center gap-4"
-          >
-            <div className="bg-white/20 p-3 rounded-full">
-              <Heart className="w-8 h-8" />
-            </div>
-            <div>
-              <h1 className="text-3xl font-bold">Dashboard Keluarga Berencana</h1>
-              <p className="text-blue-100 mt-1">Kelola program KB dan dapatkan edukasi lengkap</p>
-            </div>
-          </motion.div>
-        </div>
-      </div>
+      <NavbarAuth />
 
       <div className="max-w-6xl mx-auto px-6 py-8">
         {/* Educational Cards */}

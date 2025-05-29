@@ -27,6 +27,10 @@ Route::get('/imunisasi', function () {
     return Inertia::render('ImunisasiDashboardView');
 })->middleware(['auth', 'verified'])->name('imunisasi');
 
+Route::get('/kb', function () {
+    return Inertia::render('KBDashboard');
+})->middleware(['auth', 'verified'])->name('kb');
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile-page', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile-page', [ProfileController::class, 'update'])->name('profile.update');
