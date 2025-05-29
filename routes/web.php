@@ -9,6 +9,7 @@ use App\Http\Controllers\NifasTaskController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserControllerAuth;
 use App\Http\Controllers\ImunisasiController;
+use App\Http\Controllers\KBController;
 
 Route::get('/', function () {
     return Inertia::render('HomeView', [

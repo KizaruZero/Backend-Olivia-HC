@@ -9,6 +9,8 @@ import {
     Brain,
     Activity,
     AlertCircle,
+    CircleAlert,
+    Utensils,
 } from "lucide-react";
 
 type Severity = "kritis" | "serius" | "normal";
@@ -107,15 +109,37 @@ const PostpartumDangerSigns = () => {
             initial="hidden"
             animate="visible"
             exit="exit"
+            className="text-center"
         >
-            <div className="text-center mb-8">
-                <h2 className="text-3xl font-bold bg-gradient-to-r from-red-600 to-red-800 bg-clip-text text-transparent mb-4">
-                    Tanda Bahaya pada Ibu Nifas
-                </h2>
-                <p className="text-lg text-gray-600">
-                    Kenali tanda-tanda bahaya yang memerlukan penanganan segera
-                </p>
-            </div>
+            <motion.div
+                className="inline-flex items-center text-center gap-3 mb-12"
+                whileHover={{ scale: 1.05 }}
+                transition={{ type: "spring", stiffness: 300 }}
+            >
+                <motion.div
+                    className="p-3 bg-gradient-to-r from-red-500 to-red-800 rounded-2xl text-white shadow-lg"
+                    whileHover={{ rotate: 360 }}
+                    transition={{ duration: 0.6 }}
+                >
+                    <CircleAlert size={24} />
+                </motion.div>
+                <div className="k">
+                    <h1 className="text-4xl md:text-4xl font-bold bg-gradient-to-r from-red-400 to-red-600 bg-clip-text text-transparent">
+                        Tanda Bahaya Pada Ibu Nifas
+                    </h1>
+                    <p className="text-lg mt-2 text-gray-600">
+                        Kenali tanda-tanda bahaya yang memerlukan penanganan
+                        segera
+                    </p>
+                </div>
+                <motion.div
+                    className="p-3 bg-gradient-to-r from-red-500 to-red-800 rounded-2xl text-white shadow-lg"
+                    whileHover={{ rotate: 360 }}
+                    transition={{ duration: 0.6 }}
+                >
+                    <CircleAlert size={24} />
+                </motion.div>
+            </motion.div>
 
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {dangerSigns.map((sign, index) => (

@@ -6,6 +6,7 @@ use App\Models\KB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 
 class KBController extends Controller
 {
@@ -29,10 +30,19 @@ class KBController extends Controller
      */
     public function store(Request $request)
     {
+        $kbTypes = [
+            'Metode operasi wanita (MOW)/tubektomi, metode operasi pria (MOP)/ vasektomi',
+            'Implan',
+            'IUD',
+            'Kontrasepsi suntik 3 bulan atau 1 bulan',
+            'Pil KB',
+            'Kondom'
+        ];
+
         $validator = Validator::make($request->all(), [
             'start_date' => 'required|date',
             'end_date' => 'nullable|date|after_or_equal:start_date',
-            'tipe_kb' => 'required|in:Metode operasi wanita (MOW)/tubektomi, metode operasi pria (MOP)/ vasektomi,Implan,IUD,Kontrasepsi suntik 3 bulan atau 1 bulan,Pil KB,Kondom',
+            'tipe_kb' => ['required', Rule::in($kbTypes)],
             'catatan' => 'nullable|string|max:255',
             'status_kb' => 'required|in:aktif,tidak_aktif'
         ]);
@@ -49,6 +59,7 @@ class KBController extends Controller
         if ($request->status_kb === 'aktif') {
             KB::where('user_id', Auth::id())
                 ->where('status_kb', 'aktif')
+                ->where('id', '!=', $request->id)
                 ->update(['status_kb' => 'tidak_aktif']);
         }
 
@@ -87,13 +98,22 @@ class KBController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $kbTypes = [
+            'Metode operasi wanita (MOW)/tubektomi, metode operasi pria (MOP)/ vasektomi',
+            'Implan',
+            'IUD',
+            'Kontrasepsi suntik 3 bulan atau 1 bulan',
+            'Pil KB',
+            'Kondom'
+        ];
+
         $kb = KB::where('user_id', Auth::id())
             ->findOrFail($id);
 
         $validator = Validator::make($request->all(), [
             'start_date' => 'sometimes|required|date',
             'end_date' => 'nullable|date|after_or_equal:start_date',
-            'tipe_kb' => 'sometimes|required|in:Metode operasi wanita (MOW)/tubektomi, metode operasi pria (MOP)/ vasektomi,Implan,IUD,Kontrasepsi suntik 3 bulan atau 1 bulan,Pil KB,Kondom',
+            'tipe_kb' => ['sometimes', 'required', Rule::in($kbTypes)],
             'catatan' => 'nullable|string|max:255',
             'status_kb' => 'sometimes|required|in:aktif,tidak_aktif'
         ]);
@@ -114,7 +134,16 @@ class KBController extends Controller
                 ->update(['status_kb' => 'tidak_aktif']);
         }
 
-        $kb->update($request->all());
+
+
+        // Update only the fields that are present in the request
+        $updateData = array_filter($request->all(), function ($value) {
+            return $value !== null && $value !== '';
+        });
+
+        $kb->update($updateData);
+
+        $kb->refresh();
 
         return response()->json([
             'status' => 'success',

@@ -8,6 +8,7 @@ import {
     Plus,
     Save,
     X,
+    Award,
     Baby,
     Heart,
     Shield,
@@ -15,6 +16,8 @@ import {
 import axios from "axios";
 import Swal from "sweetalert2";
 import NavbarAuth from "./Components/NavbarAuth";
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import PDFImunisasiSection from "./Components/PDFImunisasiSection";
 
 interface Imunisasi {
     id: number;
@@ -73,9 +76,78 @@ const ImunisasiDashboardView = () => {
     const [localStatus, setLocalStatus] = useState<{ [key: string]: string }>(
         {}
     );
+    const [activeEducationCard, setActiveEducationCard] = useState(0);
+
+    const educationalCards = [
+        {
+            id: 1,
+            title: "Pentingnya Imunisasi Ibu Hamil",
+            description:
+                "Imunisasi melindungi ibu dan bayi dari penyakit berbahaya selama kehamilan dan setelah lahir.",
+            icon: Shield,
+            color: "from-blue-500 to-blue-600",
+            tips: [
+                "Melindungi dari tetanus dan difteri",
+                "Mencegah komplikasi kehamilan",
+                "Memberikan kekebalan pada bayi",
+                "Mengurangi risiko kelahiran prematur",
+            ],
+        },
+        {
+            id: 2,
+            title: "Jadwal Imunisasi Optimal",
+            description:
+                "Mengetahui waktu yang tepat untuk setiap jenis imunisasi selama kehamilan.",
+            icon: Calendar,
+            color: "from-indigo-500 to-indigo-600",
+            tips: [
+                "Tetanus: 16-28 minggu kehamilan",
+                "Influenza: Setiap musim flu",
+                "Hepatitis B: Jika berisiko tinggi",
+                "Covid-19: Sesuai rekomendasi dokter",
+            ],
+        },
+        {
+            id: 3,
+            title: "Manfaat untuk Bayi",
+            description:
+                "Imunisasi ibu memberikan perlindungan awal yang sangat penting bagi bayi baru lahir.",
+            icon: Baby,
+            color: "from-pink-500 to-pink-600",
+            tips: [
+                "Antibodi dari ibu ke bayi",
+                "Perlindungan 6 bulan pertama",
+                "Mencegah penyakit serius",
+                "Membangun sistem imun bayi",
+            ],
+        },
+        {
+            id: 4,
+            title: "Keamanan Imunisasi",
+            description:
+                "Imunisasi yang direkomendasikan untuk ibu hamil telah terbukti aman dan efektif.",
+            icon: Award,
+            color: "from-green-500 to-green-600",
+            tips: [
+                "Telah melalui uji klinis",
+                "Direkomendasikan WHO",
+                "Efek samping minimal",
+                "Manfaat lebih besar dari risiko",
+            ],
+        },
+    ];
 
     useEffect(() => {
         fetchData();
+    }, []);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setActiveEducationCard(
+                (prev) => (prev + 1) % educationalCards.length
+            );
+        }, 5000);
+        return () => clearInterval(interval);
     }, []);
 
     const fetchData = async () => {
@@ -439,350 +511,724 @@ const ImunisasiDashboardView = () => {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100">
-            <NavbarAuth />
+            <AuthenticatedLayout>
+                <div className="container mx-auto px-6 p-8 min-h-screen">
+                    {/* Welcome Section */}
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="bg-gradient-to-r from-blue-600 to-blue-800 p-8 mb-8 rounded-2xl shadow-xl"
+                    >
+                        <div className="flex items-center justify-between">
+                            <div className="text-white">
+                                <motion.h1
+                                    className="text-3xl font-bold mb-3"
+                                    initial={{ x: -20, opacity: 0 }}
+                                    animate={{ x: 0, opacity: 1 }}
+                                    transition={{ delay: 0.2 }}
+                                >
+                                    Program Imunisasi Bayi
+                                </motion.h1>
+                                <motion.p
+                                    className="text-blue-100 text-lg"
+                                    initial={{ x: -20, opacity: 0 }}
+                                    animate={{ x: 0, opacity: 1 }}
+                                    transition={{ delay: 0.3 }}
+                                >
+                                    Lindungi si kecil dengan imunisasi lengkap
+                                </motion.p>
+                            </div>
+                            <motion.div
+                                initial={{ scale: 0 }}
+                                animate={{ scale: 1 }}
+                                transition={{ delay: 0.4 }}
+                            >
+                                <Shield className="w-16 h-16 text-white/80" />
+                            </motion.div>
+                        </div>
+                    </motion.div>
 
-            <div className="max-w-6xl mx-auto px-6 py-8">
-                {/* Imunisasi Management */}
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="bg-white rounded-2xl shadow-lg p-6 mb-8"
-                >
-                    <div className="flex justify-between items-center mb-6">
-                        <h2 className="text-2xl font-bold text-gray-800 flex items-center gap-3">
-                            <Shield className="w-6 h-6 text-blue-600" />
-                            Program Imunisasi
-                        </h2>
-                    </div>
+                    {/* Educational Cards Section */}
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.2 }}
+                        className="mb-12"
+                    >
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                            {educationalCards.map((card, index) => (
+                                <motion.div
+                                    key={card.id}
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: index * 0.1 }}
+                                    whileHover={{ y: -5, scale: 1.02 }}
+                                    className={`relative overflow-hidden rounded-2xl shadow-lg cursor-pointer transition-all duration-300 ${
+                                        activeEducationCard === index
+                                            ? "ring-4 ring-blue-300"
+                                            : ""
+                                    }`}
+                                    onClick={() =>
+                                        setActiveEducationCard(index)
+                                    }
+                                >
+                                    <div
+                                        className={`bg-gradient-to-br ${card.color} p-6 text-white`}
+                                    >
+                                        <card.icon className="w-8 h-8 mb-4" />
+                                        <h3 className="text-xl font-bold mb-2">
+                                            {card.title}
+                                        </h3>
+                                        <p className="text-white/90 text-sm leading-relaxed">
+                                            {card.description}
+                                        </p>
+                                    </div>
+
+                                    <div className="bg-white p-6">
+                                        <h4 className="font-semibold text-gray-800 mb-3">
+                                            Poin Penting:
+                                        </h4>
+                                        <ul className="space-y-2">
+                                            {card.tips.map((tip, tipIndex) => (
+                                                <motion.li
+                                                    key={tipIndex}
+                                                    initial={{
+                                                        opacity: 0,
+                                                        x: -20,
+                                                    }}
+                                                    animate={{
+                                                        opacity: 1,
+                                                        x: 0,
+                                                    }}
+                                                    transition={{
+                                                        delay: tipIndex * 0.1,
+                                                    }}
+                                                    className="flex items-center gap-2 text-gray-600"
+                                                >
+                                                    <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
+                                                    <span className="text-sm">
+                                                        {tip}
+                                                    </span>
+                                                </motion.li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                </motion.div>
+                            ))}
+                        </div>
+                    </motion.div>
+
+                    <PDFImunisasiSection />
 
                     {/* Progress Overview */}
                     {selectedImunisasi && (
-                        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 mb-6">
-                            <div className="flex justify-between items-center mb-4">
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.4 }}
+                            className="bg-gradient-to-r from-blue-600 to-blue-800 rounded-2xl p-6 mb-8 text-white"
+                        >
+                            <div className="flex justify-between items-center mb-6">
                                 <div>
-                                    <h3 className="text-lg font-semibold text-gray-800">
-                                        Progress Keseluruhan
+                                    <h3 className="text-xl font-bold mb-2">
+                                        Progress Imunisasi
                                     </h3>
-                                    <p className="text-gray-600">
-                                        Dimulai: {selectedImunisasi.start_date}
+                                    <p className="text-blue-100">
+                                        Lacak perkembangan imunisasi si kecil
                                     </p>
                                 </div>
                                 <div className="text-right">
-                                    <div className="text-2xl font-bold text-blue-600">
+                                    <div className="text-3xl font-bold">
                                         {completedFasesCount}/{totalFases}
                                     </div>
-                                    <div className="text-sm text-gray-600">
+                                    <div className="text-sm text-blue-100">
                                         Fase Selesai
                                     </div>
                                 </div>
                             </div>
-                            <div className="w-full bg-gray-200 rounded-full h-3">
+                            <div className="w-full bg-blue-700/50 rounded-full h-4">
                                 <motion.div
                                     initial={{ width: 0 }}
                                     animate={{
                                         width: `${progressPercentage}%`,
                                     }}
                                     transition={{ duration: 1, delay: 0.5 }}
-                                    className="bg-gradient-to-r from-blue-500 to-blue-600 h-3 rounded-full"
+                                    className="bg-white h-4 rounded-full"
                                 />
                             </div>
-                            <div className="text-center mt-2 text-sm text-gray-600">
+                            <div className="text-center mt-2 text-sm text-blue-100">
                                 {progressPercentage.toFixed(1)}% Complete
                             </div>
-                        </div>
+                        </motion.div>
                     )}
 
                     {/* Imunisasi List */}
-                    <div className="grid gap-4">
-                        {imunisasiList && imunisasiList.length > 0 ? (
-                            imunisasiList.map((imunisasi) => (
-                                <motion.div
-                                    key={imunisasi.id}
-                                    whileHover={{ scale: 1.02 }}
-                                    className={`p-4 rounded-xl border-2 cursor-pointer transition-all duration-300 ${
-                                        selectedImunisasi?.id === imunisasi.id
-                                            ? "border-blue-500 bg-blue-50"
-                                            : "border-gray-200 bg-white hover:border-blue-300"
-                                    }`}
-                                    onClick={() =>
-                                        setSelectedImunisasi(imunisasi)
-                                    }
-                                >
-                                    <div className="flex justify-between items-center">
-                                        <div className="flex items-center gap-3">
-                                            <div
-                                                className={`w-3 h-3 rounded-full ${
-                                                    imunisasi.is_active
-                                                        ? "bg-green-500"
-                                                        : "bg-gray-400"
-                                                }`}
-                                            />
-                                            <div>
-                                                <h3 className="font-semibold">
-                                                    Program Imunisasi
-                                                </h3>
-                                                <p className="text-sm text-gray-600">
-                                                    Mulai:{" "}
-                                                    {imunisasi.start_date} |
-                                                    Status:{" "}
-                                                    {imunisasi.is_completed
-                                                        ? "Selesai"
-                                                        : "Aktif"}
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <Heart className="w-5 h-5 text-pink-500" />
-                                    </div>
-                                </motion.div>
-                            ))
-                        ) : (
-                            <div className="text-center py-8 text-gray-500">
-                                Tidak ada data Imunisasi yang tersedia
-                            </div>
-                        )}
-                    </div>
-                </motion.div>
-
-                {/* Fase Imunisasi */}
-                {selectedImunisasi && faseImunisasiList.length > 0 && (
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.2 }}
+                        className="bg-white rounded-2xl shadow-lg p-6 mb-8"
                     >
-                        <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-3">
-                            <Calendar className="w-6 h-6 text-blue-600" />
-                            Fase Pemulihan
-                        </h2>
+                        <div className="flex justify-between items-center mb-6">
+                            <div>
+                                <h2 className="text-2xl font-bold text-gray-800 flex items-center gap-3">
+                                    <Shield className="w-6 h-6 text-blue-600" />
+                                    Program Imunisasi Aktif
+                                </h2>
+                                <p className="text-gray-600 mt-1">
+                                    Kelola dan pantau program imunisasi si kecil
+                                </p>
+                            </div>
+                        </div>
 
                         <div className="grid gap-6">
-                            {getCurrentFases().map((fase, index) => (
-                                <motion.div
-                                    key={fase.id}
-                                    initial={{ opacity: 0, x: -20 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    transition={{ delay: index * 0.1 }}
-                                    className={`bg-white rounded-2xl shadow-lg overflow-hidden ${
-                                        fase.is_complete
-                                            ? "ring-2 ring-green-500"
-                                            : ""
-                                    }`}
-                                >
-                                    <div
-                                        className={`p-6 ${
-                                            fase.is_complete
-                                                ? "bg-green-50"
-                                                : "bg-gradient-to-r from-blue-50 to-indigo-50"
+                            {imunisasiList && imunisasiList.length > 0 ? (
+                                imunisasiList.map((imunisasi) => (
+                                    <motion.div
+                                        key={imunisasi.id}
+                                        initial={{ opacity: 0, y: 20 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        whileHover={{ scale: 1.02 }}
+                                        className={`relative overflow-hidden rounded-xl border-2 transition-all duration-300 ${
+                                            selectedImunisasi?.id ===
+                                            imunisasi.id
+                                                ? "border-blue-500 bg-blue-50"
+                                                : "border-gray-200 bg-white hover:border-blue-300"
                                         }`}
+                                        onClick={() =>
+                                            setSelectedImunisasi(imunisasi)
+                                        }
                                     >
-                                        <div className="flex justify-between items-start mb-4">
-                                            <div className="flex-1">
-                                                <div className="flex items-center gap-3 mb-2">
-                                                    <span
-                                                        className={`px-3 py-1 rounded-full text-sm font-medium ${
-                                                            fase.is_complete
-                                                                ? "bg-green-100 text-green-800"
-                                                                : "bg-blue-100 text-blue-800"
+                                        <div className="p-6">
+                                            <div className="flex justify-between items-start">
+                                                <div className="flex items-start gap-4">
+                                                    <div
+                                                        className={`p-3 rounded-full ${
+                                                            imunisasi.is_active
+                                                                ? "bg-green-100"
+                                                                : "bg-gray-100"
                                                         }`}
                                                     >
-                                                        {fase.waktu_fase}
-                                                    </span>
-                                                    {fase.is_complete && (
-                                                        <CheckCircle className="w-5 h-5 text-green-600" />
-                                                    )}
+                                                        <Heart
+                                                            className={`w-6 h-6 ${
+                                                                imunisasi.is_active
+                                                                    ? "text-green-600"
+                                                                    : "text-gray-400"
+                                                            }`}
+                                                        />
+                                                    </div>
+                                                    <div>
+                                                        <div className="flex items-center gap-3 mb-2">
+                                                            <h3 className="text-lg font-semibold text-gray-800">
+                                                                Program
+                                                                Imunisasi
+                                                            </h3>
+                                                            <span
+                                                                className={`px-3 py-1 rounded-full text-xs font-medium ${
+                                                                    imunisasi.is_completed
+                                                                        ? "bg-green-100 text-green-800 border border-green-200"
+                                                                        : "bg-blue-100 text-blue-800 border border-blue-200"
+                                                                }`}
+                                                            >
+                                                                {imunisasi.is_completed
+                                                                    ? "Selesai"
+                                                                    : "Aktif"}
+                                                            </span>
+                                                        </div>
+                                                        <div className="space-y-1">
+                                                            <p className="text-sm text-gray-600">
+                                                                <span className="font-medium">
+                                                                    Mulai:
+                                                                </span>{" "}
+                                                                {imunisasi.start_date
+                                                                    ? new Date(
+                                                                          imunisasi.start_date
+                                                                      ).toLocaleDateString(
+                                                                          "id-ID",
+                                                                          {
+                                                                              day: "numeric",
+                                                                              month: "long",
+                                                                              year: "numeric",
+                                                                          }
+                                                                      )
+                                                                    : "Belum ditentukan"}
+                                                            </p>
+                                                            {imunisasi.completed_at && (
+                                                                <p className="text-sm text-gray-600">
+                                                                    <span className="font-medium">
+                                                                        Selesai:
+                                                                    </span>{" "}
+                                                                    {new Date(
+                                                                        imunisasi.completed_at
+                                                                    ).toLocaleDateString(
+                                                                        "id-ID",
+                                                                        {
+                                                                            day: "numeric",
+                                                                            month: "long",
+                                                                            year: "numeric",
+                                                                        }
+                                                                    )}
+                                                                </p>
+                                                            )}
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                                <h3 className="text-xl font-bold text-gray-800 mb-2">
-                                                    {fase.nama_fase}
-                                                </h3>
-                                                <p className="text-gray-600">
-                                                    {fase.deskripsi_fase}
-                                                </p>
-                                            </div>
-                                            <div className="flex gap-2">
-                                                <button
-                                                    onClick={() =>
-                                                        setEditingFase(
-                                                            editingFase ===
-                                                                fase.id
-                                                                ? null
-                                                                : fase.id
-                                                        )
-                                                    }
-                                                    className="p-2 text-blue-600 hover:bg-blue-100 rounded-lg transition-colors"
-                                                >
-                                                    <Edit3 className="w-5 h-5" />
-                                                </button>
-                                                {!fase.is_complete && (
-                                                    <button
-                                                        onClick={() =>
-                                                            handleCompleteFase(
-                                                                fase.id
-                                                            )
-                                                        }
-                                                        className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2"
+                                                <div className="flex items-center gap-3">
+                                                    <div className="flex items-center gap-2">
+                                                        <div
+                                                            className={`w-2 h-2 rounded-full ${
+                                                                imunisasi.is_active
+                                                                    ? "bg-green-500"
+                                                                    : "bg-gray-400"
+                                                            }`}
+                                                        />
+                                                        <span className="text-sm text-gray-600">
+                                                            {imunisasi.is_active
+                                                                ? "Sedang Berjalan"
+                                                                : "Selesai"}
+                                                        </span>
+                                                    </div>
+                                                    <motion.div
+                                                        whileHover={{
+                                                            scale: 1.1,
+                                                        }}
+                                                        whileTap={{
+                                                            scale: 0.9,
+                                                        }}
+                                                        className="p-2 text-blue-600 hover:bg-blue-100 rounded-lg transition-colors"
                                                     >
-                                                        <CheckCircle className="w-4 h-4" />
-                                                        Complete
-                                                    </button>
-                                                )}
+                                                        <Edit3 className="w-5 h-5" />
+                                                    </motion.div>
+                                                </div>
+                                            </div>
+
+                                            {/* Progress Bar */}
+                                            <div className="mt-4">
+                                                <div className="flex justify-between items-center mb-2">
+                                                    <span className="text-sm font-medium text-gray-600">
+                                                        Progress
+                                                    </span>
+                                                    <span className="text-sm text-gray-600">
+                                                        {completedFasesCount}/
+                                                        {totalFases} Fase
+                                                    </span>
+                                                </div>
+                                                <div className="w-full bg-gray-200 rounded-full h-2">
+                                                    <motion.div
+                                                        initial={{ width: 0 }}
+                                                        animate={{
+                                                            width: `${progressPercentage}%`,
+                                                        }}
+                                                        transition={{
+                                                            duration: 1,
+                                                        }}
+                                                        className="bg-gradient-to-r from-blue-500 to-blue-600 h-2 rounded-full"
+                                                    />
+                                                </div>
                                             </div>
                                         </div>
 
-                                        <AnimatePresence>
-                                            {editingFase === fase.id && (
-                                                <motion.div
-                                                    initial={{
-                                                        opacity: 0,
-                                                        height: 0,
-                                                    }}
-                                                    animate={{
-                                                        opacity: 1,
-                                                        height: "auto",
-                                                    }}
-                                                    exit={{
-                                                        opacity: 0,
-                                                        height: 0,
-                                                    }}
-                                                    className="mt-6 space-y-6"
-                                                >
-                                                    {/* Tugas 1-4 */}
-                                                    {[1, 2, 3, 4].map(
-                                                        (tugasNum) => {
-                                                            const tugasKey =
-                                                                `tugas_${tugasNum}` as keyof FaseImunisasi;
-                                                            const deskripsiKey =
-                                                                `deskripsi_tugas_${tugasNum}` as keyof FaseImunisasi;
-                                                            const statusKey =
-                                                                `tugas_${tugasNum}_status` as keyof FaseImunisasi;
-                                                            const tanggalKey =
-                                                                `tugas_${tugasNum}_tanggal` as keyof FaseImunisasi;
-                                                            const catatanKey =
-                                                                `tugas_${tugasNum}_catatan` as keyof FaseImunisasi;
+                                        {/* Hover Effect Border */}
+                                        <div className="absolute inset-0 border-2 border-blue-500 opacity-0 transition-opacity duration-300 rounded-xl pointer-events-none" />
+                                    </motion.div>
+                                ))
+                            ) : (
+                                <motion.div
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    className="text-center py-12 bg-gray-50 rounded-xl"
+                                >
+                                    <div className="bg-gray-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                                        <Baby className="w-8 h-8 text-gray-400" />
+                                    </div>
+                                    <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                                        Belum Ada Program Imunisasi
+                                    </h3>
+                                    <p className="text-gray-600 mb-4">
+                                        Mulai program imunisasi untuk melindungi
+                                        kesehatan si kecil
+                                    </p>
+                                    <motion.button
+                                        whileHover={{ scale: 1.05 }}
+                                        whileTap={{ scale: 0.95 }}
+                                        className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-6 py-3 rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all duration-300 flex items-center gap-2 mx-auto"
+                                    >
+                                        <Plus className="w-5 h-5" />
+                                        Tambah Program Baru
+                                    </motion.button>
+                                </motion.div>
+                            )}
+                        </div>
+                    </motion.div>
 
-                                                            return (
-                                                                <div
-                                                                    key={
-                                                                        tugasNum
-                                                                    }
-                                                                    className="bg-white p-4 rounded-xl border border-gray-200"
-                                                                >
-                                                                    <div className="flex items-center gap-3 mb-3">
-                                                                        <span className="font-semibold text-gray-800">
-                                                                            Tugas{" "}
-                                                                            {
-                                                                                tugasNum
-                                                                            }
-                                                                            :
-                                                                        </span>
-                                                                        <span className="text-gray-600">
+                    {/* Fase Imunisasi */}
+                    {selectedImunisasi && faseImunisasiList.length > 0 && (
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.2 }}
+                            className="bg-white rounded-2xl shadow-lg p-6 mb-8"
+                        >
+                            <div className="flex justify-between items-center mb-8">
+                                <div>
+                                    <h2 className="text-2xl font-bold text-gray-800 flex items-center gap-3">
+                                        <Calendar className="w-6 h-6 text-blue-600" />
+                                        Fase Imunisasi
+                                    </h2>
+                                    <p className="text-gray-600 mt-1">
+                                        Pantau dan kelola setiap fase imunisasi
+                                        si kecil
+                                    </p>
+                                </div>
+                                <div className="flex items-center gap-3">
+                                    <div className="bg-blue-50 px-4 py-2 rounded-lg">
+                                        <span className="text-sm font-medium text-blue-700">
+                                            Total Fase: {totalFases}
+                                        </span>
+                                    </div>
+                                    <div className="bg-green-50 px-4 py-2 rounded-lg">
+                                        <span className="text-sm font-medium text-green-700">
+                                            Selesai: {completedFasesCount}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="grid gap-6">
+                                {getCurrentFases().map((fase, index) => (
+                                    <motion.div
+                                        key={fase.id}
+                                        initial={{ opacity: 0, x: -20 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        transition={{ delay: index * 0.1 }}
+                                        className={`relative overflow-hidden rounded-xl border-2 ${
+                                            fase.is_complete
+                                                ? "border-green-200 bg-green-50"
+                                                : "border-blue-100 bg-white hover:border-blue-300"
+                                        } transition-all duration-300`}
+                                    >
+                                        <div className="p-6">
+                                            <div className="flex justify-between items-start mb-4">
+                                                <div className="flex-1">
+                                                    <div className="flex items-center gap-3 mb-3">
+                                                        <div
+                                                            className={`p-2 rounded-full ${
+                                                                fase.is_complete
+                                                                    ? "bg-green-100"
+                                                                    : "bg-blue-100"
+                                                            }`}
+                                                        >
+                                                            <Clock
+                                                                className={`w-5 h-5 ${
+                                                                    fase.is_complete
+                                                                        ? "text-green-600"
+                                                                        : "text-blue-600"
+                                                                }`}
+                                                            />
+                                                        </div>
+                                                        <div>
+                                                            <h3 className="text-lg font-bold text-gray-800">
+                                                                {fase.nama_fase}
+                                                            </h3>
+                                                            <p className="text-sm text-gray-600">
+                                                                {
+                                                                    fase.waktu_fase
+                                                                }
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                    <p className="text-gray-700 mb-4">
+                                                        {fase.deskripsi_fase}
+                                                    </p>
+                                                </div>
+                                                <div className="flex gap-2">
+                                                    <motion.button
+                                                        whileHover={{
+                                                            scale: 1.05,
+                                                        }}
+                                                        whileTap={{
+                                                            scale: 0.95,
+                                                        }}
+                                                        onClick={() =>
+                                                            setEditingFase(
+                                                                editingFase ===
+                                                                    fase.id
+                                                                    ? null
+                                                                    : fase.id
+                                                            )
+                                                        }
+                                                        className="p-2 text-blue-600 hover:bg-blue-100 rounded-lg transition-colors"
+                                                    >
+                                                        <Edit3 className="w-5 h-5" />
+                                                    </motion.button>
+                                                    {!fase.is_complete && (
+                                                        <motion.button
+                                                            whileHover={{
+                                                                scale: 1.05,
+                                                            }}
+                                                            whileTap={{
+                                                                scale: 0.95,
+                                                            }}
+                                                            onClick={() =>
+                                                                handleCompleteFase(
+                                                                    fase.id
+                                                                )
+                                                            }
+                                                            className="bg-gradient-to-r from-green-500 to-green-600 text-white px-4 py-2 rounded-lg hover:from-green-600 hover:to-green-700 transition-all duration-300 flex items-center gap-2"
+                                                        >
+                                                            <CheckCircle className="w-4 h-4" />
+                                                            Selesai
+                                                        </motion.button>
+                                                    )}
+                                                </div>
+                                            </div>
+
+                                            {/* Tasks Grid */}
+                                            <div className="grid md:grid-cols-2 gap-4 mb-4">
+                                                {[1, 2, 3, 4].map(
+                                                    (tugasNum) => {
+                                                        const tugasKey =
+                                                            `tugas_${tugasNum}` as keyof FaseImunisasi;
+                                                        const statusKey =
+                                                            `tugas_${tugasNum}_status` as keyof FaseImunisasi;
+                                                        const deskripsiKey =
+                                                            `deskripsi_tugas_${tugasNum}` as keyof FaseImunisasi;
+                                                        const tanggalKey =
+                                                            `tugas_${tugasNum}_tanggal` as keyof FaseImunisasi;
+
+                                                        if (!fase[tugasKey])
+                                                            return null;
+
+                                                        return (
+                                                            <div
+                                                                key={tugasNum}
+                                                                className="bg-white rounded-lg p-4 border border-gray-100"
+                                                            >
+                                                                <div className="flex items-start gap-3">
+                                                                    <div
+                                                                        className={`p-2 rounded-full ${
+                                                                            (fase[
+                                                                                statusKey
+                                                                            ] as string) ===
+                                                                            "sudah"
+                                                                                ? "bg-green-100"
+                                                                                : "bg-gray-100"
+                                                                        }`}
+                                                                    >
+                                                                        <CheckCircle
+                                                                            className={`w-4 h-4 ${
+                                                                                (fase[
+                                                                                    statusKey
+                                                                                ] as string) ===
+                                                                                "sudah"
+                                                                                    ? "text-green-600"
+                                                                                    : "text-gray-400"
+                                                                            }`}
+                                                                        />
+                                                                    </div>
+                                                                    <div className="flex-1">
+                                                                        <h4 className="font-medium text-gray-800 mb-1">
                                                                             {
                                                                                 fase[
                                                                                     tugasKey
                                                                                 ] as string
                                                                             }
-                                                                        </span>
-                                                                    </div>
-
-                                                                    <p className="text-sm text-gray-600 mb-4">
-                                                                        {
+                                                                        </h4>
+                                                                        <p className="text-sm text-gray-600 mb-2">
+                                                                            {
+                                                                                fase[
+                                                                                    deskripsiKey
+                                                                                ] as string
+                                                                            }
+                                                                        </p>
+                                                                        {(fase[
+                                                                            statusKey
+                                                                        ] as string) ===
+                                                                            "sudah" &&
                                                                             fase[
-                                                                                deskripsiKey
-                                                                            ] as string
-                                                                        }
-                                                                    </p>
+                                                                                tanggalKey
+                                                                            ] && (
+                                                                                <span className="text-xs text-gray-500">
+                                                                                    Selesai:{" "}
+                                                                                    {new Date(
+                                                                                        fase[
+                                                                                            tanggalKey
+                                                                                        ] as string
+                                                                                    ).toLocaleDateString(
+                                                                                        "id-ID"
+                                                                                    )}
+                                                                                </span>
+                                                                            )}
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        );
+                                                    }
+                                                )}
+                                            </div>
 
-                                                                    <div className="grid md:grid-cols-2 gap-4">
-                                                                        <div>
-                                                                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                                                                                Status
-                                                                            </label>
-                                                                            <select
-                                                                                value={
-                                                                                    localStatus[
-                                                                                        `${fase.id}_${statusKey}`
-                                                                                    ] !==
-                                                                                    undefined
-                                                                                        ? localStatus[
-                                                                                              `${fase.id}_${statusKey}`
-                                                                                          ]
-                                                                                        : (fase[
-                                                                                              statusKey
-                                                                                          ] as string)
+                                            {/* Edit Form */}
+                                            <AnimatePresence>
+                                                {editingFase === fase.id && (
+                                                    <motion.div
+                                                        initial={{
+                                                            opacity: 0,
+                                                            height: 0,
+                                                        }}
+                                                        animate={{
+                                                            opacity: 1,
+                                                            height: "auto",
+                                                        }}
+                                                        exit={{
+                                                            opacity: 0,
+                                                            height: 0,
+                                                        }}
+                                                        className="mt-6 space-y-6 bg-blue-50 rounded-xl p-6"
+                                                    >
+                                                        {/* Tugas 1-4 */}
+                                                        {[1, 2, 3, 4].map(
+                                                            (tugasNum) => {
+                                                                const tugasKey =
+                                                                    `tugas_${tugasNum}` as keyof FaseImunisasi;
+                                                                const deskripsiKey =
+                                                                    `deskripsi_tugas_${tugasNum}` as keyof FaseImunisasi;
+                                                                const statusKey =
+                                                                    `tugas_${tugasNum}_status` as keyof FaseImunisasi;
+                                                                const tanggalKey =
+                                                                    `tugas_${tugasNum}_tanggal` as keyof FaseImunisasi;
+                                                                const catatanKey =
+                                                                    `tugas_${tugasNum}_catatan` as keyof FaseImunisasi;
+
+                                                                if (
+                                                                    !fase[
+                                                                        tugasKey
+                                                                    ]
+                                                                )
+                                                                    return null;
+
+                                                                return (
+                                                                    <div
+                                                                        key={
+                                                                            tugasNum
+                                                                        }
+                                                                        className="bg-white rounded-xl p-4 border border-gray-200"
+                                                                    >
+                                                                        <div className="flex items-center gap-3 mb-3">
+                                                                            <span className="font-semibold text-gray-800">
+                                                                                Tugas{" "}
+                                                                                {
+                                                                                    tugasNum
                                                                                 }
-                                                                                onChange={(
-                                                                                    e
-                                                                                ) =>
-                                                                                    handleInputChange(
-                                                                                        fase.id,
-                                                                                        statusKey,
-                                                                                        e
-                                                                                            .target
-                                                                                            .value
-                                                                                    )
+
+                                                                                :
+                                                                            </span>
+                                                                            <span className="text-gray-600">
+                                                                                {
+                                                                                    fase[
+                                                                                        tugasKey
+                                                                                    ] as string
                                                                                 }
-                                                                                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                                                            >
-                                                                                <option value="belum">
-                                                                                    Belum
-                                                                                </option>
-                                                                                <option value="sudah">
-                                                                                    Sudah
-                                                                                </option>
-                                                                                <option value="ditunda">
-                                                                                    Ditunda
-                                                                                </option>
-                                                                                <option value="dilewati">
-                                                                                    Dilewati
-                                                                                </option>
-                                                                            </select>
+                                                                            </span>
                                                                         </div>
 
-                                                                        <div>
-                                                                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                                                                                Tanggal
-                                                                            </label>
-                                                                            <input
-                                                                                type="date"
-                                                                                value={
-                                                                                    localNotes[
-                                                                                        `${fase.id}_${tanggalKey}`
-                                                                                    ] !==
-                                                                                    undefined
-                                                                                        ? localNotes[
-                                                                                              `${fase.id}_${tanggalKey}`
-                                                                                          ]
-                                                                                        : (
-                                                                                              fase[
-                                                                                                  tanggalKey
-                                                                                              ] as string
-                                                                                          )?.split(
-                                                                                              "T"
-                                                                                          )[0] ||
-                                                                                          ""
-                                                                                }
-                                                                                onChange={(
-                                                                                    e
-                                                                                ) =>
-                                                                                    handleInputChange(
-                                                                                        fase.id,
-                                                                                        tanggalKey,
+                                                                        <p className="text-sm text-gray-600 mb-4">
+                                                                            {
+                                                                                fase[
+                                                                                    deskripsiKey
+                                                                                ] as string
+                                                                            }
+                                                                        </p>
+
+                                                                        <div className="grid md:grid-cols-2 gap-4">
+                                                                            <div>
+                                                                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                                                    Status
+                                                                                </label>
+                                                                                <select
+                                                                                    value={
+                                                                                        localStatus[
+                                                                                            `${fase.id}_${statusKey}`
+                                                                                        ] !==
+                                                                                        undefined
+                                                                                            ? localStatus[
+                                                                                                  `${fase.id}_${statusKey}`
+                                                                                              ]
+                                                                                            : (fase[
+                                                                                                  statusKey
+                                                                                              ] as string)
+                                                                                    }
+                                                                                    onChange={(
                                                                                         e
-                                                                                            .target
-                                                                                            .value
-                                                                                    )
-                                                                                }
-                                                                                disabled={
-                                                                                    localStatus[
-                                                                                        `${fase.id}_${statusKey}`
-                                                                                    ] !==
-                                                                                        "sudah" &&
-                                                                                    (fase[
-                                                                                        statusKey
-                                                                                    ] as string) !==
-                                                                                        "sudah"
-                                                                                }
-                                                                                className={`w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent
-                                                                                    ${
+                                                                                    ) =>
+                                                                                        handleInputChange(
+                                                                                            fase.id,
+                                                                                            statusKey,
+                                                                                            e
+                                                                                                .target
+                                                                                                .value
+                                                                                        )
+                                                                                    }
+                                                                                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                                                                >
+                                                                                    <option value="belum">
+                                                                                        Belum
+                                                                                    </option>
+                                                                                    <option value="sudah">
+                                                                                        Sudah
+                                                                                    </option>
+                                                                                    <option value="ditunda">
+                                                                                        Ditunda
+                                                                                    </option>
+                                                                                    <option value="dilewati">
+                                                                                        Dilewati
+                                                                                    </option>
+                                                                                </select>
+                                                                            </div>
+
+                                                                            <div>
+                                                                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                                                    Tanggal
+                                                                                </label>
+                                                                                <input
+                                                                                    type="date"
+                                                                                    value={
+                                                                                        localNotes[
+                                                                                            `${fase.id}_${tanggalKey}`
+                                                                                        ] !==
+                                                                                        undefined
+                                                                                            ? localNotes[
+                                                                                                  `${fase.id}_${tanggalKey}`
+                                                                                              ]
+                                                                                            : (
+                                                                                                  fase[
+                                                                                                      tanggalKey
+                                                                                                  ] as string
+                                                                                              )?.split(
+                                                                                                  "T"
+                                                                                              )[0] ||
+                                                                                              ""
+                                                                                    }
+                                                                                    onChange={(
+                                                                                        e
+                                                                                    ) =>
+                                                                                        handleInputChange(
+                                                                                            fase.id,
+                                                                                            tanggalKey,
+                                                                                            e
+                                                                                                .target
+                                                                                                .value
+                                                                                        )
+                                                                                    }
+                                                                                    disabled={
+                                                                                        localStatus[
+                                                                                            `${fase.id}_${statusKey}`
+                                                                                        ] !==
+                                                                                            "sudah" &&
+                                                                                        (fase[
+                                                                                            statusKey
+                                                                                        ] as string) !==
+                                                                                            "sudah"
+                                                                                    }
+                                                                                    className={`w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
                                                                                         localStatus[
                                                                                             `${fase.id}_${statusKey}`
                                                                                         ] !==
@@ -794,162 +1240,275 @@ const ImunisasiDashboardView = () => {
                                                                                             ? "bg-gray-100 cursor-not-allowed"
                                                                                             : ""
                                                                                     }`}
+                                                                                />
+                                                                            </div>
+                                                                        </div>
+
+                                                                        <div className="mt-4">
+                                                                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                                                Catatan
+                                                                            </label>
+                                                                            <textarea
+                                                                                value={
+                                                                                    localNotes[
+                                                                                        `${fase.id}_${catatanKey}`
+                                                                                    ] !==
+                                                                                    undefined
+                                                                                        ? localNotes[
+                                                                                              `${fase.id}_${catatanKey}`
+                                                                                          ]
+                                                                                        : (fase[
+                                                                                              catatanKey
+                                                                                          ] as string) ||
+                                                                                          ""
+                                                                                }
+                                                                                onChange={(
+                                                                                    e
+                                                                                ) =>
+                                                                                    handleInputChange(
+                                                                                        fase.id,
+                                                                                        catatanKey,
+                                                                                        e
+                                                                                            .target
+                                                                                            .value
+                                                                                    )
+                                                                                }
+                                                                                rows={
+                                                                                    3
+                                                                                }
+                                                                                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                                                                placeholder="Tambahkan catatan..."
                                                                             />
                                                                         </div>
-                                                                    </div>
 
-                                                                    <div className="mt-4">
-                                                                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                                                                            Catatan
-                                                                        </label>
-                                                                        <textarea
-                                                                            value={
-                                                                                localNotes[
-                                                                                    `${fase.id}_${catatanKey}`
-                                                                                ] !==
-                                                                                undefined
-                                                                                    ? localNotes[
-                                                                                          `${fase.id}_${catatanKey}`
-                                                                                      ]
-                                                                                    : (fase[
-                                                                                          catatanKey
-                                                                                      ] as string) ||
-                                                                                      ""
-                                                                            }
-                                                                            onChange={(
-                                                                                e
-                                                                            ) =>
-                                                                                handleInputChange(
-                                                                                    fase.id,
-                                                                                    catatanKey,
-                                                                                    e
-                                                                                        .target
-                                                                                        .value
-                                                                                )
-                                                                            }
-                                                                            rows={
-                                                                                3
-                                                                            }
-                                                                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                                                            placeholder="Tambahkan catatan..."
-                                                                        />
-                                                                    </div>
-
-                                                                    <div className="mt-3 flex items-center gap-2">
-                                                                        <span
-                                                                            className={`px-3 py-1 rounded-full text-sm border ${getStatusColor(
-                                                                                localStatus[
-                                                                                    `${fase.id}_${statusKey}`
-                                                                                ] ||
-                                                                                    (fase[
-                                                                                        statusKey
-                                                                                    ] as string)
-                                                                            )}`}
-                                                                        >
-                                                                            {getStatusIcon(
-                                                                                localStatus[
-                                                                                    `${fase.id}_${statusKey}`
-                                                                                ] ||
-                                                                                    (fase[
-                                                                                        statusKey
-                                                                                    ] as string)
-                                                                            )}
-                                                                            <span className="ml-1 capitalize">
-                                                                                {localStatus[
-                                                                                    `${fase.id}_${statusKey}`
-                                                                                ] ||
-                                                                                    (fase[
-                                                                                        statusKey
-                                                                                    ] as string)}
-                                                                            </span>
-                                                                        </span>
-                                                                        {(localStatus[
-                                                                            `${fase.id}_${statusKey}`
-                                                                        ] ===
-                                                                            "sudah" ||
-                                                                            (fase[
-                                                                                statusKey
-                                                                            ] as string) ===
-                                                                                "sudah") &&
-                                                                            (localNotes[
-                                                                                `${fase.id}_${tanggalKey}`
-                                                                            ] ||
-                                                                                (fase[
-                                                                                    tanggalKey
-                                                                                ] as string)) && (
-                                                                                <span className="text-sm text-gray-600">
-                                                                                    Tanggal:{" "}
-                                                                                    {localNotes[
-                                                                                        `${fase.id}_${tanggalKey}`
+                                                                        <div className="mt-3 flex items-center gap-2">
+                                                                            <span
+                                                                                className={`px-3 py-1 rounded-full text-sm border ${getStatusColor(
+                                                                                    localStatus[
+                                                                                        `${fase.id}_${statusKey}`
                                                                                     ] ||
-                                                                                        (
-                                                                                            fase[
-                                                                                                tanggalKey
-                                                                                            ] as string
-                                                                                        )?.split(
-                                                                                            "T"
-                                                                                        )[0]}
+                                                                                        (fase[
+                                                                                            statusKey
+                                                                                        ] as string)
+                                                                                )}`}
+                                                                            >
+                                                                                {getStatusIcon(
+                                                                                    localStatus[
+                                                                                        `${fase.id}_${statusKey}`
+                                                                                    ] ||
+                                                                                        (fase[
+                                                                                            statusKey
+                                                                                        ] as string)
+                                                                                )}
+                                                                                <span className="ml-1 capitalize">
+                                                                                    {localStatus[
+                                                                                        `${fase.id}_${statusKey}`
+                                                                                    ] ||
+                                                                                        (fase[
+                                                                                            statusKey
+                                                                                        ] as string)}
                                                                                 </span>
-                                                                            )}
+                                                                            </span>
+                                                                            {(localStatus[
+                                                                                `${fase.id}_${statusKey}`
+                                                                            ] ===
+                                                                                "sudah" ||
+                                                                                (fase[
+                                                                                    statusKey
+                                                                                ] as string) ===
+                                                                                    "sudah") &&
+                                                                                (localNotes[
+                                                                                    `${fase.id}_${tanggalKey}`
+                                                                                ] ||
+                                                                                    (fase[
+                                                                                        tanggalKey
+                                                                                    ] as string)) && (
+                                                                                    <span className="text-sm text-gray-600">
+                                                                                        Tanggal:{" "}
+                                                                                        {localNotes[
+                                                                                            `${fase.id}_${tanggalKey}`
+                                                                                        ] ||
+                                                                                            (
+                                                                                                fase[
+                                                                                                    tanggalKey
+                                                                                                ] as string
+                                                                                            )?.split(
+                                                                                                "T"
+                                                                                            )[0]}
+                                                                                    </span>
+                                                                                )}
+                                                                        </div>
                                                                     </div>
-                                                                </div>
-                                                            );
-                                                        }
-                                                    )}
+                                                                );
+                                                            }
+                                                        )}
 
-                                                    {/* Catatan Fase */}
-                                                    <div className="bg-white p-4 rounded-xl border border-gray-200">
-                                                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                                                            Catatan Fase
-                                                        </label>
-                                                        <textarea
-                                                            value={
-                                                                localNotes[
-                                                                    `${fase.id}_catatan_fase`
-                                                                ] !== undefined
-                                                                    ? localNotes[
-                                                                          `${fase.id}_catatan_fase`
-                                                                      ]
-                                                                    : fase.catatan_fase ||
-                                                                      ""
-                                                            }
-                                                            onChange={(e) =>
-                                                                handleInputChange(
-                                                                    fase.id,
-                                                                    "catatan_fase",
-                                                                    e.target
-                                                                        .value
-                                                                )
-                                                            }
-                                                            rows={3}
-                                                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                                            placeholder="Catatan umum untuk fase ini..."
-                                                        />
-                                                    </div>
+                                                        {/* Catatan Fase */}
+                                                        <div className="bg-white rounded-xl p-4 border border-gray-200">
+                                                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                                Catatan Fase
+                                                            </label>
+                                                            <textarea
+                                                                value={
+                                                                    localNotes[
+                                                                        `${fase.id}_catatan_fase`
+                                                                    ] !==
+                                                                    undefined
+                                                                        ? localNotes[
+                                                                              `${fase.id}_catatan_fase`
+                                                                          ]
+                                                                        : fase.catatan_fase ||
+                                                                          ""
+                                                                }
+                                                                onChange={(e) =>
+                                                                    handleInputChange(
+                                                                        fase.id,
+                                                                        "catatan_fase",
+                                                                        e.target
+                                                                            .value
+                                                                    )
+                                                                }
+                                                                rows={3}
+                                                                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                                                placeholder="Catatan umum untuk fase ini..."
+                                                            />
+                                                        </div>
 
-                                                    <div className="mt-4 flex justify-end">
-                                                        <button
-                                                            onClick={() =>
-                                                                handleUpdateFase(
-                                                                    fase.id
-                                                                )
-                                                            }
-                                                            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
-                                                        >
-                                                            <Save className="w-4 h-4" />
-                                                            Update
-                                                        </button>
-                                                    </div>
-                                                </motion.div>
-                                            )}
-                                        </AnimatePresence>
-                                    </div>
-                                </motion.div>
-                            ))}
+                                                        <div className="mt-4 flex justify-end">
+                                                            <motion.button
+                                                                whileHover={{
+                                                                    scale: 1.05,
+                                                                }}
+                                                                whileTap={{
+                                                                    scale: 0.95,
+                                                                }}
+                                                                onClick={() =>
+                                                                    handleUpdateFase(
+                                                                        fase.id
+                                                                    )
+                                                                }
+                                                                className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-6 py-3 rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all duration-300 flex items-center gap-2"
+                                                            >
+                                                                <Save className="w-4 h-4" />
+                                                                Simpan Perubahan
+                                                            </motion.button>
+                                                        </div>
+                                                    </motion.div>
+                                                )}
+                                            </AnimatePresence>
+                                        </div>
+
+                                        {/* Status Badge */}
+                                        {fase.is_complete && (
+                                            <div className="absolute top-7 right-16">
+                                                <span className="px-3 py-1 bg-green-100 text-green-800 text-sm font-medium rounded-full border border-green-200">
+                                                    Selesai
+                                                </span>
+                                            </div>
+                                        )}
+                                    </motion.div>
+                                ))}
+                            </div>
+                        </motion.div>
+                    )}
+
+                    {/* Immunization Phases Timeline */}
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.3 }}
+                        className="bg-white rounded-2xl p-6 shadow-lg mb-8"
+                    >
+                        <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-3">
+                            <Clock className="w-6 h-6 text-blue-600" />
+                            Fase Imunisasi Lengkap
+                        </h2>
+                        <div className="relative">
+                            {/* Timeline Line */}
+                            <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-blue-200"></div>
+
+                            {/* Timeline Items */}
+                            <div className="space-y-8">
+                                {[
+                                    {
+                                        title: "Fase 1: Hepatitis B",
+                                        time: "0-7 hari",
+                                        desc: "Mencegah infeksi virus hepatitis B yang dapat menyebabkan kerusakan hati",
+                                        icon: <Shield className="w-5 h-5" />,
+                                    },
+                                    {
+                                        title: "Fase 2: BCG & Polio 1",
+                                        time: "1 bulan",
+                                        desc: "BCG mencegah TBC, Polio mencegah kelumpuhan",
+                                        icon: <Heart className="w-5 h-5" />,
+                                    },
+                                    {
+                                        title: "Fase 3: DPT-HB-Hib 1 & Polio 2",
+                                        time: "2 bulan",
+                                        desc: "Kombinasi vaksin untuk mencegah difteri, pertusis, tetanus, hepatitis B, dan Hib",
+                                        icon: <Shield className="w-5 h-5" />,
+                                    },
+                                    {
+                                        title: "Fase 4: DPT-HB-Hib 2 & Polio 3",
+                                        time: "3 bulan",
+                                        desc: "Lanjutan vaksinasi untuk memperkuat kekebalan",
+                                        icon: <Heart className="w-5 h-5" />,
+                                    },
+                                    {
+                                        title: "Fase 5: DPT-HB-Hib 3 & Polio 4",
+                                        time: "4 bulan",
+                                        desc: "Dosis ketiga untuk memastikan kekebalan optimal",
+                                        icon: <Shield className="w-5 h-5" />,
+                                    },
+                                    {
+                                        title: "Fase 6: Campak",
+                                        time: "9 bulan",
+                                        desc: "Mencegah penyakit campak yang dapat menyebabkan komplikasi serius",
+                                        icon: <Heart className="w-5 h-5" />,
+                                    },
+                                    {
+                                        title: "Fase 7: DPT-HB-Hib & Campak",
+                                        time: "18 bulan",
+                                        desc: "Booster untuk memperkuat kekebalan yang sudah ada",
+                                        icon: <Shield className="w-5 h-5" />,
+                                    },
+                                    {
+                                        title: "Fase 8: DT & Campak",
+                                        time: "5 tahun",
+                                        desc: "Vaksinasi ulang untuk mempertahankan kekebalan",
+                                        icon: <Heart className="w-5 h-5" />,
+                                    },
+                                ].map((phase, index) => (
+                                    <motion.div
+                                        key={index}
+                                        initial={{ opacity: 0, x: -20 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        transition={{ delay: index * 0.1 }}
+                                        className="relative pl-12"
+                                    >
+                                        <div className="absolute left-0 top-0 w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white">
+                                            {phase.icon}
+                                        </div>
+                                        <div className="bg-blue-50 rounded-xl p-4">
+                                            <div className="flex items-center gap-3 mb-2">
+                                                <h3 className="font-bold text-gray-800">
+                                                    {phase.title}
+                                                </h3>
+                                                <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
+                                                    {phase.time}
+                                                </span>
+                                            </div>
+                                            <p className="text-sm text-gray-600">
+                                                {phase.desc}
+                                            </p>
+                                        </div>
+                                    </motion.div>
+                                ))}
+                            </div>
                         </div>
                     </motion.div>
-                )}
-            </div>
+                </div>
+            </AuthenticatedLayout>
         </div>
     );
 };

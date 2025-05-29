@@ -235,9 +235,9 @@ export default function PolaMakanNifas() {
                             whileHover={{ rotate: 360 }}
                             transition={{ duration: 0.6 }}
                         >
-                            <Utensils size={32} />
+                            <Utensils size={24} />
                         </motion.div>
-                        <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
+                        <h1 className="text-4xl md:text-4xl font-bold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
                             Pola Makan Ibu Nifas
                         </h1>
                     </motion.div>
@@ -268,7 +268,7 @@ export default function PolaMakanNifas() {
 
                 {/* Cards Grid */}
                 <motion.div
-                    className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+                    className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 "
                     variants={containerVariants}
                     initial="hidden"
                     animate="visible"

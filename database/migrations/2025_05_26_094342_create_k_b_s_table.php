@@ -15,7 +15,14 @@ return new class extends Migration {
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->date('start_date')->nullable();
             $table->date('end_date')->nullable();
-            $table->enum('tipe_kb', ['Metode operasi wanita (MOW)/tubektomi, metode operasi pria (MOP)/ vasektomi ', 'Implan', 'IUD', 'Kontrasepsi suntik 3 bulan atau 1 bulan', 'Pil KB', 'Kondom']);
+            $table->enum('tipe_kb', [
+                'Metode operasi wanita (MOW)/tubektomi, metode operasi pria (MOP)/ vasektomi',
+                'Implan',
+                'IUD',
+                'Kontrasepsi suntik 3 bulan atau 1 bulan',
+                'Pil KB',
+                'Kondom'
+            ]);
             $table->string('catatan')->nullable();
             $table->enum('status_kb', ['aktif', 'tidak_aktif']);
             $table->timestamps();

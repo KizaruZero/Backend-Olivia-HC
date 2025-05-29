@@ -31,6 +31,10 @@ class KB extends Model
 
     public function getTipeKbAttribute($value)
     {
+        // Special case for MOW/MOP
+        if ($value === 'Metode operasi wanita (MOW)/tubektomi, metode operasi pria (MOP)/ vasektomi') {
+            return $value;
+        }
         return ucfirst($value);
     }
 
