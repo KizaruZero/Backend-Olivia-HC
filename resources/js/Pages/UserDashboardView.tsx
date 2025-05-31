@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import Swal from "sweetalert2";
-
+import NifasReminder from "./Components/NifasReminder";
 interface FaseNifas {
     id: number;
     name: string;
@@ -76,6 +76,7 @@ export default function DashboardNifas() {
     );
     const [customPuskesmas, setCustomPuskesmas] = useState("");
     const [notes, setNotes] = useState("");
+    const [reminder, setReminder] = useState<any>(null);
 
     useEffect(() => {
         fetch("/api/nifas/user", {
@@ -222,6 +223,14 @@ export default function DashboardNifas() {
             .then((response) => response.json())
             .then((data) => {
                 setFaseNifas(data);
+            });
+    }, []);
+
+    useEffect(() => {
+        fetch("/api/nifas/reminder")
+            .then((response) => response.json())
+            .then((data) => {
+                setReminder(data);
             });
     }, []);
 
@@ -435,26 +444,14 @@ export default function DashboardNifas() {
                 </div>
 
                 {/* Reminders */}
-                <div className="bg-white rounded-lg p-6 shadow-md">
-                    <h3 className="text-lg font-medium text-gray-800 mb-4">
-                        Pengingat
-                    </h3>
-                    <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-md">
-                        <div className="flex">
-                            <div className="flex-shrink-0">
-                                <Bell className="text-yellow-500" size={20} />
-                            </div>
-                            <div className="ml-3">
-                                <h4 className="text-sm font-medium text-yellow-800">
-                                    Kunjungan KF 2
-                                </h4>
-                                <p className="text-sm text-yellow-700 mt-1">
-                                    Jangan lupa jadwal kunjungan KF 2 pada
-                                    tanggal 9 Mei 2025
-                                </p>
-                            </div>
-                        </div>
-                    </div>
+                <div>
+                    {reminder && (
+                        <NifasReminder
+                            currentPhase={reminder.current_phase}
+                            nextPhase={reminder.reminder.phase}
+                            reminderDate={reminder.reminder.date}
+                        />
+                    )}
                 </div>
 
                 {/* KF Progress Cards */}

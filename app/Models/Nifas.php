@@ -5,8 +5,14 @@ use App\Models\NifasTask;
 use App\Models\NifasProgress;
 use App\Models\NifasTaskProgress;
 use App\Models\FaseNifas;
-use Carbon\Carbon;  
-
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\NifasPhaseReminder;
+use DateTime;
+use DateInterval;
+use Twilio\Rest\Client;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Database\Eloquent\Model;
 
 class Nifas extends Model
@@ -17,7 +23,7 @@ class Nifas extends Model
         'end_date',
         'is_active',
     ];
-    
+
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -36,7 +42,7 @@ class Nifas extends Model
         static::created(function ($nifas) {
             // Get all fase nifas (assuming you have 4 phases)
             $faseNifas = FaseNifas::all();
-            
+
             foreach ($faseNifas as $fase) {
                 $nifasProgress = NifasProgress::create([
                     'nifas_id' => $nifas->id,
@@ -59,9 +65,19 @@ class Nifas extends Model
             if ($nifas->is_active && $nifas->wasChanged('is_active')) {
                 // Pastikan hanya satu nifas yang aktif per user
                 Nifas::where('user_id', $nifas->user_id)
-                     ->where('id', '!=', $nifas->id)
-                     ->update(['is_active' => false]);
+                    ->where('id', '!=', $nifas->id)
+                    ->update(['is_active' => false]);
             }
+        });
+
+        static::created(function ($nifas) {
+            // For newly created records, check if we need to send initial reminder
+            self::checkAndSendReminder($nifas);
+        });
+
+        static::updated(function ($nifas) {
+            // For updated records, check if we need to send reminder
+            self::checkAndSendReminder($nifas);
         });
     }
 
@@ -90,4 +106,11 @@ class Nifas extends Model
         $today = Carbon::today();
         return $today->between($this->start_date, $this->end_date);
     }
+
+
+
+
+
+
+
 }

@@ -38,5 +38,6 @@ Route::get('/api/nifas/user', [NifasController::class, 'getNifasByUser']);
 
 Route::get('/api/nifastask/user', [NifasTaskController::class, 'getNifasTaskProgressByUser']);
 Route::get('/api/nifastask/percentage', [NifasTaskController::class, 'getAllFaseNifasWithPercentage']);
+Route::get('/api/nifas/reminder', [NifasController::class, 'getFaseNifasReminderByUser']);
 
 require __DIR__ . '/auth.php';
