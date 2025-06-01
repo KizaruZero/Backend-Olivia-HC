@@ -45,9 +45,7 @@ export default function NavbarAuth() {
         { name: "Imunisasi", id: "imunisasi" },
     ];
 
-    const navItems = isActiveNifas
-        ? [...baseNavItems, ...additionalNavItems]
-        : baseNavItems;
+    const navItems = [...baseNavItems, ...additionalNavItems];
 
     const handleNavigation = (item: NavItem) => {
         if (item.method) {

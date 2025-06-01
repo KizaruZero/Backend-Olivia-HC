@@ -1,5 +1,5 @@
-import React from "react";
-import { motion } from "framer-motion";
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
     AlertTriangle,
     Thermometer,
@@ -11,11 +11,15 @@ import {
     AlertCircle,
     CircleAlert,
     Utensils,
+    Eye,
+    X,
 } from "lucide-react";
 
 type Severity = "kritis" | "serius" | "normal";
 
 const PostpartumDangerSigns = () => {
+    const [selectedImage, setSelectedImage] = useState<string | null>(null);
+
     const dangerSigns = [
         {
             id: 1,
@@ -185,6 +189,68 @@ const PostpartumDangerSigns = () => {
                 ))}
             </div>
 
+            {/* Poster Section */}
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                className="mt-12"
+            >
+                <div className="bg-white rounded-xl p-6">
+                    <div className="text-center mb-6">
+                        <h3 className="text-xl font-bold text-gray-800 mb-2">
+                            Poster Tanda Bahaya pada Ibu Nifas
+                        </h3>
+                        <p className="text-gray-600">
+                            Download poster untuk panduan visual
+                        </p>
+                    </div>
+                    <div className="max-w-2xl mx-auto">
+                        <div
+                            className="relative group cursor-pointer"
+                            onClick={() =>
+                                setSelectedImage("/storage/poster/bahaya.png")
+                            }
+                        >
+                            <img
+                                src="/storage/poster/bahaya.png"
+                                alt="Poster Tanda Bahaya pada Ibu Nifas"
+                                className="w-full mx-auto h-auto rounded-xl shadow-lg transition-transform duration-300 group-hover:scale-[1.02]"
+                            />
+                            <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 rounded-xl"></div>
+                            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                <div className="bg-white/90 rounded-full p-2">
+                                    <Eye className="w-6 h-6 text-red-600" />
+                                </div>
+                            </div>
+                        </div>
+                        <div className="flex justify-center mt-6">
+                            <a
+                                href="/storage/poster/bahaya.png"
+                                download="Poster_Tanda_Bahaya_pada_Ibu_Nifas.png"
+                                className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-red-500 to-red-700 text-white rounded-full hover:from-red-600 hover:to-red-800 transition-all duration-300 shadow-lg hover:shadow-xl"
+                            >
+                                <svg
+                                    className="w-5 h-5 mr-2"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth="2"
+                                        d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                                    />
+                                </svg>
+                                Download Poster
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </motion.div>
+
             {/* Emergency Contact */}
             <motion.div
                 initial={{ opacity: 0, y: 30 }}
@@ -211,6 +277,39 @@ const PostpartumDangerSigns = () => {
                     </div>
                 </div>
             </motion.div>
+
+            {/* Image Modal */}
+            <AnimatePresence>
+                {selectedImage && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-75"
+                        onClick={() => setSelectedImage(null)}
+                    >
+                        <motion.div
+                            initial={{ scale: 0.9, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            exit={{ scale: 0.9, opacity: 0 }}
+                            className="relative max-w-2xl w-full"
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <button
+                                onClick={() => setSelectedImage(null)}
+                                className="absolute -top-4 -right-4 bg-white rounded-full p-2 shadow-lg hover:bg-gray-100 transition-colors"
+                            >
+                                <X className="w-6 h-6 text-gray-600" />
+                            </button>
+                            <img
+                                src={selectedImage}
+                                alt="Enlarged poster"
+                                className="w-full h-auto rounded-lg shadow-2xl"
+                            />
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </motion.div>
     );
 };

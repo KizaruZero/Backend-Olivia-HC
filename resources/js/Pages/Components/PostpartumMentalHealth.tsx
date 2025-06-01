@@ -19,11 +19,14 @@ import {
     Baby,
     Sparkles,
     Quote,
+    Eye,
+    X,
 } from "lucide-react";
 
 const PostpartumMentalHealth = () => {
     const [activeTab, setActiveTab] = useState("overview");
     const [currentTip, setCurrentTip] = useState(0);
+    const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
     const awarenessMessages = [
         "💙 Anda tidak sendirian dalam perjalanan ini",
@@ -462,6 +465,68 @@ const PostpartumMentalHealth = () => {
                                     </div>
                                 </motion.div>
                             ))}
+
+                            {/* Poster Section */}
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.5 }}
+                                className="bg-white rounded-3xl shadow-2xl p-8 mt-12"
+                            >
+                                <div className="text-center mb-8">
+                                    <h3 className="text-2xl font-bold text-gray-800 mb-2">
+                                        Poster Edukasi Gangguan Mental
+                                    </h3>
+                                    <p className="text-gray-600">
+                                        Download poster untuk informasi lebih
+                                        lengkap
+                                    </p>
+                                </div>
+                                <div className="max-w-2xl mx-auto">
+                                    <div
+                                        className="relative group cursor-pointer"
+                                        onClick={() =>
+                                            setSelectedImage(
+                                                "/storage/poster/gangguan.png"
+                                            )
+                                        }
+                                    >
+                                        <img
+                                            src="/storage/poster/gangguan.png"
+                                            alt="Poster Gangguan Mental"
+                                            className="w-full mx-auto h-auto rounded-xl shadow-lg transition-transform duration-300 group-hover:scale-[1.02]"
+                                        />
+                                        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 rounded-xl"></div>
+                                        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                            <div className="bg-white/90 rounded-full p-2">
+                                                <Eye className="w-6 h-6 text-blue-600" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="flex justify-center mt-6">
+                                        <a
+                                            href="/storage/poster/gangguan.png"
+                                            download="Poster_Gangguan_Mental.png"
+                                            className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-700 text-white rounded-full hover:from-blue-600 hover:to-blue-800 transition-all duration-300 shadow-lg hover:shadow-xl"
+                                        >
+                                            <svg
+                                                className="w-5 h-5 mr-2"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                viewBox="0 0 24 24"
+                                            >
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    strokeWidth="2"
+                                                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                                                />
+                                            </svg>
+                                            Download Poster
+                                        </a>
+                                    </div>
+                                </div>
+                            </motion.div>
                         </motion.div>
                     )}
 
@@ -512,6 +577,68 @@ const PostpartumMentalHealth = () => {
                                     </motion.div>
                                 ))}
                             </div>
+
+                            {/* Poster Section */}
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.5 }}
+                                className="bg-white rounded-3xl shadow-2xl p-8 mt-12"
+                            >
+                                <div className="text-center mb-8">
+                                    <h3 className="text-2xl font-bold text-gray-800 mb-2">
+                                        Poster Pencegahan
+                                    </h3>
+                                    <p className="text-gray-600">
+                                        Download poster untuk informasi lebih
+                                        lengkap
+                                    </p>
+                                </div>
+                                <div className="max-w-2xl mx-auto">
+                                    <div
+                                        className="relative group cursor-pointer"
+                                        onClick={() =>
+                                            setSelectedImage(
+                                                "/storage/poster/pencegahan.png"
+                                            )
+                                        }
+                                    >
+                                        <img
+                                            src="/storage/poster/pencegahan.png"
+                                            alt="Poster Pencegahan"
+                                            className="w-full mx-auto h-auto rounded-xl shadow-lg transition-transform duration-300 group-hover:scale-[1.02]"
+                                        />
+                                        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 rounded-xl"></div>
+                                        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                            <div className="bg-white/90 rounded-full p-2">
+                                                <Eye className="w-6 h-6 text-blue-600" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="flex justify-center mt-6">
+                                        <a
+                                            href="/storage/poster/pencegahan.png"
+                                            download="Poster_Pencegahan.png"
+                                            className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-700 text-white rounded-full hover:from-blue-600 hover:to-blue-800 transition-all duration-300 shadow-lg hover:shadow-xl"
+                                        >
+                                            <svg
+                                                className="w-5 h-5 mr-2"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                viewBox="0 0 24 24"
+                                            >
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    strokeWidth="2"
+                                                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                                                />
+                                            </svg>
+                                            Download Poster
+                                        </a>
+                                    </div>
+                                </div>
+                            </motion.div>
                         </motion.div>
                     )}
 
@@ -593,6 +720,68 @@ const PostpartumMentalHealth = () => {
                                 ))}
                             </div>
 
+                            {/* Poster Section */}
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.5 }}
+                                className="bg-white rounded-3xl shadow-2xl p-8 mt-12"
+                            >
+                                <div className="text-center mb-8">
+                                    <h3 className="text-2xl font-bold text-gray-800 mb-2">
+                                        Poster Penanganan
+                                    </h3>
+                                    <p className="text-gray-600">
+                                        Download poster untuk informasi lebih
+                                        lengkap
+                                    </p>
+                                </div>
+                                <div className="max-w-2xl mx-auto">
+                                    <div
+                                        className="relative group cursor-pointer"
+                                        onClick={() =>
+                                            setSelectedImage(
+                                                "/storage/poster/Penanganan.png"
+                                            )
+                                        }
+                                    >
+                                        <img
+                                            src="/storage/poster/Penanganan.png"
+                                            alt="Poster Penanganan"
+                                            className="w-full mx-auto h-auto rounded-xl shadow-lg transition-transform duration-300 group-hover:scale-[1.02]"
+                                        />
+                                        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 rounded-xl"></div>
+                                        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                            <div className="bg-white/90 rounded-full p-2">
+                                                <Eye className="w-6 h-6 text-blue-600" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="flex justify-center mt-6">
+                                        <a
+                                            href="/storage/poster/Penanganan.png"
+                                            download="Poster_Penanganan.png"
+                                            className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-700 text-white rounded-full hover:from-blue-600 hover:to-blue-800 transition-all duration-300 shadow-lg hover:shadow-xl"
+                                        >
+                                            <svg
+                                                className="w-5 h-5 mr-2"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                viewBox="0 0 24 24"
+                                            >
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    strokeWidth="2"
+                                                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                                                />
+                                            </svg>
+                                            Download Poster
+                                        </a>
+                                    </div>
+                                </div>
+                            </motion.div>
+
                             {/* Emergency Contact */}
                             <motion.div
                                 initial={{ opacity: 0, y: 30 }}
@@ -636,6 +825,39 @@ const PostpartumMentalHealth = () => {
                 >
                     <Sparkles className="w-6 h-6" />
                 </motion.div>
+
+                {/* Image Modal */}
+                <AnimatePresence>
+                    {selectedImage && (
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-75"
+                            onClick={() => setSelectedImage(null)}
+                        >
+                            <motion.div
+                                initial={{ scale: 0.9, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                exit={{ scale: 0.9, opacity: 0 }}
+                                className="relative max-w-2xl w-full"
+                                onClick={(e) => e.stopPropagation()}
+                            >
+                                <button
+                                    onClick={() => setSelectedImage(null)}
+                                    className="absolute -top-4 -right-4 bg-white rounded-full p-2 shadow-lg hover:bg-gray-100 transition-colors"
+                                >
+                                    <X className="w-6 h-6 text-gray-600" />
+                                </button>
+                                <img
+                                    src={selectedImage}
+                                    alt="Enlarged poster"
+                                    className="w-full h-auto rounded-lg shadow-2xl"
+                                />
+                            </motion.div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
             </div>
         </div>
     );

@@ -1,19 +1,30 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-    ChevronDown,
     Baby,
-    Heart,
     Clock,
+    Heart,
     Droplets,
+    Target,
     User,
     Eye,
-    Target,
     Smile,
+    Info,
+    Shield,
+    ArrowRight,
+    CheckCircle,
+    Pill,
+    AlertTriangle,
+    Utensils,
+    Shirt,
+    Sparkles,
+    Quote,
+    X,
 } from "lucide-react";
 
 const EducationSSection = () => {
     const [expandedCard, setExpandedCard] = useState<string | null>(null);
+    const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
     const mainCards = [
         {
@@ -114,6 +125,142 @@ const EducationSSection = () => {
                 },
             ],
         },
+        {
+            id: "komposisi-asi",
+            title: "Komposisi ASI",
+            icon: <Droplets className="w-8 h-8" />,
+            description:
+                "Pemahaman tentang tahapan dan komposisi ASI dari waktu ke waktu",
+            poster: "/storage/poster/komposisiasi.jpg",
+            items: [
+                {
+                    icon: <Clock className="w-6 h-6" />,
+                    title: "Kolostrum (Hari ke-1/3)",
+                    content:
+                        "Cairan pertama, berwarna kekuningan, mengandung antibodi, kadar protein tinggi, akan menggumpal jika dipanaskan.",
+                },
+                {
+                    icon: <ArrowRight className="w-6 h-6" />,
+                    title: "Susu Peralihan (Hari ke-4/10)",
+                    content:
+                        "Kadar protein rendah, karbohidrat dan lemak meningkat.",
+                },
+                {
+                    icon: <CheckCircle className="w-6 h-6" />,
+                    title: "Susu Matur (Hari ke-10 dst)",
+                    content:
+                        "Berwarna putih kekuningan, jika dipanaskan tidak menggumpal.",
+                },
+            ],
+        },
+        {
+            id: "asi-eksklusif",
+            title: "ASI Eksklusif",
+            icon: <Heart className="w-8 h-8" />,
+            description:
+                "Pentingnya ASI eksklusif dan manfaatnya bagi bayi dalam masa pertumbuhan",
+            poster: "/storage/poster/manfaatasi.jpg",
+            items: [
+                {
+                    icon: <Info className="w-6 h-6" />,
+                    title: "Pengertian",
+                    content:
+                        "ASI eksklusif adalah bayi yang hanya diberi ASI saja tanpa tambahan cairan/makanan sampai usia 6 bulan.",
+                },
+                {
+                    icon: <Heart className="w-6 h-6" />,
+                    title: "Manfaat ASI",
+                    content:
+                        "ASI sebagai nutrisi, ASI sebagai daya tahan tubuh, ASI meningkatkan kecerdasan, ASI meningkatkan jalinan kasih sayang.",
+                },
+                {
+                    icon: <Shield className="w-6 h-6" />,
+                    title: "Zat Kekebalan Dalam",
+                    content:
+                        "a. Faktor bifidus, mencegah pertumbuhan bakteri merugikan\nb. Laktoferin, mengikat zat besi dalam ASI\nc. Anti alergi\nd. Zat anti virus polio",
+                },
+            ],
+        },
+        {
+            id: "breast-care",
+            title: "Breast Care",
+            icon: <Heart className="w-8 h-8" />,
+            description:
+                "Panduan lengkap perawatan payudara untuk ibu menyusui",
+            poster: "/storage/poster/breastcare.jpg",
+            items: [
+                {
+                    icon: <Shield className="w-6 h-6" />,
+                    title: "Persiapan Awal",
+                    content:
+                        "Cuci tangan dengan sabun dan air mengalir, lalu keringkan",
+                },
+                {
+                    icon: <Droplets className="w-6 h-6" />,
+                    title: "Perawatan Puting",
+                    content:
+                        "Kompres kedua puting sampai areola dengan kapas yang dibasahi baby oil, diamkan 3 menit, lalu bersihkan",
+                },
+                {
+                    icon: <Heart className="w-6 h-6" />,
+                    title: "Pemijatan",
+                    content:
+                        "Licinkan kedua tangan dengan baby oil/minyak kelapa/zaitun, sokong payudara dan lakukan gerakan memijat dari pangkal ke puting",
+                },
+                {
+                    icon: <Clock className="w-6 h-6" />,
+                    title: "Kompres Bergantian",
+                    content:
+                        "Kompres payudara dengan air hangat dan dingin bergantian selama 5 menit",
+                },
+                {
+                    icon: <Shirt className="w-6 h-6" />,
+                    title: "Pakaian Dalam",
+                    content:
+                        "Gunakan BH yang menopang payudara, tanpa kawat, lakukan breast care tiap mau mandi",
+                },
+            ],
+        },
+        {
+            id: "tablet-tambah-darah",
+            title: "Tablet Tambah Darah",
+            icon: <Pill className="w-8 h-8" />,
+            description:
+                "Informasi penting tentang konsumsi tablet tambah darah untuk ibu nifas",
+            poster: "/storage/poster/tablet.jpg",
+            items: [
+                {
+                    icon: <Info className="w-6 h-6" />,
+                    title: "Pengertian",
+                    content:
+                        "Zat besi adalah suplemen tambah darah untuk mencegah anemia",
+                },
+                {
+                    icon: <Clock className="w-6 h-6" />,
+                    title: "Dosis dan Durasi",
+                    content:
+                        "Dosis perhari untuk ibu nifas yaitu 1x/hari selama 40 hari",
+                },
+                {
+                    icon: <AlertTriangle className="w-6 h-6" />,
+                    title: "Cara Konsumsi",
+                    content:
+                        "Diminum saat malam hari menjelang tidur, tidak boleh diminum bersama kopi, teh, susu",
+                },
+                {
+                    icon: <AlertTriangle className="w-6 h-6" />,
+                    title: "Efek Samping",
+                    content:
+                        "Efek samping tablet ini yaitu rasa mual, dan susah BAB",
+                },
+                {
+                    icon: <Utensils className="w-6 h-6" />,
+                    title: "Makanan Kaya Zat Besi",
+                    content:
+                        "Bahan makanan yang mengandung zat besi, seperti: bayam, kangkung, daun singkong, dan pete",
+                },
+            ],
+        },
     ];
 
     const toggleCard = (cardId: string) => {
@@ -144,8 +291,41 @@ const EducationSSection = () => {
                     </p>
                 </motion.div>
 
+                {/* Image Modal */}
+                <AnimatePresence>
+                    {selectedImage && (
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-75"
+                            onClick={() => setSelectedImage(null)}
+                        >
+                            <motion.div
+                                initial={{ scale: 0.9, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                exit={{ scale: 0.9, opacity: 0 }}
+                                className="relative max-w-2xl w-full"
+                                onClick={(e) => e.stopPropagation()}
+                            >
+                                <button
+                                    onClick={() => setSelectedImage(null)}
+                                    className="absolute -top-4 -right-4 bg-white rounded-full p-2 shadow-lg hover:bg-gray-100 transition-colors"
+                                >
+                                    <X className="w-6 h-6 text-gray-600" />
+                                </button>
+                                <img
+                                    src={selectedImage}
+                                    alt="Enlarged poster"
+                                    className="w-full h-auto rounded-lg shadow-2xl"
+                                />
+                            </motion.div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+
                 {/* Main Cards Grid */}
-                <div className="grid lg:grid-cols-3 md:grid-cols-2 gap-8 justify-items-center justify-center">
+                <div className="flex flex-wrap gap-8 justify-center">
                     {mainCards.map((card, index) => (
                         <motion.div
                             key={card.id}
@@ -178,13 +358,13 @@ const EducationSSection = () => {
                                         }}
                                         transition={{ duration: 0.5 }}
                                         className={`
-                      p-3 rounded-full
-                      ${
-                          expandedCard === card.id
-                              ? "bg-white/20 text-white"
-                              : "bg-gradient-to-r from-blue-100 to-blue-200 text-blue-600"
-                      }
-                    `}
+                                        p-3 rounded-full
+                                        ${
+                                            expandedCard === card.id
+                                                ? "bg-white/20 text-white"
+                                                : "bg-gradient-to-r from-blue-100 to-blue-200 text-blue-600"
+                                        }
+                                        `}
                                     >
                                         {card.icon}
                                     </motion.div>
@@ -209,35 +389,164 @@ const EducationSSection = () => {
                                     {card.description}
                                 </p>
 
-                                <div className="flex items-center justify-between">
-                                    <span
-                                        className={`text-sm font-medium ${
-                                            expandedCard === card.id
-                                                ? "text-blue-100"
-                                                : "text-blue-600"
-                                        }`}
+                                <div className="flex items-center justify-between mb-4">
+                                    <h3 className="text-xl font-semibold flex items-center">
+                                        <Quote className="mr-2" size={16} />
+                                        {card.title}
+                                    </h3>
+                                </div>
+                            </motion.div>
+
+                            {/* Poster Section - Now outside of expanded content */}
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.5 }}
+                                className="bg-white rounded-xl p-6 shadow-lg mt-4"
+                            >
+                                <div className="text-center mb-6">
+                                    <h3 className="text-xl font-bold text-gray-800 mb-2">
+                                        {card.id === "cara-menyusui" &&
+                                            "Poster Cara Menyusui"}
+                                        {card.id === "posisi-perlekatan" &&
+                                            "Poster Posisi Menyusui"}
+                                        {card.id === "cara-menyimpan-asi" &&
+                                            "Poster Cara Menyimpan ASI"}
+                                        {card.id === "komposisi-asi" &&
+                                            "Poster Komposisi ASI"}
+                                        {card.id === "asi-eksklusif" &&
+                                            "Poster ASI Eksklusif"}
+                                        {card.id === "breast-care" &&
+                                            "Poster Breast Care"}
+                                        {card.id === "tablet-tambah-darah" &&
+                                            "Poster Tablet Tambah Darah"}
+                                    </h3>
+                                    <p className="text-gray-600">
+                                        Download poster untuk panduan visual
+                                    </p>
+                                </div>
+                                <div className="max-w-2xl mx-auto">
+                                    <div
+                                        className="relative group cursor-pointer"
+                                        onClick={() =>
+                                            setSelectedImage(
+                                                `/storage/poster/${
+                                                    card.id === "cara-menyusui"
+                                                        ? "caramenyusui.png"
+                                                        : card.id ===
+                                                          "posisi-perlekatan"
+                                                        ? "posisimenyusui.png"
+                                                        : card.id ===
+                                                          "cara-menyimpan-asi"
+                                                        ? "menyimpan.png"
+                                                        : card.id ===
+                                                          "komposisi-asi"
+                                                        ? "komposisiasi.jpg"
+                                                        : card.id ===
+                                                          "asi-eksklusif"
+                                                        ? "manfaatasi.jpg"
+                                                        : card.id ===
+                                                          "breast-care"
+                                                        ? "breastcare.jpg"
+                                                        : "tablet.jpg"
+                                                }`
+                                            )
+                                        }
                                     >
-                                        {expandedCard === card.id
-                                            ? "Tutup Detail"
-                                            : "Lihat Detail"}
-                                    </span>
-                                    <motion.div
-                                        animate={{
-                                            rotate:
-                                                expandedCard === card.id
-                                                    ? 180
-                                                    : 0,
-                                        }}
-                                        transition={{ duration: 0.3 }}
-                                    >
-                                        <ChevronDown
-                                            className={`w-5 h-5 ${
-                                                expandedCard === card.id
-                                                    ? "text-white"
-                                                    : "text-blue-600"
+                                        <img
+                                            src={`/storage/poster/${
+                                                card.id === "cara-menyusui"
+                                                    ? "caramenyusui.png"
+                                                    : card.id ===
+                                                      "posisi-perlekatan"
+                                                    ? "posisimenyusui.png"
+                                                    : card.id ===
+                                                      "cara-menyimpan-asi"
+                                                    ? "menyimpan.png"
+                                                    : card.id ===
+                                                      "komposisi-asi"
+                                                    ? "komposisiasi.jpg"
+                                                    : card.id ===
+                                                      "asi-eksklusif"
+                                                    ? "manfaatasi.jpg"
+                                                    : card.id === "breast-care"
+                                                    ? "breastcare.jpg"
+                                                    : "tablet.jpg"
                                             }`}
+                                            alt={`Poster ${card.title}`}
+                                            className="w-full mx-auto h-auto rounded-xl shadow-lg transition-transform duration-300 group-hover:scale-[1.02]"
                                         />
-                                    </motion.div>
+                                        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 rounded-xl"></div>
+                                        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                            <div className="bg-white/90 rounded-full p-2">
+                                                <Eye className="w-6 h-6 text-blue-600" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="flex justify-center mt-6">
+                                        <a
+                                            href={`/storage/poster/${
+                                                card.id === "cara-menyusui"
+                                                    ? "caramenyusui.png"
+                                                    : card.id ===
+                                                      "posisi-perlekatan"
+                                                    ? "posisimenyusui.png"
+                                                    : card.id ===
+                                                      "cara-menyimpan-asi"
+                                                    ? "menyimpan.png"
+                                                    : card.id ===
+                                                      "komposisi-asi"
+                                                    ? "komposisiasi.jpg"
+                                                    : card.id ===
+                                                      "asi-eksklusif"
+                                                    ? "manfaatasi.jpg"
+                                                    : card.id === "breast-care"
+                                                    ? "breastcare.jpg"
+                                                    : "tablet.jpg"
+                                            }`}
+                                            download={`Poster_${
+                                                card.id === "cara-menyusui"
+                                                    ? "Cara_Menyusui"
+                                                    : card.id ===
+                                                      "posisi-perlekatan"
+                                                    ? "Posisi_Menyusui"
+                                                    : card.id ===
+                                                      "cara-menyimpan-asi"
+                                                    ? "Cara_Menyimpan_ASI"
+                                                    : card.id ===
+                                                      "komposisi-asi"
+                                                    ? "Komposisi_ASI"
+                                                    : card.id ===
+                                                      "asi-eksklusif"
+                                                    ? "ASI_Eksklusif"
+                                                    : card.id === "breast-care"
+                                                    ? "Breast_Care"
+                                                    : "Tablet_Tambah_Darah"
+                                            }.${
+                                                card.id === "komposisi-asi" ||
+                                                card.id === "asi-eksklusif" ||
+                                                card.id === "breast-care"
+                                                    ? "jpg"
+                                                    : "png"
+                                            }`}
+                                            className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-700 text-white rounded-full hover:from-blue-600 hover:to-blue-800 transition-all duration-300 shadow-lg hover:shadow-xl"
+                                        >
+                                            <svg
+                                                className="w-5 h-5 mr-2"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                viewBox="0 0 24 24"
+                                            >
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    strokeWidth="2"
+                                                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                                                />
+                                            </svg>
+                                            Download Poster
+                                        </a>
+                                    </div>
                                 </div>
                             </motion.div>
 

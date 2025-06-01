@@ -118,6 +118,6 @@ class AuthenticatedSessionController extends Controller
         // Explicitly save the session before redirect
         session()->save();
 
-        return redirect()->intended('home'); // Use simple path instead of route()
+        return redirect()->intended('/'); // Use simple path instead of route()
     }
 }

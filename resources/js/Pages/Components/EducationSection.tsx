@@ -8,6 +8,7 @@ import {
     ExternalLink,
     AlertCircle,
     Info,
+    Eye,
 } from "lucide-react";
 import EducationSSection from "./EducationSSection";
 import PostpartumMentalHealth from "./PostpartumMentalHealth";
@@ -24,24 +25,9 @@ interface AvoidanceItem {
 export default function EducationSection() {
     return (
         <section className="bg-white pb-12 pt-16 min-h-screen px-4 sm:px-6 lg:px-8">
-            <motion.div
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, ease: "easeOut" }}
-            >
-                <h2 className="text-4xl font-bold text-center mb-6 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-blue-400">
-                    Edukasi Masa Nifas
-                </h2>
-                <p className="text-center text-blue-600 max-w-2xl mx-auto mb-16 opacity-90">
-                    Informasi penting untuk kesehatan dan keselamatan ibu selama
-                    masa pemulihan pasca persalinan
-                </p>
-            </motion.div>
-
             <div className="container mx-auto space-y-20">
                 <EducationSSection />
                 <AvoidanceSection />
-                <MakananSection />
                 <PostpartumDangerSigns />
                 <PostpartumMentalHealth />
             </div>
@@ -51,6 +37,7 @@ export default function EducationSection() {
 
 // Things to avoid during postpartum section
 function AvoidanceSection() {
+    const [selectedImage, setSelectedImage] = useState<string | null>(null);
     const avoidanceItems = [
         {
             id: 1,
@@ -117,6 +104,39 @@ function AvoidanceSection() {
             <div className="absolute -top-10 -right-10 w-40 h-40 bg-gradient-to-br from-blue-200 to-blue-400 rounded-full opacity-20 blur-2xl"></div>
             <div className="absolute -bottom-20 -left-20 w-60 h-60 bg-gradient-to-tr from-blue-300 to-blue-100 rounded-full opacity-20 blur-3xl"></div>
 
+            {/* Image Modal */}
+            <AnimatePresence>
+                {selectedImage && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-75"
+                        onClick={() => setSelectedImage(null)}
+                    >
+                        <motion.div
+                            initial={{ scale: 0.9, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            exit={{ scale: 0.9, opacity: 0 }}
+                            className="relative max-w-2xl w-full"
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <button
+                                onClick={() => setSelectedImage(null)}
+                                className="absolute -top-4 -right-4 bg-white rounded-full p-2 shadow-lg hover:bg-gray-100 transition-colors"
+                            >
+                                <X className="w-6 h-6 text-gray-600" />
+                            </button>
+                            <img
+                                src={selectedImage}
+                                alt="Enlarged poster"
+                                className="w-full h-auto rounded-lg shadow-2xl"
+                            />
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
             <div
                 className="bg-white rounded-2xl shadow-xl p-8 border border-blue-100"
                 style={{
@@ -138,7 +158,7 @@ function AvoidanceSection() {
                 </motion.div>
 
                 <motion.div
-                    className="flex flex-wrap justify-center gap-8" // Ganti grid dengan flex
+                    className="flex flex-wrap justify-center gap-8"
                     variants={containerVariants}
                     initial="hidden"
                     whileInView="visible"
@@ -149,11 +169,73 @@ function AvoidanceSection() {
                             key={item.id}
                             className="w-full md:w-[calc(25%-1.5rem)]"
                         >
-                            {" "}
-                            {/* Atur lebar per item */}
                             <AvoidanceCard item={item} />
                         </div>
                     ))}
+                </motion.div>
+
+                {/* Poster Section */}
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: 0.2 }}
+                    className="mt-12"
+                >
+                    <div className="bg-white rounded-xl p-6">
+                        <div className="text-center mb-6">
+                            <h3 className="text-xl font-bold text-gray-800 mb-2">
+                                Poster Hal yang Harus Dihindari Selama Nifas
+                            </h3>
+                            <p className="text-gray-600">
+                                Download poster untuk panduan visual
+                            </p>
+                        </div>
+                        <div className="max-w-2xl mx-auto">
+                            <div
+                                className="relative group cursor-pointer"
+                                onClick={() =>
+                                    setSelectedImage(
+                                        "/storage/poster/hindari.png"
+                                    )
+                                }
+                            >
+                                <img
+                                    src="/storage/poster/hindari.png"
+                                    alt="Poster Hal yang Harus Dihindari"
+                                    className="w-full mx-auto h-auto rounded-xl shadow-lg transition-transform duration-300 group-hover:scale-[1.02]"
+                                />
+                                <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 rounded-xl"></div>
+                                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                    <div className="bg-white/90 rounded-full p-2">
+                                        <Eye className="w-6 h-6 text-blue-600" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="flex justify-center mt-6">
+                                <a
+                                    href="/storage/poster/hindari.png"
+                                    download="Poster_Hal_yang_Harus_Dihindari.png"
+                                    className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-700 text-white rounded-full hover:from-blue-600 hover:to-blue-800 transition-all duration-300 shadow-lg hover:shadow-xl"
+                                >
+                                    <svg
+                                        className="w-5 h-5 mr-2"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth="2"
+                                            d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                                        />
+                                    </svg>
+                                    Download Poster
+                                </a>
+                            </div>
+                        </div>
+                    </div>
                 </motion.div>
             </div>
         </motion.div>

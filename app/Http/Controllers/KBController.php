@@ -25,18 +25,32 @@ class KBController extends Controller
         ]);
     }
 
+    public function show($id)
+    {
+        $kb = KB::where('user_id', Auth::id())
+            ->findOrFail($id);
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $kb
+        ]);
+    }
     /**
      * Store a newly created KB record.
      */
     public function store(Request $request)
     {
         $kbTypes = [
+            // Jangka Panjang
             'Metode operasi wanita (MOW)/tubektomi, metode operasi pria (MOP)/ vasektomi',
             'Implan',
             'IUD',
-            'Kontrasepsi suntik 3 bulan atau 1 bulan',
+            'MAL (Metode Amenore Laktasi)',
+            // Jangka Pendek
+            'Kontrasepsi Suntik Progestin (KSP)',
             'Pil KB',
-            'Kondom'
+            'Kondom',
+            'KSK (Kontrasepsi Suntik Kombinasi)'
         ];
 
         $validator = Validator::make($request->all(), [
@@ -79,32 +93,19 @@ class KBController extends Controller
         ], 201);
     }
 
-    /**
-     * Display the specified KB record.
-     */
-    public function show($id)
-    {
-        $kb = KB::where('user_id', Auth::id())
-            ->findOrFail($id);
-
-        return response()->json([
-            'status' => 'success',
-            'data' => $kb
-        ]);
-    }
-
-    /**
-     * Update the specified KB record.
-     */
     public function update(Request $request, $id)
     {
         $kbTypes = [
+            // Jangka Panjang
             'Metode operasi wanita (MOW)/tubektomi, metode operasi pria (MOP)/ vasektomi',
             'Implan',
             'IUD',
-            'Kontrasepsi suntik 3 bulan atau 1 bulan',
+            'MAL (Metode Amenore Laktasi)',
+            // Jangka Pendek
+            'Kontrasepsi Suntik Progestin (KSP)',
             'Pil KB',
-            'Kondom'
+            'Kondom',
+            'KSK (Kontrasepsi Suntik Kombinasi)'
         ];
 
         $kb = KB::where('user_id', Auth::id())

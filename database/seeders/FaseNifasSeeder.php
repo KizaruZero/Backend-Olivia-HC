@@ -37,7 +37,7 @@ class FaseNifasSeeder extends Seeder
                 'border_style' => 'border-warning',
             ],
             [
-                'name' => 'Fase Akhir',
+                'name' => 'Fase Tengah',
                 'start_day' => 8,
                 'end_day' => 28,
                 'description' => "Fase pemulihan lanjutan hingga 6 minggu postpartum untuk pemulihan menyeluruh, konseling KB, kesehatan mental, dan adaptasi peran sebagai ibu.",
@@ -53,6 +53,10 @@ class FaseNifasSeeder extends Seeder
                 'end_day' => 42,
                 'description' => "Fase pemulihan lanjutan hingga 6 minggu postpartum untuk pemulihan menyeluruh, konseling KB, kesehatan mental, dan adaptasi peran sebagai ibu.",
                 'video_url' => 'https://www.youtube.com/watch?v=UJ76qKD12LU',
+                'leaflet_url' => 'https://www.google.com',
+                'article_url' => 'https://www.google.com',
+                'twibbon_image' => 'twibbon/fase3.png',
+                'border_style' => 'border-success',
             ],
         ];
 

@@ -265,18 +265,6 @@ export default function Register() {
                                 </div>
                                 <div className="social-login mt-4 flex justify-center space-x-4">
                                     <button
-                                        className="bg-blue-600 text-white px-4 py-3 rounded-3xl shadow-md hover:bg-blue-700 transition-colors flex items-center justify-center"
-                                        onClick={loginWithGoogle}
-                                    >
-                                        <svg
-                                            className="w-6 h-6"
-                                            fill="currentColor"
-                                            viewBox="0 0 24 24"
-                                        >
-                                            <path d="M22 12.07C22 6.48 17.52 2 12 2S2 6.48 2 12.07C2 17.1 5.66 21.23 10.44 22v-7.01H7.9v-2.92h2.54V9.71c0-2.5 1.49-3.89 3.77-3.89 1.09 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56v1.87h2.78l-.44 2.92h-2.34V22C18.34 21.23 22 17.1 22 12.07z" />
-                                        </svg>
-                                    </button>
-                                    <button
                                         className="bg-white text-black px-4 py-3 rounded-3xl shadow-md hover:bg-gray-100 transition-colors flex items-center justify-center"
                                         onClick={loginWithGoogle}
                                     >

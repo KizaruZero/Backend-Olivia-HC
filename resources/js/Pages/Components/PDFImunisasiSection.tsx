@@ -58,7 +58,7 @@ interface PDFData {
     icon: React.ElementType;
     color: string;
     preview: string;
-    size: string;
+    // size: string;
     pages: number;
     pdfUrl: string;
     downloadUrl: string;
@@ -84,33 +84,34 @@ const EducationDashboard = () => {
             color: "from-blue-500 to-cyan-500",
             preview:
                 "Berisi tentang edukasi pentingnya imunisasi Hepatitis B (HB0)",
-            size: "2.3 MB",
+            // size: "2.3 MB",
             pages: 24,
             pdfUrl: "/storage/imunisasi/HB0.pdf",
             downloadUrl: "/storage/imunisasi/HB0.pdf",
         },
         {
             id: 2,
-            title: "POSTER IMUNISASI IPV & BCG",
+            title: "POSTER IMUNISASI IPV",
             description:
                 "Berisi tentang edukasi pentingnya imunisasi IPV dan BCG",
             icon: Shield,
             color: "from-green-500 to-emerald-500",
             preview: "Berisi tentang edukasi pentingnya imunisasi IPV dan BCG",
-            size: "1.8 MB",
+            // size: "1.8 MB",
             pages: 18,
             pdfUrl: "/storage/imunisasi/IPVBCG.pdf",
             downloadUrl: "/storage/imunisasi/IPVBCG.pdf",
         },
         {
             id: 3,
-            title: "POSTER IMUNISASI MR & BCG",
+            title: "POSTER IMUNISASI MR",
             description:
-                "Berisi tentang edukasi pentingnya imunisasi MR dan BCG",
+                "Berisi tentang edukasi pentingnya imunisasi CAMPAK RUBELA (MR) ",
             icon: Heart,
             color: "from-purple-500 to-pink-500",
-            preview: "Berisi tentang edukasi pentingnya imunisasi MR dan BCG",
-            size: "1.5 MB",
+            preview:
+                "Berisi tentang edukasi pentingnya imunisasi CAMPAK RUBELA (MR)",
+            // size: "1.5 MB",
             pages: 14,
             pdfUrl: "/storage/imunisasi/MRBCG.pdf",
             downloadUrl: "/storage/imunisasi/MRBCG.pdf",
@@ -123,24 +124,77 @@ const EducationDashboard = () => {
             icon: Users,
             color: "from-orange-500 to-red-500",
             preview: "Berisi tentang edukasi pentingnya imunisasi Polio (OPV)",
-            size: "2.1 MB",
+            // size: "2.1 MB",
             pages: 20,
             pdfUrl: "/storage/imunisasi/OPV.pdf",
             downloadUrl: "/storage/imunisasi/OPV.pdf",
         },
         {
             id: 5,
-            title: "POSTER IMUNISASI RV DAN OPV",
+            title: "POSTER IMUNISASI RV",
             description:
-                "Berisi tentang edukasi pentingnya imunisasi ROTAVIRUS (RV) dan POLIO (OPV)",
+                "Berisi tentang edukasi pentingnya imunisasi ROTAVIRUS (RV)",
+            icon: Users,
+            color: "from-blue-500 to-cyan-500",
+            preview:
+                "Berisi tentang edukasi pentingnya imunisasi ROTAVIRUS (RV)",
+            // size: "2.1 MB",
+            pages: 20,
+            pdfUrl: "/storage/imunisasi/RV.pdf",
+            downloadUrl: "/storage/imunisasi/RV.pdf",
+        },
+        {
+            id: 6,
+            title: "POSTER IMUNISASI DPT-HB-HIB",
+            description:
+                "Berisi tentang edukasi pentingnya imunisasi DPT-HB-HIB",
+            icon: Users,
+            color: "from-green-500 to-emerald-500",
+            preview: "Berisi tentang edukasi pentingnya imunisasi DPT-HB-HIB",
+            // size: "2.1 MB",
+            pages: 20,
+            pdfUrl: "/storage/imunisasi/DPT-HB-HIB.pdf",
+            downloadUrl: "/storage/imunisasi/DPT-HB-HIB.pdf",
+        },
+        {
+            id: 7,
+            title: "POSTER IMUNISASI PCV",
+            description:
+                "Berisi tentang edukasi pentingnya imunisasi PCV  (Pneumococcal Conjugate Vaccine)",
+            icon: Users,
+            color: "from-purple-500 to-pink-500",
+            preview: "Berisi tentang edukasi pentingnya imunisasi PCV",
+            // size: "2.1 MB",
+            pages: 20,
+            pdfUrl: "/storage/imunisasi/PCV.pdf",
+            downloadUrl: "/storage/imunisasi/PCV.pdf",
+        },
+        {
+            id: 8,
+            title: "POSTER IMUNISASI JE",
+            description:
+                "Berisi tentang edukasi pentingnya imunisasi JE (Japanese Encephalitis)",
             icon: Users,
             color: "from-orange-500 to-red-500",
             preview:
-                "Berisi tentang edukasi pentingnya imunisasi ROTAVIRUS (RV) dan POLIO (OPV)",
-            size: "2.1 MB",
+                "Berisi tentang edukasi pentingnya imunisasi JE (Japanese Encephalitis)",
+            // size: "2.1 MB",
             pages: 20,
-            pdfUrl: "/storage/imunisasi/OPV.pdf",
-            downloadUrl: "/storage/imunisasi/OPV.pdf",
+            pdfUrl: "/storage/imunisasi/JE.pdf",
+            downloadUrl: "/storage/imunisasi/JE.pdf",
+        },
+        {
+            id: 9,
+            title: "POSTER IMUNISASI BCG",
+            description:
+                "Berisi tentang edukasi pentingnya imunisasi IPV dan BCG",
+            icon: Shield,
+            color: "from-blue-500 to-cyan-500",
+            preview: "Berisi tentang edukasi pentingnya imunisasi IPV dan BCG",
+            // size: "1.8 MB",
+            pages: 18,
+            pdfUrl: "/storage/imunisasi/IPVBCG.pdf",
+            downloadUrl: "/storage/imunisasi/IPVBCG.pdf",
         },
     ];
 
@@ -336,7 +390,7 @@ const EducationDashboard = () => {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ duration: 0.6, delay: 0.4 }}
-                    className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-5 gap-6 "
+                    className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-3    gap-6 "
                 >
                     {educationPdfs.map((pdf, index) => {
                         const IconComponent = pdf.icon;
@@ -437,10 +491,6 @@ const EducationDashboard = () => {
                                             <h2 className="text-xl font-bold">
                                                 {selectedPdf.title}
                                             </h2>
-                                            <p className="text-white/80">
-                                                {selectedPdf.pages} halaman •{" "}
-                                                {selectedPdf.size}
-                                            </p>
                                         </div>
                                     </div>
 
@@ -454,9 +504,7 @@ const EducationDashboard = () => {
                                             >
                                                 <ChevronLeft className="h-5 w-5" />
                                             </button>
-                                            <span className="text-sm bg-white/20 px-3 py-1 rounded">
-                                                {pageNum} / {pdfDoc.numPages}
-                                            </span>
+
                                             <button
                                                 onClick={goToNextPage}
                                                 disabled={

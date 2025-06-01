@@ -26,7 +26,7 @@ export default function JoinUs() {
                             initial={{ opacity: 0 }}
                             whileInView={{ opacity: 1 }}
                         >
-                            Mulai Perjalanan Kehamilan{" "}
+                            Mulai Perjalanan Nifas{" "}
                             <span className="text-pink-200">
                                 Tanpa Khawatir
                             </span>
@@ -37,7 +37,7 @@ export default function JoinUs() {
                                 "📝 Catatan Harian",
                                 "📅 Kalender Medis",
                                 "🛡️ Peringatan Dini",
-                                "👩‍⚕️ Konsultasi",
+                                "👩‍⚕️ Materi Edukasi",
                             ].map((item, i) => (
                                 <motion.div
                                     key={i}

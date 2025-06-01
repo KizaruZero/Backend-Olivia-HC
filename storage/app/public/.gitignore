@@ -1,2 +1,13 @@
 *
 !.gitignore
+
+# Except these paths inside public
+!/public/storage
+!/public/storage/imunisasi/
+!/public/storage/imunisasi/*
+!/public/storage/poster/
+!/public/storage/poster/*
+!/public/storage/twibbon/
+!/public/storage/twibbon/*
+!/public/storage/video_nifas/
+!/public/storage/video_nifas/*

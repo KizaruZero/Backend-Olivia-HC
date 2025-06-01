@@ -14,7 +14,7 @@ export default function FiturSection() {
         },
         {
             title: "Pengingat Kontrol Kesehatan",
-            desc: "Dapatkan notifikasi jadwal kontrol ke puskesmas dan tips harian via WhatsApp/email! Reminder otomatis berdasarkan tanggal mulai nifas, notifikasi untuk kontrol ke fasilitas kesehatan, minum obat/vitamin, cek gejala bahaya (demo perdarahan, demam), dan integrasi booking janji online (jika terhubung ke sistem puskesmas). Mengurangi risiko lupa kontrol dan memandu ibu langkah demi langkah.",
+            desc: "Notifikasi otomatis untuk kontrol ke fasilitas kesehatan selama masa nifas, disesuaikan dengan setiap fase sejak tanggal mulai nifas.",
             icon: "⏰",
             gradient: "from-blue-500 to-cyan-500",
             buttonText: "Uji Coba",
@@ -22,7 +22,7 @@ export default function FiturSection() {
         },
         {
             title: "Edukasi 3-in-1",
-            desc: "Akses konten edukasi sesuai fase nifasmu: video singkat, leaflet praktis, dan artikel lengkap! Konten dikurasi oleh tenaga medis dengan video penjelasan dokter/bidan (1-2 menit), leaflet infografis download/print, artikel gejala yang perlu diwaspadai, dan personalized hanya tampilkan konten relevan dengan fase user. Informasi mudah dicerna dalam berbagai format dan menyesuaikan kebutuhan tiap tahap nifas.",
+            desc: "Akses konten edukasi sesuai fase nifasmu: video singkat dan leaflet praktis! Konten dikurasi oleh tenaga medis, termasuk penjelasan dari dokter atau bidan (1–2 menit) dan infografis yang bisa diunduh atau dicetak. Informasi disajikan dalam format yang mudah dipahami untuk mendukung ibu di setiap tahap masa nifas.",
             icon: "📚",
             gradient: "from-amber-500 to-orange-500",
             buttonText: "Coba Fitur",
@@ -93,7 +93,7 @@ export default function FiturSection() {
                     className="text-lg text-gray-600 max-w-2xl mx-auto"
                 >
                     Dari{" "}
-                    <span className="text-blue-400">hari pertama hamil</span>{" "}
+                    <span className="text-blue-400">hari pertama nifas</span>{" "}
                     sampai
                     <span className="text-blue-400">
                         {" "}
@@ -187,16 +187,7 @@ export default function FiturSection() {
                             : "max-h-0 opacity-0"
                     }
                 `}
-                            >
-                                <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
-                                    <button className="px-6 py-2 border border-pink-400 text-pink-600 rounded-full">
-                                        Lihat Demo
-                                    </button>
-                                    <button className="px-6 py-2 bg-pink-100 text-pink-600 rounded-full">
-                                        Download Buku Panduan
-                                    </button>
-                                </div>
-                            </div>
+                            ></div>
                         </div>
                     </motion.div>
                 ))}

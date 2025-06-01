@@ -25,6 +25,8 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import TwibbonSystem from "./Components/TwibbonSection";
 import { usePage } from "@inertiajs/react";
 import GuestLayout from "@/Layouts/GuestLayout";
+import EducationSection from "./Components/EducationSection";
+import NifasSection from "./Components/FaseNifasSection";
 interface FaseNifas {
     id: number;
     name: string;
@@ -179,7 +181,6 @@ export default function DashboardNifas() {
             .then((response) => response.json())
             .then((data) => {
                 setNifasTask(data);
-                
             });
     }, []);
 
@@ -1141,6 +1142,9 @@ export default function DashboardNifas() {
                         </motion.div>
                     </motion.div>
                 )}
+                <NifasSection></NifasSection>
+                {/* Education Section */}
+                <EducationSection></EducationSection>
             </AuthenticatedLayout>
         </div>
     );

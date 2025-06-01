@@ -15,6 +15,7 @@ import {
     Info,
     Baby,
     Stethoscope,
+    Download,
 } from "lucide-react";
 import NavbarAuth from "./Components/NavbarAuth";
 import axios from "axios";
@@ -47,6 +48,7 @@ const KBDashboard = () => {
         catatan: "",
         status_kb: "aktif" as "aktif" | "tidak_aktif",
     });
+    const [showMainPosterModal, setShowMainPosterModal] = useState(false);
 
     const kbTypes = [
         "Metode operasi wanita (MOW)/tubektomi, metode operasi pria (MOP)/ vasektomi",
@@ -62,12 +64,166 @@ const KBDashboard = () => {
             "Metode operasi wanita (MOW)/tubektomi, metode operasi pria (MOP)/ vasektomi",
             "Implan",
             "IUD",
+            "MAL",
         ],
         "Jangka Pendek": [
-            "Kontrasepsi suntik 3 bulan atau 1 bulan",
+            "Kontrasepsi Suntik Progestin (KSP)",
             "Pil KB",
             "Kondom",
+            "KSK",
         ],
+    };
+
+    const kbMethods = {
+        "Jangka Panjang": [
+            {
+                title: "Metode Operasi Wanita (MOW)/Tubektomi & Metode Operasi Pria (MOP)/Vasektomi",
+                poster: "/storage/poster/MOW.png",
+                shortTitle: "MOW/MOP",
+            },
+            {
+                title: "Implan",
+                poster: "/storage/poster/Implant.png",
+                shortTitle: "Implan",
+            },
+            {
+                title: "IUD",
+                poster: "/storage/poster/IUD .png",
+                shortTitle: "IUD",
+            },
+            {
+                title: "MAL (Metode Amenore Laktasi)",
+                poster: "/storage/poster/MAL.png",
+                shortTitle: "MAL",
+            },
+        ],
+        "Jangka Pendek": [
+            {
+                title: "Kontrasepsi Suntik Progestin (KSP)",
+                poster: "/storage/poster/KSP.png",
+                shortTitle: "KSP",
+            },
+            {
+                title: "Pil KB",
+                poster: "/storage/poster/KB.png",
+                shortTitle: "Pil KB",
+            },
+            {
+                title: "Kondom",
+                poster: "/storage/poster/Kondom.png",
+                shortTitle: "Kondom",
+            },
+            {
+                title: "KSK (Kontrasepsi Suntik Kombinasi)",
+                poster: "/storage/poster/KSK.png",
+                shortTitle: "KSK",
+            },
+        ],
+    };
+
+    const handleDownload = (posterPath: string, methodName: string) => {
+        // Create a temporary link element
+        const link = document.createElement("a");
+        link.href = posterPath;
+        link.download = `Poster_${methodName.replace(/\s+/g, "_")}.png`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
+    type MethodCardProps = {
+        method: {
+            title: string;
+            poster: string;
+            shortTitle: string;
+        };
+        index: number;
+        color: string;
+    };
+
+    const MethodCard = ({ method, index, color }: MethodCardProps) => {
+        const [showModal, setShowModal] = useState(false);
+
+        return (
+            <>
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                    className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden hover:shadow-xl transition-shadow duration-300"
+                >
+                    {/* Poster Image */}
+                    <div
+                        className="bg-gray-100 overflow-hidden cursor-pointer"
+                        onClick={() => setShowModal(true)}
+                    >
+                        <img
+                            src={method.poster}
+                            alt={`Poster ${method.shortTitle}`}
+                            className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                            onError={(e) => {
+                                (e.target as HTMLImageElement).src =
+                                    "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDIwMCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMTUwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik04NyA2NUg4M1Y2MUg4N1Y2NVpNMTEzIDY1SDEwOVY2MUgxMTNWNjVaTTEwMyA5NUg5N1Y4OUgxMDNWOTVaTTg3IDk1SDgzVjg5SDg3Vjk1Wk0xMTMgOTVIMTA5Vjg5SDExM1Y5NVoiIGZpbGw9IiM5Q0EzQUYiLz4KPHRleHQgeD0iMTAwIiB5PSIxMjAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM2Qjc2ODQiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZm9udC13ZWlnaHQ9IjUwMCI+UG9zdGVyIE5vdCBGb3VuZDwvdGV4dD4KPHN2Zz4=";
+                            }}
+                        />
+                    </div>
+
+                    {/* Card Content */}
+                    <div className="p-6">
+                        <h4 className="text-lg font-bold text-gray-800 mb-3 line-clamp-2">
+                            {method.title}
+                        </h4>
+
+                        <button
+                            onClick={() =>
+                                handleDownload(method.poster, method.shortTitle)
+                            }
+                            className={`w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r ${
+                                color === "purple"
+                                    ? "from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800"
+                                    : "from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800"
+                            } text-white rounded-xl font-semibold transition-all duration-300 hover:shadow-lg transform hover:-translate-y-0.5`}
+                        >
+                            <Download className="w-4 h-4" />
+                            <span>Download Poster</span>
+                        </button>
+                    </div>
+                </motion.div>
+
+                {/* Image Modal */}
+                <AnimatePresence>
+                    {showModal && (
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            className="fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center p-4"
+                            onClick={() => setShowModal(false)}
+                        >
+                            <motion.div
+                                initial={{ scale: 0.9, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                exit={{ scale: 0.9, opacity: 0 }}
+                                className="relative w-full md:w-3/4 max-w-2xl mx-auto"
+                                onClick={(e) => e.stopPropagation()}
+                            >
+                                <button
+                                    onClick={() => setShowModal(false)}
+                                    className="absolute -top-12 right-0 text-white hover:text-gray-300 transition-colors"
+                                >
+                                    <X className="w-8 h-8" />
+                                </button>
+                                <img
+                                    src={method.poster}
+                                    alt={`Poster ${method.shortTitle}`}
+                                    className="w-full h-auto rounded-lg shadow-2xl"
+                                />
+                            </motion.div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+            </>
+        );
     };
 
     // Fetch KB records
@@ -354,138 +510,219 @@ const KBDashboard = () => {
                         animate={{ opacity: 1, y: 0 }}
                         className="grid md:grid-cols-2 gap-6 mb-8"
                     >
-                        {/* Main KB Info Card */}
-                        <div className="bg-gradient-to-br from-blue-50 to-indigo-100 rounded-2xl p-6 shadow-lg">
-                            <div className="flex items-start gap-4">
-                                <div className="bg-blue-600 p-3 rounded-full">
-                                    <Users className="w-6 h-6 text-white" />
-                                </div>
-                                <div className="flex-1">
-                                    <h3 className="text-xl font-bold text-gray-800 mb-3">
-                                        Tentang Keluarga Berencana
-                                    </h3>
-                                    <p className="text-gray-700 text-sm leading-relaxed mb-4">
-                                        <strong>KELUARGA BERENCANA (KB)</strong>{" "}
-                                        atau program keluarga berencana
-                                        merupakan program yang biasanya
-                                        diberikan kepada ibu pasca bersalin
-                                        sampai 6 minggu / 42 hari sesudah
-                                        melahirkan, pemilihan KB disesuaikan
-                                        dengan kondisi ibu.
-                                    </p>
-                                    <div className="bg-white/60 rounded-lg p-3">
-                                        <p className="text-xs text-gray-600">
-                                            💡 Konsultasikan dengan tenaga
-                                            kesehatan untuk memilih metode KB
-                                            yang tepat sesuai kondisi Anda
+                        {/* Poster Section */}
+                        <div className="relative">
+                            <div
+                                className="img mb-4 cursor-pointer"
+                                onClick={() => setShowMainPosterModal(true)}
+                            >
+                                <img
+                                    src="/storage/poster/manfaatkb.png"
+                                    alt="Manfaat KB Poster"
+                                    className="w-1/2 h-full object-cover rounded-2xl shadow-lg mx-auto"
+                                />
+                            </div>
+                            <div className="download flex justify-center">
+                                <a
+                                    href="/storage/poster/manfaatkb.png"
+                                    download
+                                    className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+                                >
+                                    <Download className="w-4 h-4" />
+                                    Download Poster
+                                </a>
+                            </div>
+                        </div>
+
+                        {/* Cards Section */}
+                        <div className="space-y-6">
+                            {/* Main KB Info Card */}
+                            <div className="bg-gradient-to-br from-blue-50 to-indigo-100 rounded-2xl p-6 shadow-lg">
+                                <div className="flex items-start gap-4">
+                                    <div className="bg-blue-600 p-3 rounded-full">
+                                        <Users className="w-6 h-6 text-white" />
+                                    </div>
+                                    <div className="flex-1">
+                                        <h3 className="text-xl font-bold text-gray-800 mb-3">
+                                            Tentang Keluarga Berencana
+                                        </h3>
+                                        <p className="text-gray-700 text-sm leading-relaxed mb-4">
+                                            <strong>
+                                                KELUARGA BERENCANA (KB)
+                                            </strong>{" "}
+                                            atau program keluarga berencana
+                                            merupakan program yang biasanya
+                                            diberikan kepada ibu pasca bersalin
+                                            sampai 6 minggu / 42 hari sesudah
+                                            melahirkan, pemilihan KB disesuaikan
+                                            dengan kondisi ibu.
                                         </p>
+                                        <div className="bg-white/60 rounded-lg p-3">
+                                            <p className="text-xs text-gray-600">
+                                                💡 Konsultasikan dengan tenaga
+                                                kesehatan untuk memilih metode
+                                                KB yang tepat sesuai kondisi
+                                                Anda
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Benefits Card */}
+                            <div className="bg-gradient-to-br from-green-50 to-emerald-100 rounded-2xl p-6 shadow-lg">
+                                <div className="flex items-start gap-4">
+                                    <div className="bg-green-600 p-3 rounded-full">
+                                        <Shield className="w-6 h-6 text-white" />
+                                    </div>
+                                    <div className="flex-1">
+                                        <h3 className="text-xl font-bold text-gray-800 mb-3">
+                                            Manfaat KB
+                                        </h3>
+                                        <ul className="space-y-2 text-sm text-gray-700">
+                                            <li className="flex items-start gap-2">
+                                                <CheckCircle className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
+                                                <span>
+                                                    Mengatur jarak kehamilan
+                                                    minimal 2 tahun
+                                                </span>
+                                            </li>
+                                            <li className="flex items-start gap-2">
+                                                <CheckCircle className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
+                                                <span>
+                                                    Mengatur jumlah anak yang
+                                                    dilahirkan
+                                                </span>
+                                            </li>
+                                            <li className="flex items-start gap-2">
+                                                <CheckCircle className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
+                                                <span>
+                                                    Mencegah dan meningkatkan
+                                                    kesehatan ibu dan bayi
+                                                </span>
+                                            </li>
+                                            <li className="flex items-start gap-2">
+                                                <CheckCircle className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
+                                                <span>
+                                                    Memberi ibu waktu khusus
+                                                    untuk merawat bayinya
+                                                </span>
+                                            </li>
+                                        </ul>
                                     </div>
                                 </div>
                             </div>
                         </div>
-
-                        {/* Benefits Card */}
-                        <div className="bg-gradient-to-br from-green-50 to-emerald-100 rounded-2xl p-6 shadow-lg">
-                            <div className="flex items-start gap-4">
-                                <div className="bg-green-600 p-3 rounded-full">
-                                    <Shield className="w-6 h-6 text-white" />
-                                </div>
-                                <div className="flex-1">
-                                    <h3 className="text-xl font-bold text-gray-800 mb-3">
-                                        Manfaat KB
-                                    </h3>
-                                    <ul className="space-y-2 text-sm text-gray-700">
-                                        <li className="flex items-start gap-2">
-                                            <CheckCircle className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
-                                            <span>
-                                                Mengatur jarak kehamilan minimal
-                                                2 tahun
-                                            </span>
-                                        </li>
-                                        <li className="flex items-start gap-2">
-                                            <CheckCircle className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
-                                            <span>
-                                                Mengatur jumlah anak yang
-                                                dilahirkan
-                                            </span>
-                                        </li>
-                                        <li className="flex items-start gap-2">
-                                            <CheckCircle className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
-                                            <span>
-                                                Mencegah dan meningkatkan
-                                                kesehatan ibu dan bayi
-                                            </span>
-                                        </li>
-                                        <li className="flex items-start gap-2">
-                                            <CheckCircle className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
-                                            <span>
-                                                Memberi ibu waktu khusus untuk
-                                                merawat bayinya
-                                            </span>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
                     </motion.div>
 
-                    {/* Methods Cards */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.1 }}
-                        className="grid md:grid-cols-2 gap-6 mb-8"
-                    >
-                        {/* Long-term Methods */}
-                        <div className="bg-white rounded-2xl p-6 shadow-lg border border-purple-100">
-                            <div className="flex items-center gap-3 mb-4">
-                                <div className="bg-purple-600 p-2 rounded-full">
-                                    <Clock className="w-5 h-5 text-white" />
-                                </div>
-                                <h3 className="text-lg font-bold text-gray-800">
-                                    Metode Kontrasepsi Jangka Panjang
-                                </h3>
-                            </div>
-                            <ul className="space-y-3">
-                                {kbTypeCategories["Jangka Panjang"].map(
-                                    (method, index) => (
-                                        <li
-                                            key={index}
-                                            className="flex items-start gap-2 text-sm text-gray-700"
-                                        >
-                                            <div className="w-2 h-2 bg-purple-400 rounded-full mt-2 flex-shrink-0" />
-                                            <span>{method}</span>
-                                        </li>
-                                    )
-                                )}
-                            </ul>
-                        </div>
+                    {/* Main Poster Modal */}
+                    <AnimatePresence>
+                        {showMainPosterModal && (
+                            <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                className="fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center p-4"
+                                onClick={() => setShowMainPosterModal(false)}
+                            >
+                                <motion.div
+                                    initial={{ scale: 0.9, opacity: 0 }}
+                                    animate={{ scale: 1, opacity: 1 }}
+                                    exit={{ scale: 0.9, opacity: 0 }}
+                                    className="relative w-full md:w-3/4 max-w-2xl mx-auto"
+                                    onClick={(e) => e.stopPropagation()}
+                                >
+                                    <button
+                                        onClick={() =>
+                                            setShowMainPosterModal(false)
+                                        }
+                                        className="absolute -top-12 right-0 text-white hover:text-gray-300 transition-colors"
+                                    >
+                                        <X className="w-8 h-8" />
+                                    </button>
+                                    <img
+                                        src="/storage/poster/manfaatkb.png"
+                                        alt="Manfaat KB Poster"
+                                        className="w-full h-auto rounded-lg shadow-2xl"
+                                    />
+                                </motion.div>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
 
-                        {/* Short-term Methods */}
-                        <div className="bg-white rounded-2xl p-6 shadow-lg border border-orange-100">
-                            <div className="flex items-center gap-3 mb-4">
-                                <div className="bg-orange-600 p-2 rounded-full">
-                                    <Calendar className="w-5 h-5 text-white" />
+                    <div className="max-w-7xl mx-auto px-6 py-12">
+                        {/* Long-term Methods Section */}
+                        <motion.section
+                            initial={{ opacity: 0, y: 30 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.6 }}
+                            className="mb-16"
+                        >
+                            <div className="text-center mb-12">
+                                <div className="flex items-center justify-center gap-3 mb-4">
+                                    <div className="bg-purple-600 p-3 rounded-full">
+                                        <Clock className="w-6 h-6 text-white" />
+                                    </div>
+                                    <h2 className="text-3xl font-bold text-gray-800">
+                                        Metode Kontrasepsi Jangka Panjang
+                                    </h2>
                                 </div>
-                                <h3 className="text-lg font-bold text-gray-800">
-                                    Metode Kontrasepsi Jangka Pendek
-                                </h3>
+                                <p className="text-gray-600 max-w-2xl mx-auto">
+                                    Metode kontrasepsi yang memberikan
+                                    perlindungan jangka panjang dengan
+                                    efektivitas tinggi
+                                </p>
                             </div>
-                            <ul className="space-y-3">
-                                {kbTypeCategories["Jangka Pendek"].map(
+
+                            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                                {kbMethods["Jangka Panjang"].map(
                                     (method, index) => (
-                                        <li
+                                        <MethodCard
                                             key={index}
-                                            className="flex items-start gap-2 text-sm text-gray-700"
-                                        >
-                                            <div className="w-2 h-2 bg-orange-400 rounded-full mt-2 flex-shrink-0" />
-                                            <span>{method}</span>
-                                        </li>
+                                            method={method}
+                                            index={index}
+                                            color="purple"
+                                        />
                                     )
                                 )}
-                            </ul>
-                        </div>
-                    </motion.div>
+                            </div>
+                        </motion.section>
+
+                        {/* Short-term Methods Section */}
+                        <motion.section
+                            initial={{ opacity: 0, y: 30 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.6, delay: 0.2 }}
+                        >
+                            <div className="text-center mb-12">
+                                <div className="flex items-center justify-center gap-3 mb-4">
+                                    <div className="bg-orange-600 p-3 rounded-full">
+                                        <Calendar className="w-6 h-6 text-white" />
+                                    </div>
+                                    <h2 className="text-3xl font-bold text-gray-800">
+                                        Metode Kontrasepsi Jangka Pendek
+                                    </h2>
+                                </div>
+                                <p className="text-gray-600 max-w-2xl mx-auto">
+                                    Metode kontrasepsi yang mudah digunakan
+                                    dengan fleksibilitas tinggi
+                                </p>
+                            </div>
+
+                            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                                {kbMethods["Jangka Pendek"].map(
+                                    (method, index) => (
+                                        <MethodCard
+                                            key={index}
+                                            method={method}
+                                            index={index}
+                                            color="orange"
+                                        />
+                                    )
+                                )}
+                            </div>
+                        </motion.section>
+                    </div>
 
                     {/* Current Active KB Status */}
                     {activeRecord && (
@@ -553,17 +790,20 @@ const KBDashboard = () => {
                         transition={{ delay: 0.3 }}
                         className="bg-white rounded-2xl shadow-lg p-6"
                     >
-                        <div className="flex justify-between items-center mb-6">
-                            <h2 className="text-2xl font-bold text-gray-800 flex items-center gap-3">
-                                <Baby className="w-6 h-6 text-blue-600" />
+                        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
+                            <h2 className="text-xl sm:text-2xl font-bold text-gray-800 flex items-center gap-3">
+                                <Baby className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />
                                 Riwayat Program KB
                             </h2>
                             <button
                                 onClick={() => setShowForm(true)}
-                                className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-6 py-3 rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all duration-300 flex items-center gap-2 shadow-lg hover:shadow-xl"
+                                className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all duration-300 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl text-sm sm:text-base w-full sm:w-auto"
                             >
-                                <Plus className="w-5 h-5" />
-                                Tambah KB Baru
+                                <Plus className="w-4 h-4 sm:w-5 sm:h-5" />
+                                <span className="sm:hidden">Tambah KB</span>
+                                <span className="hidden sm:inline">
+                                    Tambah KB Baru
+                                </span>
                             </button>
                         </div>
 

@@ -9,6 +9,8 @@ use App\Http\Controllers\NifasTaskProgressController;
 use App\Http\Controllers\KBController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ImunisasiController;
+
 
 // Kehamilan 
 Route::get('/kehamilan/user/{id}', [MaternalController::class, 'getKehamilan'])
@@ -35,6 +37,9 @@ Route::post('/nifas-task', [NifasTaskController::class, 'createNifasTask']);
 Route::get('/nifas-task-progress/{nifasId}', [NifasTaskController::class, 'getNifasTaskProgressByNifasId']);
 Route::post('/nifasprogress/update', [NifasTaskController::class, 'updateProgress']);
 Route::post('/nifastasks/updatebatch', [NifasTaskController::class, 'updateBatchTasks']);
+
+Route::put('/imunisasi/{id}', [ImunisasiController::class, 'update']);
+
 
 
 Route::get('/fase-nifas', [FaseNifasController::class, 'getFaseNifas']);

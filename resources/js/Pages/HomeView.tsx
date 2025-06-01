@@ -1,6 +1,5 @@
 import { motion } from "framer-motion";
-import { useState, useEffect } from "react";
-import heroImage from "./assets/hero.png";
+import { useState, useEffect, useRef } from "react";
 import ProblemSection from "./Components/ProblemSection";
 import JoinUs from "./Components/JoinUs";
 import FiturCard from "./Components/FiturSection";
@@ -8,7 +7,35 @@ import GuestLayout from "@/Layouts/GuestLayout";
 import { usePage, router } from "@inertiajs/react";
 import NifasSection from "./Components/FaseNifasSection";
 import EducationSection from "./Components/EducationSection";
+import GeneralEducationSection from "./Components/GeneralEducationSection";
+
 export default function HomeView() {
+    const videoRef = useRef<HTMLVideoElement>(null);
+
+    // Video intersection observer
+    useEffect(() => {
+        const video = videoRef.current;
+        if (!video) return;
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        video.play();
+                        video.muted = false;
+                    } else {
+                        video.pause();
+                        video.muted = true;
+                    }
+                });
+            },
+            { threshold: 0.5 }
+        );
+
+        observer.observe(video);
+        return () => observer.disconnect();
+    }, []);
+
     // Animation variants
     const containerVariants = {
         hidden: { opacity: 0 },
@@ -109,7 +136,7 @@ export default function HomeView() {
                                 >
                                     Selamat datang di{" "}
                                     <span className="text-blue-600 font-bold">
-                                        Bunda Sehat+
+                                        Rumah Nifas
                                     </span>
                                 </motion.h3>
 
@@ -120,21 +147,24 @@ export default function HomeView() {
                                     transition={{ duration: 0.5 }}
                                     className="text-4xl md:text-5xl font-bold text-gray-800 mb-4 "
                                 >
-                                    Setiap Momen{" "}
+                                    Rumah Nifas{" "}
                                     <span className="text-blue-600 font-bold">
-                                        Kehamilan
-                                    </span>{" "}
-                                    hingga{" "}
-                                    <span className="text-blue-600 font-bold">
-                                        Pulih
+                                        Tempat ibu belajar
                                     </span>
-                                    , Kami Temani Anda
+                                    ,{" "}
+                                    <span className="text-blue-600 font-bold">
+                                        memahami
+                                    </span>
+                                    , dan{" "}
+                                    <span className="text-blue-600 font-bold">
+                                        merawat diri
+                                    </span>
                                 </motion.h1>
                                 <p className="text-xl text-gray-500 mb-8">
-                                    Dapatkan panduan holistik trimester demi
-                                    trimester & pemantauan nifas 24/7 - karena
-                                    kesehatan Bunda menentukan masa depan si
-                                    kecil
+                                    Ruang aman dan nyaman bagi ibu untuk
+                                    memahami cara merawat diri dan bayinya
+                                    selama masa nifas, dengan dukungan edukasi
+                                    yang menyeluruh.
                                 </p>
                                 <button
                                     onClick={() => router.visit("/login")}
@@ -143,16 +173,42 @@ export default function HomeView() {
                                     Mulai Sekarang
                                 </button>
                             </div>
-                            <div className="image mx-auto ">
-                                <motion.img
+                            <div className="image mx-auto">
+                                <motion.video
+                                    ref={videoRef}
                                     initial={{ scale: 0 }}
                                     whileInView={{ scale: 1 }}
                                     viewport={{ once: true }}
                                     transition={{ duration: 0.5 }}
-                                    src={heroImage}
-                                    alt="Hero Image"
-                                    className="hidden md:block w-full h-auto mx-auto"
+                                    src="/storage/video_nifas/edukasinifas.mp4"
+                                    loop
+                                    playsInline
+                                    controls
+                                    className="w-full md:w-1/2 h-auto mx-auto rounded-lg shadow-xl mb-4"
                                 />
+                                <div className="flex justify-center mt-4">
+                                    <a
+                                        href="/storage/video_nifas/edukasinifas.mp4"
+                                        download="Edukasi_Nifas.mp4"
+                                        className="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-300 shadow-md"
+                                    >
+                                        <svg
+                                            className="w-5 h-5 mr-2"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            viewBox="0 0 24 24"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                        >
+                                            <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                strokeWidth="2"
+                                                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                                            />
+                                        </svg>
+                                        Download Video
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </motion.div>
@@ -160,9 +216,7 @@ export default function HomeView() {
 
                 {/* Fase Nifas Section */}
                 <NifasSection></NifasSection>
-
-                {/* Education Section */}
-                <EducationSection></EducationSection>
+                <GeneralEducationSection />
 
                 {/* Problem Section */}
                 <ProblemSection></ProblemSection>

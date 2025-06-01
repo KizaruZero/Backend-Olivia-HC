@@ -83,33 +83,31 @@ class Nifas extends Model
             }
         });
 
-        static::updated(function ($nifas) {
-            if ($nifas->is_completed && $nifas->wasChanged('is_completed')) {
-                try {
-                    DB::beginTransaction();
+        static::created(function ($nifas) {
+            try {
+                DB::beginTransaction();
 
-                    // Nonaktifkan imunisasi aktif lainnya
-                    Imunisasi::where('user_id', $nifas->user_id)
-                        ->where('is_active', true)
-                        ->update(['is_active' => false]);
+                // Nonaktifkan imunisasi aktif lainnya
+                Imunisasi::where('user_id', $nifas->user_id)
+                    ->where('is_active', true)
+                    ->update(['is_active' => false]);
 
-                    // Buat imunisasi baru
-                    Imunisasi::create([
-                        'user_id' => $nifas->user_id,
-                        'start_date' => Carbon::now(),
-                        'is_active' => true,
-                        'is_completed' => false,
-                    ]);
+                // Buat imunisasi baru
+                Imunisasi::create([
+                    'user_id' => $nifas->user_id,
+                    'start_date' => Carbon::now(),
+                    'is_active' => true,
+                    'is_completed' => false,
+                ]);
 
-                    DB::commit();
-                } catch (\Exception $e) {
-                    DB::rollBack();
-                    Log::error('Failed to create Imunisasi after Nifas completion: ' . $e->getMessage(), [
-                        'nifas_id' => $nifas->id,
-                        'user_id' => $nifas->user_id,
-                        'error' => $e->getMessage()
-                    ]);
-                }
+                DB::commit();
+            } catch (\Exception $e) {
+                DB::rollBack();
+                Log::error('Failed to create Imunisasi after Nifas creation: ' . $e->getMessage(), [
+                    'nifas_id' => $nifas->id,
+                    'user_id' => $nifas->user_id,
+                    'error' => $e->getMessage()
+                ]);
             }
         });
 

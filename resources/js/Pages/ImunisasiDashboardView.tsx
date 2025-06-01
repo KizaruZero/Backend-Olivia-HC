@@ -77,11 +77,20 @@ const ImunisasiDashboardView = () => {
         {}
     );
     const [activeEducationCard, setActiveEducationCard] = useState(0);
+    const [editingImunisasi, setEditingImunisasi] = useState<Imunisasi | null>(
+        null
+    );
+    const [editForm, setEditForm] = useState({
+        start_date: "",
+        is_active: true,
+        is_completed: false,
+        completed_at: "",
+    });
 
     const educationalCards = [
         {
             id: 1,
-            title: "Pentingnya Imunisasi Ibu Hamil",
+            title: "Pentingnya Imunisasi bagi anak anak",
             description:
                 "Imunisasi melindungi ibu dan bayi dari penyakit berbahaya selama kehamilan dan setelah lahir.",
             icon: Shield,
@@ -481,6 +490,76 @@ const ImunisasiDashboardView = () => {
     const progressPercentage =
         totalFases > 0 ? (completedFasesCount / totalFases) * 100 : 0;
 
+    const handleEditImunisasi = (imunisasi: Imunisasi) => {
+        setEditingImunisasi(imunisasi);
+        setEditForm({
+            start_date: imunisasi.start_date || "",
+            is_active: imunisasi.is_active,
+            is_completed: imunisasi.is_completed,
+            completed_at: imunisasi.completed_at || "",
+        });
+    };
+
+    const handleUpdateImunisasi = async () => {
+        if (!editingImunisasi) return;
+
+        try {
+            const response = await axios.put(
+                `/api/imunisasi/${editingImunisasi.id}`,
+                editForm,
+                {
+                    headers: {
+                        Authorization:
+                            "Bearer " + localStorage.getItem("token"),
+                    },
+                    withCredentials: true,
+                }
+            );
+
+            if (response.data.success) {
+                // Update the imunisasi list
+                setImunisasiList((prevList) =>
+                    prevList.map((item) =>
+                        item.id === editingImunisasi.id
+                            ? { ...item, ...editForm }
+                            : item
+                    )
+                );
+
+                // Update selected imunisasi if it's the one being edited
+                if (selectedImunisasi?.id === editingImunisasi.id) {
+                    setSelectedImunisasi((prev) =>
+                        prev ? { ...prev, ...editForm } : null
+                    );
+                }
+
+                Swal.fire({
+                    icon: "success",
+                    title: "Berhasil!",
+                    text: "Program imunisasi berhasil diperbarui",
+                    timer: 1500,
+                    showConfirmButton: false,
+                });
+
+                setEditingImunisasi(null);
+            }
+        } catch (error) {
+            console.error("Error updating imunisasi:", error);
+            Swal.fire({
+                icon: "error",
+                title: "Gagal!",
+                text: "Gagal memperbarui program imunisasi",
+            });
+        }
+    };
+
+    const handleImunisasiInputChange = (field: string, value: any) => {
+        setEditForm((prev) => ({
+            ...prev,
+            [field]: value,
+        }));
+    };
+
     if (loading) {
         return (
             <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100 flex items-center justify-center">
@@ -666,28 +745,39 @@ const ImunisasiDashboardView = () => {
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="bg-white rounded-2xl shadow-lg p-6 mb-8"
+                        className="bg-white rounded-2xl shadow-lg p-4 md:p-6 mb-8"
                     >
-                        <div className="flex justify-between items-center mb-6">
+                        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4 mb-6">
                             <div>
-                                <h2 className="text-2xl font-bold text-gray-800 flex items-center gap-3">
-                                    <Shield className="w-6 h-6 text-blue-600" />
-                                    Program Imunisasi Aktif
+                                <h2 className="text-xl md:text-2xl font-bold text-gray-800 flex items-center gap-2 md:gap-3">
+                                    <Shield className="w-5 h-5 md:w-6 md:h-6 text-blue-600" />
+                                    <span className="hidden sm:inline">
+                                        Program Imunisasi Aktif
+                                    </span>
+                                    <span className="sm:hidden">
+                                        Imunisasi Aktif
+                                    </span>
                                 </h2>
-                                <p className="text-gray-600 mt-1">
-                                    Kelola dan pantau program imunisasi si kecil
+                                <p className="text-sm md:text-base text-gray-600 mt-1">
+                                    <span className="hidden md:inline">
+                                        Kelola dan pantau program imunisasi si
+                                        kecil
+                                    </span>
+                                    <span className="md:hidden">
+                                        Pantau imunisasi si kecil
+                                    </span>
                                 </p>
                             </div>
                         </div>
 
-                        <div className="grid gap-6">
+                        <div className="grid gap-4 md:gap-6">
                             {imunisasiList && imunisasiList.length > 0 ? (
                                 imunisasiList.map((imunisasi) => (
                                     <motion.div
                                         key={imunisasi.id}
                                         initial={{ opacity: 0, y: 20 }}
                                         animate={{ opacity: 1, y: 0 }}
-                                        whileHover={{ scale: 1.02 }}
+                                        whileHover={{ scale: 1.01 }}
                                         className={`relative overflow-hidden rounded-xl border-2 transition-all duration-300 ${
                                             selectedImunisasi?.id ===
                                             imunisasi.id
@@ -698,116 +788,235 @@ const ImunisasiDashboardView = () => {
                                             setSelectedImunisasi(imunisasi)
                                         }
                                     >
-                                        <div className="p-6">
-                                            <div className="flex justify-between items-start">
-                                                <div className="flex items-start gap-4">
-                                                    <div
-                                                        className={`p-3 rounded-full ${
-                                                            imunisasi.is_active
-                                                                ? "bg-green-100"
-                                                                : "bg-gray-100"
-                                                        }`}
-                                                    >
-                                                        <Heart
-                                                            className={`w-6 h-6 ${
+                                        <div className="p-4 md:p-6">
+                                            {/* Mobile Layout */}
+                                            <div className="sm:hidden space-y-4">
+                                                <div className="flex items-start justify-between">
+                                                    <div className="flex items-start gap-3">
+                                                        <div
+                                                            className={`p-2 rounded-full ${
                                                                 imunisasi.is_active
-                                                                    ? "text-green-600"
-                                                                    : "text-gray-400"
+                                                                    ? "bg-green-100"
+                                                                    : "bg-gray-100"
                                                             }`}
-                                                        />
-                                                    </div>
-                                                    <div>
-                                                        <div className="flex items-center gap-3 mb-2">
-                                                            <h3 className="text-lg font-semibold text-gray-800">
+                                                        >
+                                                            <Heart
+                                                                className={`w-4 h-4 ${
+                                                                    imunisasi.is_active
+                                                                        ? "text-green-600"
+                                                                        : "text-gray-400"
+                                                                }`}
+                                                            />
+                                                        </div>
+                                                        <div>
+                                                            <h3 className="text-base font-semibold text-gray-800">
                                                                 Program
                                                                 Imunisasi
                                                             </h3>
-                                                            <span
-                                                                className={`px-3 py-1 rounded-full text-xs font-medium ${
-                                                                    imunisasi.is_completed
-                                                                        ? "bg-green-100 text-green-800 border border-green-200"
-                                                                        : "bg-blue-100 text-blue-800 border border-blue-200"
-                                                                }`}
-                                                            >
-                                                                {imunisasi.is_completed
-                                                                    ? "Selesai"
-                                                                    : "Aktif"}
-                                                            </span>
+                                                            <div className="flex items-center gap-2 mt-1">
+                                                                <div
+                                                                    className={`w-2 h-2 rounded-full ${
+                                                                        imunisasi.is_active
+                                                                            ? "bg-green-500"
+                                                                            : "bg-gray-400"
+                                                                    }`}
+                                                                />
+                                                                <span className="text-xs text-gray-600">
+                                                                    {imunisasi.is_active
+                                                                        ? "Berjalan"
+                                                                        : "Selesai"}
+                                                                </span>
+                                                            </div>
                                                         </div>
-                                                        <div className="space-y-1">
-                                                            <p className="text-sm text-gray-600">
-                                                                <span className="font-medium">
-                                                                    Mulai:
-                                                                </span>{" "}
-                                                                {imunisasi.start_date
-                                                                    ? new Date(
-                                                                          imunisasi.start_date
-                                                                      ).toLocaleDateString(
-                                                                          "id-ID",
-                                                                          {
-                                                                              day: "numeric",
-                                                                              month: "long",
-                                                                              year: "numeric",
-                                                                          }
-                                                                      )
-                                                                    : "Belum ditentukan"}
-                                                            </p>
-                                                            {imunisasi.completed_at && (
-                                                                <p className="text-sm text-gray-600">
-                                                                    <span className="font-medium">
-                                                                        Selesai:
-                                                                    </span>{" "}
-                                                                    {new Date(
-                                                                        imunisasi.completed_at
-                                                                    ).toLocaleDateString(
-                                                                        "id-ID",
-                                                                        {
-                                                                            day: "numeric",
-                                                                            month: "long",
-                                                                            year: "numeric",
-                                                                        }
-                                                                    )}
-                                                                </p>
-                                                            )}
-                                                        </div>
+                                                    </div>
+                                                    <div className="flex items-center gap-2">
+                                                        <span
+                                                            className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                                                imunisasi.is_completed
+                                                                    ? "bg-green-100 text-green-800 border border-green-200"
+                                                                    : "bg-blue-100 text-blue-800 border border-blue-200"
+                                                            }`}
+                                                        >
+                                                            {imunisasi.is_completed
+                                                                ? "Selesai"
+                                                                : "Aktif"}
+                                                        </span>
+                                                        <motion.div
+                                                            whileHover={{
+                                                                scale: 1.1,
+                                                            }}
+                                                            whileTap={{
+                                                                scale: 0.9,
+                                                            }}
+                                                            className="p-1.5 text-blue-600 hover:bg-blue-100 rounded-lg transition-colors"
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                handleEditImunisasi(
+                                                                    imunisasi
+                                                                );
+                                                            }}
+                                                        >
+                                                            <Edit3 className="w-4 h-4" />
+                                                        </motion.div>
                                                     </div>
                                                 </div>
-                                                <div className="flex items-center gap-3">
-                                                    <div className="flex items-center gap-2">
-                                                        <div
-                                                            className={`w-2 h-2 rounded-full ${
-                                                                imunisasi.is_active
-                                                                    ? "bg-green-500"
-                                                                    : "bg-gray-400"
-                                                            }`}
-                                                        />
-                                                        <span className="text-sm text-gray-600">
-                                                            {imunisasi.is_active
-                                                                ? "Sedang Berjalan"
-                                                                : "Selesai"}
-                                                        </span>
-                                                    </div>
-                                                    <motion.div
-                                                        whileHover={{
-                                                            scale: 1.1,
-                                                        }}
-                                                        whileTap={{
-                                                            scale: 0.9,
-                                                        }}
-                                                        className="p-2 text-blue-600 hover:bg-blue-100 rounded-lg transition-colors"
-                                                    >
-                                                        <Edit3 className="w-5 h-5" />
-                                                    </motion.div>
+
+                                                <div className="space-y-1">
+                                                    <p className="text-xs text-gray-600">
+                                                        <span className="font-medium">
+                                                            Mulai:
+                                                        </span>{" "}
+                                                        {imunisasi.start_date
+                                                            ? new Date(
+                                                                  imunisasi.start_date
+                                                              ).toLocaleDateString(
+                                                                  "id-ID",
+                                                                  {
+                                                                      day: "numeric",
+                                                                      month: "short",
+                                                                      year: "numeric",
+                                                                  }
+                                                              )
+                                                            : "Belum ditentukan"}
+                                                    </p>
+                                                    {imunisasi.completed_at && (
+                                                        <p className="text-xs text-gray-600">
+                                                            <span className="font-medium">
+                                                                Selesai:
+                                                            </span>{" "}
+                                                            {new Date(
+                                                                imunisasi.completed_at
+                                                            ).toLocaleDateString(
+                                                                "id-ID",
+                                                                {
+                                                                    day: "numeric",
+                                                                    month: "short",
+                                                                    year: "numeric",
+                                                                }
+                                                            )}
+                                                        </p>
+                                                    )}
                                                 </div>
                                             </div>
 
-                                            {/* Progress Bar */}
+                                            {/* Desktop Layout */}
+                                            <div className="hidden sm:block">
+                                                <div className="flex justify-between items-start">
+                                                    <div className="flex items-start gap-4">
+                                                        <div
+                                                            className={`p-3 rounded-full ${
+                                                                imunisasi.is_active
+                                                                    ? "bg-green-100"
+                                                                    : "bg-gray-100"
+                                                            }`}
+                                                        >
+                                                            <Heart
+                                                                className={`w-6 h-6 ${
+                                                                    imunisasi.is_active
+                                                                        ? "text-green-600"
+                                                                        : "text-gray-400"
+                                                                }`}
+                                                            />
+                                                        </div>
+                                                        <div>
+                                                            <div className="flex items-center gap-3 mb-2">
+                                                                <h3 className="text-lg font-semibold text-gray-800">
+                                                                    Program
+                                                                    Imunisasi
+                                                                </h3>
+                                                                <span
+                                                                    className={`px-3 py-1 rounded-full text-xs font-medium ${
+                                                                        imunisasi.is_completed
+                                                                            ? "bg-green-100 text-green-800 border border-green-200"
+                                                                            : "bg-blue-100 text-blue-800 border border-blue-200"
+                                                                    }`}
+                                                                >
+                                                                    {imunisasi.is_completed
+                                                                        ? "Selesai"
+                                                                        : "Aktif"}
+                                                                </span>
+                                                            </div>
+                                                            <div className="space-y-1">
+                                                                <p className="text-sm text-gray-600">
+                                                                    <span className="font-medium">
+                                                                        Mulai:
+                                                                    </span>{" "}
+                                                                    {imunisasi.start_date
+                                                                        ? new Date(
+                                                                              imunisasi.start_date
+                                                                          ).toLocaleDateString(
+                                                                              "id-ID",
+                                                                              {
+                                                                                  day: "numeric",
+                                                                                  month: "long",
+                                                                                  year: "numeric",
+                                                                              }
+                                                                          )
+                                                                        : "Belum ditentukan"}
+                                                                </p>
+                                                                {imunisasi.completed_at && (
+                                                                    <p className="text-sm text-gray-600">
+                                                                        <span className="font-medium">
+                                                                            Selesai:
+                                                                        </span>{" "}
+                                                                        {new Date(
+                                                                            imunisasi.completed_at
+                                                                        ).toLocaleDateString(
+                                                                            "id-ID",
+                                                                            {
+                                                                                day: "numeric",
+                                                                                month: "long",
+                                                                                year: "numeric",
+                                                                            }
+                                                                        )}
+                                                                    </p>
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex items-center gap-3">
+                                                        <div className="flex items-center gap-2">
+                                                            <div
+                                                                className={`w-2 h-2 rounded-full ${
+                                                                    imunisasi.is_active
+                                                                        ? "bg-green-500"
+                                                                        : "bg-gray-400"
+                                                                }`}
+                                                            />
+                                                            <span className="text-sm text-gray-600">
+                                                                {imunisasi.is_active
+                                                                    ? "Sedang Berjalan"
+                                                                    : "Selesai"}
+                                                            </span>
+                                                        </div>
+                                                        <motion.div
+                                                            whileHover={{
+                                                                scale: 1.1,
+                                                            }}
+                                                            whileTap={{
+                                                                scale: 0.9,
+                                                            }}
+                                                            className="p-2 text-blue-600 hover:bg-blue-100 rounded-lg transition-colors"
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                handleEditImunisasi(
+                                                                    imunisasi
+                                                                );
+                                                            }}
+                                                        >
+                                                            <Edit3 className="w-5 h-5" />
+                                                        </motion.div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            {/* Progress Bar - Same for both layouts */}
                                             <div className="mt-4">
                                                 <div className="flex justify-between items-center mb-2">
-                                                    <span className="text-sm font-medium text-gray-600">
+                                                    <span className="text-xs md:text-sm font-medium text-gray-600">
                                                         Progress
                                                     </span>
-                                                    <span className="text-sm text-gray-600">
+                                                    <span className="text-xs md:text-sm text-gray-600">
                                                         {completedFasesCount}/
                                                         {totalFases} Fase
                                                     </span>
@@ -835,25 +1044,35 @@ const ImunisasiDashboardView = () => {
                                 <motion.div
                                     initial={{ opacity: 0 }}
                                     animate={{ opacity: 1 }}
-                                    className="text-center py-12 bg-gray-50 rounded-xl"
+                                    className="text-center py-8 md:py-12 bg-gray-50 rounded-xl"
                                 >
-                                    <div className="bg-gray-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                                        <Baby className="w-8 h-8 text-gray-400" />
+                                    <div className="bg-gray-100 w-12 h-12 md:w-16 md:h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                                        <Baby className="w-6 h-6 md:w-8 md:h-8 text-gray-400" />
                                     </div>
-                                    <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                                    <h3 className="text-base md:text-lg font-semibold text-gray-800 mb-2">
                                         Belum Ada Program Imunisasi
                                     </h3>
-                                    <p className="text-gray-600 mb-4">
-                                        Mulai program imunisasi untuk melindungi
-                                        kesehatan si kecil
+                                    <p className="text-sm md:text-base text-gray-600 mb-4 px-4">
+                                        <span className="hidden md:inline">
+                                            Mulai program imunisasi untuk
+                                            melindungi kesehatan si kecil
+                                        </span>
+                                        <span className="md:hidden">
+                                            Mulai program imunisasi si kecil
+                                        </span>
                                     </p>
                                     <motion.button
                                         whileHover={{ scale: 1.05 }}
                                         whileTap={{ scale: 0.95 }}
-                                        className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-6 py-3 rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all duration-300 flex items-center gap-2 mx-auto"
+                                        className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-4 md:px-6 py-2.5 md:py-3 rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all duration-300 flex items-center gap-2 mx-auto text-sm md:text-base"
                                     >
-                                        <Plus className="w-5 h-5" />
-                                        Tambah Program Baru
+                                        <Plus className="w-4 h-4 md:w-5 md:h-5" />
+                                        <span className="md:hidden">
+                                            Tambah Program
+                                        </span>
+                                        <span className="hidden md:inline">
+                                            Tambah Program Baru
+                                        </span>
                                     </motion.button>
                                 </motion.div>
                             )}
@@ -861,39 +1080,40 @@ const ImunisasiDashboardView = () => {
                     </motion.div>
 
                     {/* Fase Imunisasi */}
+                    {/* Fase Imunisasi */}
                     {selectedImunisasi && faseImunisasiList.length > 0 && (
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.2 }}
-                            className="bg-white rounded-2xl shadow-lg p-6 mb-8"
+                            className="bg-white rounded-2xl shadow-lg p-4 sm:p-6 mb-8"
                         >
-                            <div className="flex justify-between items-center mb-8">
+                            <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center mb-6 sm:mb-8 gap-4">
                                 <div>
-                                    <h2 className="text-2xl font-bold text-gray-800 flex items-center gap-3">
-                                        <Calendar className="w-6 h-6 text-blue-600" />
+                                    <h2 className="text-xl sm:text-2xl font-bold text-gray-800 flex items-center gap-3">
+                                        <Calendar className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />
                                         Fase Imunisasi
                                     </h2>
-                                    <p className="text-gray-600 mt-1">
+                                    <p className="text-sm sm:text-base text-gray-600 mt-1">
                                         Pantau dan kelola setiap fase imunisasi
                                         si kecil
                                     </p>
                                 </div>
-                                <div className="flex items-center gap-3">
-                                    <div className="bg-blue-50 px-4 py-2 rounded-lg">
-                                        <span className="text-sm font-medium text-blue-700">
+                                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3">
+                                    <div className="bg-blue-50 px-3 sm:px-4 py-2 rounded-lg w-full sm:w-auto">
+                                        <span className="text-xs sm:text-sm font-medium text-blue-700">
                                             Total Fase: {totalFases}
                                         </span>
                                     </div>
-                                    <div className="bg-green-50 px-4 py-2 rounded-lg">
-                                        <span className="text-sm font-medium text-green-700">
+                                    <div className="bg-green-50 px-3 sm:px-4 py-2 rounded-lg w-full sm:w-auto">
+                                        <span className="text-xs sm:text-sm font-medium text-green-700">
                                             Selesai: {completedFasesCount}
                                         </span>
                                     </div>
                                 </div>
                             </div>
 
-                            <div className="grid gap-6">
+                            <div className="grid gap-4 sm:gap-6">
                                 {getCurrentFases().map((fase, index) => (
                                     <motion.div
                                         key={fase.id}
@@ -906,8 +1126,8 @@ const ImunisasiDashboardView = () => {
                                                 : "border-blue-100 bg-white hover:border-blue-300"
                                         } transition-all duration-300`}
                                     >
-                                        <div className="p-6">
-                                            <div className="flex justify-between items-start mb-4">
+                                        <div className="p-4 sm:p-6">
+                                            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-4 gap-4">
                                                 <div className="flex-1">
                                                     <div className="flex items-center gap-3 mb-3">
                                                         <div
@@ -918,7 +1138,7 @@ const ImunisasiDashboardView = () => {
                                                             }`}
                                                         >
                                                             <Clock
-                                                                className={`w-5 h-5 ${
+                                                                className={`w-4 h-4 sm:w-5 sm:h-5 ${
                                                                     fase.is_complete
                                                                         ? "text-green-600"
                                                                         : "text-blue-600"
@@ -926,21 +1146,21 @@ const ImunisasiDashboardView = () => {
                                                             />
                                                         </div>
                                                         <div>
-                                                            <h3 className="text-lg font-bold text-gray-800">
+                                                            <h3 className="text-base sm:text-lg font-bold text-gray-800">
                                                                 {fase.nama_fase}
                                                             </h3>
-                                                            <p className="text-sm text-gray-600">
+                                                            <p className="text-xs sm:text-sm text-gray-600">
                                                                 {
                                                                     fase.waktu_fase
                                                                 }
                                                             </p>
                                                         </div>
                                                     </div>
-                                                    <p className="text-gray-700 mb-4">
+                                                    <p className="text-sm sm:text-base text-gray-700 mb-4">
                                                         {fase.deskripsi_fase}
                                                     </p>
                                                 </div>
-                                                <div className="flex gap-2">
+                                                <div className="flex gap-2 justify-end">
                                                     <motion.button
                                                         whileHover={{
                                                             scale: 1.05,
@@ -958,7 +1178,7 @@ const ImunisasiDashboardView = () => {
                                                         }
                                                         className="p-2 text-blue-600 hover:bg-blue-100 rounded-lg transition-colors"
                                                     >
-                                                        <Edit3 className="w-5 h-5" />
+                                                        <Edit3 className="w-4 h-4 sm:w-5 sm:h-5" />
                                                     </motion.button>
                                                     {!fase.is_complete && (
                                                         <motion.button
@@ -973,17 +1193,19 @@ const ImunisasiDashboardView = () => {
                                                                     fase.id
                                                                 )
                                                             }
-                                                            className="bg-gradient-to-r from-green-500 to-green-600 text-white px-4 py-2 rounded-lg hover:from-green-600 hover:to-green-700 transition-all duration-300 flex items-center gap-2"
+                                                            className="bg-gradient-to-r from-green-500 to-green-600 text-white px-3 sm:px-4 py-2 rounded-lg hover:from-green-600 hover:to-green-700 transition-all duration-300 flex items-center gap-2"
                                                         >
-                                                            <CheckCircle className="w-4 h-4" />
-                                                            Selesai
+                                                            <CheckCircle className="w-3 h-3 sm:w-4 sm:h-4" />
+                                                            <span className="text-xs sm:text-sm">
+                                                                Selesai
+                                                            </span>
                                                         </motion.button>
                                                     )}
                                                 </div>
                                             </div>
 
                                             {/* Tasks Grid */}
-                                            <div className="grid md:grid-cols-2 gap-4 mb-4">
+                                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4 mb-4">
                                                 {[1, 2, 3, 4].map(
                                                     (tugasNum) => {
                                                         const tugasKey =
@@ -1001,11 +1223,11 @@ const ImunisasiDashboardView = () => {
                                                         return (
                                                             <div
                                                                 key={tugasNum}
-                                                                className="bg-white rounded-lg p-4 border border-gray-100"
+                                                                className="bg-white rounded-lg p-3 sm:p-4 border border-gray-100"
                                                             >
                                                                 <div className="flex items-start gap-3">
                                                                     <div
-                                                                        className={`p-2 rounded-full ${
+                                                                        className={`p-1.5 sm:p-2 rounded-full ${
                                                                             (fase[
                                                                                 statusKey
                                                                             ] as string) ===
@@ -1015,7 +1237,7 @@ const ImunisasiDashboardView = () => {
                                                                         }`}
                                                                     >
                                                                         <CheckCircle
-                                                                            className={`w-4 h-4 ${
+                                                                            className={`w-3 h-3 sm:w-4 sm:h-4 ${
                                                                                 (fase[
                                                                                     statusKey
                                                                                 ] as string) ===
@@ -1025,15 +1247,15 @@ const ImunisasiDashboardView = () => {
                                                                             }`}
                                                                         />
                                                                     </div>
-                                                                    <div className="flex-1">
-                                                                        <h4 className="font-medium text-gray-800 mb-1">
+                                                                    <div className="flex-1 min-w-0">
+                                                                        <h4 className="font-medium text-sm sm:text-base text-gray-800 mb-1 break-words">
                                                                             {
                                                                                 fase[
                                                                                     tugasKey
                                                                                 ] as string
                                                                             }
                                                                         </h4>
-                                                                        <p className="text-sm text-gray-600 mb-2">
+                                                                        <p className="text-xs sm:text-sm text-gray-600 mb-2 break-words">
                                                                             {
                                                                                 fase[
                                                                                     deskripsiKey
@@ -1082,7 +1304,7 @@ const ImunisasiDashboardView = () => {
                                                             opacity: 0,
                                                             height: 0,
                                                         }}
-                                                        className="mt-6 space-y-6 bg-blue-50 rounded-xl p-6"
+                                                        className="mt-6 space-y-4 sm:space-y-6 bg-blue-50 rounded-xl p-4 sm:p-6"
                                                     >
                                                         {/* Tugas 1-4 */}
                                                         {[1, 2, 3, 4].map(
@@ -1110,10 +1332,10 @@ const ImunisasiDashboardView = () => {
                                                                         key={
                                                                             tugasNum
                                                                         }
-                                                                        className="bg-white rounded-xl p-4 border border-gray-200"
+                                                                        className="bg-white rounded-xl p-3 sm:p-4 border border-gray-200"
                                                                     >
-                                                                        <div className="flex items-center gap-3 mb-3">
-                                                                            <span className="font-semibold text-gray-800">
+                                                                        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-3">
+                                                                            <span className="font-semibold text-sm sm:text-base text-gray-800">
                                                                                 Tugas{" "}
                                                                                 {
                                                                                     tugasNum
@@ -1121,7 +1343,7 @@ const ImunisasiDashboardView = () => {
 
                                                                                 :
                                                                             </span>
-                                                                            <span className="text-gray-600">
+                                                                            <span className="text-sm sm:text-base text-gray-600 break-words">
                                                                                 {
                                                                                     fase[
                                                                                         tugasKey
@@ -1130,7 +1352,7 @@ const ImunisasiDashboardView = () => {
                                                                             </span>
                                                                         </div>
 
-                                                                        <p className="text-sm text-gray-600 mb-4">
+                                                                        <p className="text-xs sm:text-sm text-gray-600 mb-4 break-words">
                                                                             {
                                                                                 fase[
                                                                                     deskripsiKey
@@ -1138,9 +1360,9 @@ const ImunisasiDashboardView = () => {
                                                                             }
                                                                         </p>
 
-                                                                        <div className="grid md:grid-cols-2 gap-4">
+                                                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                                                                             <div>
-                                                                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                                                <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
                                                                                     Status
                                                                                 </label>
                                                                                 <select
@@ -1167,7 +1389,7 @@ const ImunisasiDashboardView = () => {
                                                                                                 .value
                                                                                         )
                                                                                     }
-                                                                                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                                                                    className="w-full p-2 sm:p-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                                                                 >
                                                                                     <option value="belum">
                                                                                         Belum
@@ -1185,7 +1407,7 @@ const ImunisasiDashboardView = () => {
                                                                             </div>
 
                                                                             <div>
-                                                                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                                                <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
                                                                                     Tanggal
                                                                                 </label>
                                                                                 <input
@@ -1228,7 +1450,7 @@ const ImunisasiDashboardView = () => {
                                                                                         ] as string) !==
                                                                                             "sudah"
                                                                                     }
-                                                                                    className={`w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                                                                                    className={`w-full p-2 sm:p-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
                                                                                         localStatus[
                                                                                             `${fase.id}_${statusKey}`
                                                                                         ] !==
@@ -1245,7 +1467,7 @@ const ImunisasiDashboardView = () => {
                                                                         </div>
 
                                                                         <div className="mt-4">
-                                                                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                                            <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
                                                                                 Catatan
                                                                             </label>
                                                                             <textarea
@@ -1276,14 +1498,14 @@ const ImunisasiDashboardView = () => {
                                                                                 rows={
                                                                                     3
                                                                                 }
-                                                                                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                                                                className="w-full p-2 sm:p-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                                                                 placeholder="Tambahkan catatan..."
                                                                             />
                                                                         </div>
 
-                                                                        <div className="mt-3 flex items-center gap-2">
+                                                                        <div className="mt-3 flex flex-wrap items-center gap-2">
                                                                             <span
-                                                                                className={`px-3 py-1 rounded-full text-sm border ${getStatusColor(
+                                                                                className={`px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm border ${getStatusColor(
                                                                                     localStatus[
                                                                                         `${fase.id}_${statusKey}`
                                                                                     ] ||
@@ -1323,7 +1545,7 @@ const ImunisasiDashboardView = () => {
                                                                                     (fase[
                                                                                         tanggalKey
                                                                                     ] as string)) && (
-                                                                                    <span className="text-sm text-gray-600">
+                                                                                    <span className="text-xs sm:text-sm text-gray-600">
                                                                                         Tanggal:{" "}
                                                                                         {localNotes[
                                                                                             `${fase.id}_${tanggalKey}`
@@ -1344,8 +1566,8 @@ const ImunisasiDashboardView = () => {
                                                         )}
 
                                                         {/* Catatan Fase */}
-                                                        <div className="bg-white rounded-xl p-4 border border-gray-200">
-                                                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                        <div className="bg-white rounded-xl p-3 sm:p-4 border border-gray-200">
+                                                            <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
                                                                 Catatan Fase
                                                             </label>
                                                             <textarea
@@ -1369,7 +1591,7 @@ const ImunisasiDashboardView = () => {
                                                                     )
                                                                 }
                                                                 rows={3}
-                                                                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                                                className="w-full p-2 sm:p-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                                                 placeholder="Catatan umum untuk fase ini..."
                                                             />
                                                         </div>
@@ -1387,9 +1609,9 @@ const ImunisasiDashboardView = () => {
                                                                         fase.id
                                                                     )
                                                                 }
-                                                                className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-6 py-3 rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all duration-300 flex items-center gap-2"
+                                                                className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all duration-300 flex items-center gap-2 text-sm sm:text-base"
                                                             >
-                                                                <Save className="w-4 h-4" />
+                                                                <Save className="w-3 h-3 sm:w-4 sm:h-4" />
                                                                 Simpan Perubahan
                                                             </motion.button>
                                                         </div>
@@ -1400,8 +1622,8 @@ const ImunisasiDashboardView = () => {
 
                                         {/* Status Badge */}
                                         {fase.is_complete && (
-                                            <div className="absolute top-7 right-16">
-                                                <span className="px-3 py-1 bg-green-100 text-green-800 text-sm font-medium rounded-full border border-green-200">
+                                            <div className="absolute top-4 sm:top-7 right-4 sm:right-16">
+                                                <span className="px-2 sm:px-3 py-1 bg-green-100 text-green-800 text-xs sm:text-sm font-medium rounded-full border border-green-200">
                                                     Selesai
                                                 </span>
                                             </div>
@@ -1507,6 +1729,151 @@ const ImunisasiDashboardView = () => {
                             </div>
                         </div>
                     </motion.div>
+
+                    {/* Edit Imunisasi Modal */}
+                    <AnimatePresence>
+                        {editingImunisasi && (
+                            <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+                                onClick={() => setEditingImunisasi(null)}
+                            >
+                                <motion.div
+                                    initial={{ scale: 0.9, opacity: 0 }}
+                                    animate={{ scale: 1, opacity: 1 }}
+                                    exit={{ scale: 0.9, opacity: 0 }}
+                                    className="bg-white rounded-xl w-full max-w-lg overflow-hidden shadow-2xl"
+                                    onClick={(e) => e.stopPropagation()}
+                                >
+                                    <div className="bg-gradient-to-r from-blue-500 to-blue-600 p-4 text-white">
+                                        <div className="flex items-center justify-between">
+                                            <h2 className="text-xl font-bold">
+                                                Edit Program Imunisasi
+                                            </h2>
+                                            <button
+                                                onClick={() =>
+                                                    setEditingImunisasi(null)
+                                                }
+                                                className="p-2 hover:bg-white/20 rounded-lg transition-colors"
+                                            >
+                                                <X className="h-5 w-5" />
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div className="p-6 space-y-4">
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                Tanggal Mulai
+                                            </label>
+                                            <input
+                                                type="date"
+                                                value={editForm.start_date}
+                                                onChange={(e) =>
+                                                    handleImunisasiInputChange(
+                                                        "start_date",
+                                                        e.target.value
+                                                    )
+                                                }
+                                                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                            />
+                                        </div>
+
+                                        <div className="flex items-center gap-4">
+                                            <div className="flex items-center">
+                                                <input
+                                                    type="checkbox"
+                                                    id="is_active"
+                                                    checked={editForm.is_active}
+                                                    onChange={(e) =>
+                                                        handleImunisasiInputChange(
+                                                            "is_active",
+                                                            e.target.checked
+                                                        )
+                                                    }
+                                                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                                                />
+                                                <label
+                                                    htmlFor="is_active"
+                                                    className="ml-2 block text-sm text-gray-700"
+                                                >
+                                                    Program Aktif
+                                                </label>
+                                            </div>
+
+                                            <div className="flex items-center">
+                                                <input
+                                                    type="checkbox"
+                                                    id="is_completed"
+                                                    checked={
+                                                        editForm.is_completed
+                                                    }
+                                                    onChange={(e) =>
+                                                        handleImunisasiInputChange(
+                                                            "is_completed",
+                                                            e.target.checked
+                                                        )
+                                                    }
+                                                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                                                />
+                                                <label
+                                                    htmlFor="is_completed"
+                                                    className="ml-2 block text-sm text-gray-700"
+                                                >
+                                                    Program Selesai
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                        {editForm.is_completed && (
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                    Tanggal Selesai
+                                                </label>
+                                                <input
+                                                    type="date"
+                                                    value={
+                                                        editForm.completed_at
+                                                    }
+                                                    onChange={(e) =>
+                                                        handleImunisasiInputChange(
+                                                            "completed_at",
+                                                            e.target.value
+                                                        )
+                                                    }
+                                                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                                />
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    <div className="border-t border-gray-200 p-4 flex justify-end gap-3">
+                                        <motion.button
+                                            whileHover={{ scale: 1.05 }}
+                                            whileTap={{ scale: 0.95 }}
+                                            onClick={() =>
+                                                setEditingImunisasi(null)
+                                            }
+                                            className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+                                        >
+                                            Batal
+                                        </motion.button>
+                                        <motion.button
+                                            whileHover={{ scale: 1.05 }}
+                                            whileTap={{ scale: 0.95 }}
+                                            onClick={handleUpdateImunisasi}
+                                            className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-6 py-2 rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-300 flex items-center gap-2"
+                                        >
+                                            <Save className="w-4 h-4" />
+                                            Simpan Perubahan
+                                        </motion.button>
+                                    </div>
+                                </motion.div>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
                 </div>
             </AuthenticatedLayout>
         </div>
