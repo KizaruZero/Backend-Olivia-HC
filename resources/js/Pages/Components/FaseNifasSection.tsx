@@ -82,6 +82,8 @@ export default function NifasSection() {
     const [scale, setScale] = useState(1.0);
     const [rotation, setRotation] = useState(0);
     const canvasRef = useRef<HTMLCanvasElement>(null);
+    const videoRef = useRef<HTMLDivElement>(null);
+    const [isVideoVisible, setIsVideoVisible] = useState(false);
 
     useEffect(() => {
         if (!isAutoPlaying) return;
@@ -277,6 +279,57 @@ export default function NifasSection() {
     const handlePhaseHover = (phaseId: number) => {
         setIsAutoPlaying(false);
         setIsHovering(phaseId);
+    };
+
+    // Add intersection observer for video visibility
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                setIsVideoVisible(entry.isIntersecting);
+            },
+            {
+                threshold: 0.5, // Trigger when 50% of the video is visible
+            }
+        );
+
+        if (videoRef.current) {
+            observer.observe(videoRef.current);
+        }
+
+        return () => {
+            if (videoRef.current) {
+                observer.unobserve(videoRef.current);
+            }
+        };
+    }, []);
+
+    // Handle video download
+    const handleVideoDownload = async (phaseNumber: number) => {
+        try {
+            const response = await fetch(`/storage/video_nifas/video_kf${phaseNumber}.mp4`);
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = `Video_KF_${phaseNumber}.mp4`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(url);
+
+            Swal.fire({
+                icon: "success",
+                title: "Berhasil",
+                text: `Video KF ${phaseNumber} berhasil diunduh!`,
+            });
+        } catch (error) {
+            console.error("Download error:", error);
+            Swal.fire({
+                icon: "error",
+                title: "Gagal mengunduh",
+                text: "Terjadi kesalahan saat mengunduh video. Silakan coba lagi.",
+            });
+        }
     };
 
     return (
@@ -679,7 +732,7 @@ export default function NifasSection() {
                                                         damping: 20,
                                                     }}
                                                 />
-                                            ) : (
+                                            ) : (   
                                                 <div
                                                     className="absolute bottom-0 left-1/2 w-0 h-1 bg-blue-300 rounded-full 
                                                                 group-hover:w-[60%] group-hover:left-[20%] 
@@ -725,12 +778,9 @@ export default function NifasSection() {
                                     className="min-h-[300px]"
                                 >
                                     {activeTab === "video" && (
-                                        <div className="w-full aspect-video rounded-xl overflow-hidden">
+                                        <div ref={videoRef} className="w-full aspect-video rounded-xl overflow-hidden relative group">
                                             <ReactPlayer
-                                                url={
-                                                    nifasPhases[activePhase - 1]
-                                                        .video_url
-                                                }
+                                                url={`/storage/video_nifas/video_kf${activePhase}.mp4`}
                                                 controls
                                                 width="100%"
                                                 height="100%"
@@ -738,7 +788,25 @@ export default function NifasSection() {
                                                 style={{
                                                     borderRadius: "0.75rem",
                                                 }}
+                                                playing={isVideoVisible}
+                                                muted={false}
+                                                config={{
+                                                    file: {
+                                                        attributes: {
+                                                            controlsList: "nodownload",
+                                                        },
+                                                    },
+                                                }}
                                             />
+                                            <motion.button
+                                                whileHover={{ scale: 1.05 }}
+                                                whileTap={{ scale: 0.95 }}
+                                                onClick={() => handleVideoDownload(activePhase)}
+                                                className="absolute bottom-4 right-4 bg-blue-600 text-white px-4 py-2 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center space-x-2"
+                                            >
+                                                <Download className="h-4 w-4" />
+                                                <span>Download Video</span>
+                                            </motion.button>
                                         </div>
                                     )}
 
