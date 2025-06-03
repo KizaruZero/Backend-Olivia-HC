@@ -103,11 +103,15 @@ export default function NavbarAuth() {
                     onClick={() => router.visit("/")}
                     whileHover={{ scale: 1.05 }}
                 >
-                    <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-xl mr-3">
-                        BS+
+                    <div className="w-12 h-12 rounded-full flex items-center justify-center mr-3 overflow-hidden">
+                        <img
+                            src="/storage/video_nifas/logo.png"
+                            alt="Rumah Nifas Logo"
+                            className="w-full h-full object-cover"
+                        />
                     </div>
                     <span className="text-xl font-semibold text-blue-600 hidden md:block">
-                        BundaSehat+
+                        Rumah Nifas
                     </span>
                 </motion.div>
 
