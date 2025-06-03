@@ -258,12 +258,12 @@ export default function Register() {
                                     className="mt-2"
                                 />
                                 {/* or continue with */}
-                                <div className="or mt-4 text-center">
+                                {/* <div className="or mt-4 text-center">
                                     <p className="text-gray-600">
                                         or continue with
                                     </p>
-                                </div>
-                                <div className="social-login mt-4 flex justify-center space-x-4">
+                                </div> */}
+                                {/* <div className="social-login mt-4 flex justify-center space-x-4">
                                     <button
                                         className="bg-white text-black px-4 py-3 rounded-3xl shadow-md hover:bg-gray-100 transition-colors flex items-center justify-center"
                                         onClick={loginWithGoogle}
@@ -290,7 +290,7 @@ export default function Register() {
                                             />
                                         </svg>
                                     </button>
-                                </div>
+                                </div> */}
                             </motion.div>
 
                             <motion.div
