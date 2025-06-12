@@ -137,9 +137,9 @@ class NifasController extends Controller
             return 2;
         if ($daysPassed <= 28)
             return 3;
-        if ($daysPassed <= 42)
+        if ($daysPassed <= 42 || $daysPassed > 42)
             return 4;
-        return 0;
+        return 1;
     }
 
     private function getNextPhaseDate($startDate, $nextPhase)

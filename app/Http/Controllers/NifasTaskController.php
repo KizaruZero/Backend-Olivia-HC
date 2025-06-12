@@ -13,6 +13,8 @@ use Carbon\Carbon;
 use App\Models\NifasProgress;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\NifasCompletionCertificate;
 
 
 
@@ -208,6 +210,15 @@ class NifasTaskController extends Controller
                 $nifas->is_completed = true;
                 $nifas->completed_at = Carbon::now();
                 $nifas->save();
+            }
+
+            $checkCompletedNifas = NifasProgress::where('nifas_id', $nifasId)->where('is_completed', 1)->count();
+            if ($checkCompletedNifas == 4) {
+                $nifas = Nifas::find($nifasId);
+                $user = $nifas->user;
+
+                // Send completion certificate email
+                Mail::to($user->email)->send(new NifasCompletionCertificate($user, $nifas));
             }
 
             return response()->json([
