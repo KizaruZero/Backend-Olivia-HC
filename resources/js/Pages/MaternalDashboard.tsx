@@ -230,10 +230,10 @@ export default function MaternalDashboard() {
                                     />
                                 ))}
                             </div>
-
+                                
                             <div className="flex justify-between text-xs text-gray-500 mt-1">
                                 <span>Hari ke-0</span>
-                                <span>Hari ke-280</span>
+                                <span>Hari ke-240</span>
                             </div>
 
                             <motion.div
